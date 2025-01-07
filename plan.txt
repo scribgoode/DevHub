@@ -1,0 +1,51 @@
+Mission
+-bring together all engineers not just software developers
+
+Key features
+-profiles
+    1.60 second pitch about you(highly recommened for greater chance of connecting)
+    2.status: creator or recruit
+    3.if creator: current projects, preferences on collarborating = hybrid, in-person, online
+    4.city
+    5.online notifier
+
+
+Core functionalities
+-possible meet up spots halfway between(coffee shops, libraries)
+
+Signup:
+email/password/dob
+to request or join stream meeting must finish required profile fields(this also lets you switch to creator status)
+
+
+Main things before launch
+-profile/account(change and add)
+-dm system
+-search and filtering
+-live chat system
+-proposed meeting spot algorithm 
+-meetings page
+-extensive testing on just functionality for now
+-advertising plan
+-something to buy
+
+
+Future
+-if you sign up for a commited meeting you have to go or you get a strike(reliability score)
+-repository
+-replit
+-kids version
+-option to do leetcode probs together on site
+-pitch competitions/meetups
+
+
+creating custom user model = https://docs.djangoproject.com/en/5.1/topics/auth/customizing/#django.contrib.auth.models.AbstractBaseUser
+authentication system = https://www.geeksforgeeks.org/user-authentication-system-using-django/
+real time chat system = https://career.proxify.io/article/real-time-chat-with-Django
+
+https://learndjango.com/tutorials/django-custom-user-model#abstractuser-vs-abstractbaseuser
+
+https://learndjango.com/tutorials/django-log-in-email-not-username
+
+adding custom user model fields to admin page(also look at authentication admin in closed) - https://stackoverflow.com/questions/65046722/add-a-field-to-the-django-admin-for-a-custom-user-model
+

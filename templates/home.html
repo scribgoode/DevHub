@@ -1,0 +1,73 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styling.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <title>DebHub.io</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="website-header">
+            <div class="title">
+                <a href="#">DevHub.io</a>
+            </div>
+        </div>
+        <div class="website-header">
+            {% if user.is_authenticated %}
+            <div class="profile-link">
+                <a href="#" id="profileLink">My Profile</a>
+            </div>
+            <div class="website-header">
+                <div class="logout-link">
+                    <a href="{% url 'account_logout' %}" id="logoutLink">Logout</a>
+                </div>
+            </div>
+            {% else %}
+            <div class="login-link">
+                <a href="{% url 'account_login' %}" id="loginLink">Login</a>
+            </div>
+            {% endif %}
+        </div>
+        <br><br><br><br>
+        <div class="engineer-table">
+            <div class="table-head">
+                <div class ="status">Status(b/c and on/off)</div>
+                <div class="name">Name</div>
+                <div class="location">Location</div>
+                <div class="current-projects">Current Project(s)(description optional)</div>
+                <div class="meeting-preferences">Meet. Pref.</div>
+            </div>
+            <div class="table-row-box">
+                <a name="profile-button" href="#">
+                    <div class="table-row">
+                        <div class="row-background"></div>
+                        <div class="status">creator/online</div>
+                        <div class="name">Scrib Goode</div>
+                        <div class="location">Chicago, IL</div>
+                        <div class="current-projects">Website that provides seamless communication for the purpose of working with fellow engineers.</div>
+                        <!--make that scrolly-->
+                        <div class="meeting-preferences">in-person</div>
+                    </div>
+                </a>
+            </div>
+            <div class="table-row-box">
+                <a name="profile-button" href="#">
+                    <div class="table-row">
+                        <div class="row-background"></div>
+                        <div class="status">creator/online</div>
+                        <div class="name">Scrib Goode</div>
+                        <div class="location">Chicago, IL</div>
+                        <div class="current-projects">Website that provides seamless communication for the purpose of working with fellow engineers.</div>
+                        <div class="meeting-preferences">in-person</div>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
