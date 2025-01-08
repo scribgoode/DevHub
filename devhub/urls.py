@@ -16,12 +16,13 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import myProfile
+from accounts.views import myProfile, home
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('', include('accounts.urls')),
-    path('my_profile/', myProfile, name='my_profile')
+    #path('', include('accounts.urls')), #moved the home views in accounts to here
+    path('my_profile/<int:id>', myProfile, name='my_profile'),
+    path('', home, name='home'),
     #path('', include('chat.urls')),
 ]

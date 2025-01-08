@@ -11,26 +11,27 @@ Key features
 
 
 Core functionalities
--possible meet up spots halfway between(coffee shops, libraries)
+-possible meet up spots halfway between(coffee shops, libraries, wework)
 
 Signup:
 email/password/dob
 to request or join stream meeting must finish required profile fields(this also lets you switch to creator status)
 
 
-Main things before launch
+MVP
 -profile/account(change and add)
 -dm system
 -search and filtering
 -live chat system
 -proposed meeting spot algorithm 
--meetings page
+-meetings/simple calendar page
+-rating system/strike system
 -extensive testing on just functionality for now
 -advertising plan
--something to buy
+-something to buy(payment when request to meet is accepted?)
 
 
-Future
+FUTURE IDEAS
 -if you sign up for a commited meeting you have to go or you get a strike(reliability score)
 -repository
 -replit
@@ -38,14 +39,15 @@ Future
 -option to do leetcode probs together on site
 -pitch competitions/meetups
 
-
+LINKS TO HELPFUL FORMUS AND TUTORIALS
 creating custom user model = https://docs.djangoproject.com/en/5.1/topics/auth/customizing/#django.contrib.auth.models.AbstractBaseUser
 authentication system = https://www.geeksforgeeks.org/user-authentication-system-using-django/
 real time chat system = https://career.proxify.io/article/real-time-chat-with-Django
-
 https://learndjango.com/tutorials/django-custom-user-model#abstractuser-vs-abstractbaseuser
-
 https://learndjango.com/tutorials/django-log-in-email-not-username
-
 adding custom user model fields to admin page(also look at authentication admin in closed) - https://stackoverflow.com/questions/65046722/add-a-field-to-the-django-admin-for-a-custom-user-model
+show a profiles information on another page - https://www.w3schools.com/django/django_add_link_details.php
 
+
+THINGS TO FIX:
+-need to add address and meeting prefernce information to user model
