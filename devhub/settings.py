@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -167,3 +168,4 @@ CHANNEL_LAYERS = {
         "BACKEND": "channels.layers. InMemoryChannelLayer"
     }
 }
+#possibly will have to change channel layers in production

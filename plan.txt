@@ -21,6 +21,7 @@ to request or join stream meeting must finish required profile fields(this also 
 MVP
 -profile/account(change and add)
 -dm system
+-friends list
 -search and filtering
 -live chat system
 -proposed meeting spot algorithm 
@@ -29,6 +30,8 @@ MVP
 -extensive testing on just functionality for now
 -advertising plan
 -something to buy(payment when request to meet is accepted?)
+-once someone accepts a meeting invation you two become collaborators(messaging and video calling only become available once two people are collaborators)
+-only show the elevator pitch and current projects(basically undentifiable information(censor name in elevator pitch using ai))(to encourage people to meet in person might not pay for meeting invite if they request that type of meeting)
 
 
 FUTURE IDEAS
@@ -38,11 +41,13 @@ FUTURE IDEAS
 -kids version
 -option to do leetcode probs together on site
 -pitch competitions/meetups
+-youtube coding interviews and skits on the platform to advertise
 
 LINKS TO HELPFUL FORMUS AND TUTORIALS
 creating custom user model = https://docs.djangoproject.com/en/5.1/topics/auth/customizing/#django.contrib.auth.models.AbstractBaseUser
 authentication system = https://www.geeksforgeeks.org/user-authentication-system-using-django/
 real time chat system = https://career.proxify.io/article/real-time-chat-with-Django
+**real time chat systems that supports multiple rooms = https://medium.com/@abdullafajal/how-to-create-live-chat-project-in-django-using-django-channels-a87715a517d6 
 https://learndjango.com/tutorials/django-custom-user-model#abstractuser-vs-abstractbaseuser
 https://learndjango.com/tutorials/django-log-in-email-not-username
 adding custom user model fields to admin page(also look at authentication admin in closed) - https://stackoverflow.com/questions/65046722/add-a-field-to-the-django-admin-for-a-custom-user-model
