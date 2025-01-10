@@ -5,3 +5,4 @@
 -activate virtual environment (.\/.venv/Scripts/activate.ps1)
 -py .\manage.py migrate (update models)
 -pip install -r requirements.txt (Install in the virtual environment)
+-py .\manage.py runserver (start servers)

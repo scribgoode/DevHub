@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'chat',
+    'text_chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,7 +76,9 @@ TEMPLATES = [
 ]
 
 
-WSGI_APPLICATION = 'devhub.wsgi.application'
+#WSGI_APPLICATION = 'devhub.wsgi.application' tutorial says to comment this out and add below line
+# Daphne
+ASGI_APPLICATION = "devhub.asgi.application"
 
 
 # Database

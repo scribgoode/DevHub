@@ -15,11 +15,24 @@
             <div class="title">
                 <a href="#">DevHub.io</a>
             </div>
-        <button class="button1" type="button">Edit Profile</button>
+        {% if user.is_authenticated and user.email == profile.email %}
+            <button class="button1" type="button">Edit Profile</button>
+        {% else %}
+            <text>not login or not your own profile</text>
+        {% endif %}
+        
         </div>
         <br><br><br><br>
         <div class="bio-background"></div>
         <div class="elevator-pitch-video">This is {{profile.first_name}}'s profile page</div>
-        <div class="repository-header">My Repositories</div>
-        <div class="repository-background"></div>
-        <span class="direct-message"><a href="#">Messages</a></span>
+        <div class="chat-header">Chat Messages
+            <div class="message-container">
+                <input type="text" class="message-input" placeholder="Enter your message">
+                <button type="button" class="send-button">Send</button>
+            </div>
+        </div>
+        <div class="chat-background">
+            where the messages goes
+        </div>
+</body>
+</html>
