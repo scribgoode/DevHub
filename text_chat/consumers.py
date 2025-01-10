@@ -12,26 +12,32 @@ from accounts.models import Engineer
 #
 class ChatConsumer(WebsocketConsumer):
     def connect(self): # When a new WebSocket connection is made, this method is called.
-        self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
-        try:
-            target_user = get_object_or_404(Engineer, username=self.room_name)
-        except:
-            target_user = ""
-        if target_user is not None:
-            users = [target_user, self.scope["Engineer"]]
-            room_qs = Room.objects.filter(users=target_user).filter(
-                users=self.scope["Engineer"]
-            )
-            if not room_qs.exists():
-                self.room = Room.objects.create()
-                self.room.users.set(users)
-            else:
-                self.room = room_qs.first()
-            self.room_group_name = self.room.token
-            async_to_sync(self.channel_layer.group_add)(
-                self.room_group_name, self.channel_name
-            )
-            self.accept()
+        self.accept()
+
+        self.send(text_data=json.dumps({
+            'type': "connection_established",
+            'message': 'Hello World!'
+            }))
+        # self.room_name = self.scope["url_route"]["kwargs"]["room_name"]
+        # try:
+        #     target_user = get_object_or_404(Engineer, username=self.room_name)
+        # except:
+        #     target_user = ""
+        # if target_user is not None:
+        #     users = [target_user, self.scope["Engineer"]]
+        #     room_qs = Room.objects.filter(users=target_user).filter(
+        #         users=self.scope["Engineer"]
+        #     )
+        #     if not room_qs.exists():
+        #         self.room = Room.objects.create()
+        #         self.room.users.set(users)
+        #     else:
+        #         self.room = room_qs.first()
+        #     self.room_group_name = self.room.token
+        #     async_to_sync(self.channel_layer.group_add)(
+        #         self.room_group_name, self.channel_name
+        #     )
+        #     self.accept()
     def disconnect(self, close_code): # When the WebSocket connection is closed, this method is called.
         async_to_sync(self.channel_layer.group_discard)(
             self.room_group_name, self.channel_name
