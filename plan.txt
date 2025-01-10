@@ -19,6 +19,7 @@ to request or join stream meeting must finish required profile fields(this also 
 
 
 MVP
+-devhub.io(this is likely going to be too expensive) or projectpal.io($32/yr on hostinger)(be careful searching domains because they probably increase the price based on hitcount) or developercentral.io
 -profile/account(change and add)
 -dm system
 -friends list
@@ -48,6 +49,10 @@ creating custom user model = https://docs.djangoproject.com/en/5.1/topics/auth/c
 authentication system = https://www.geeksforgeeks.org/user-authentication-system-using-django/
 real time chat system = https://career.proxify.io/article/real-time-chat-with-Django
 **real time chat systems that supports multiple rooms = https://medium.com/@abdullafajal/how-to-create-live-chat-project-in-django-using-django-channels-a87715a517d6 
+webrtc crashcourse = https://www.youtube.com/watch?v=FExZvpVvYxA 
+    -overview of web rtc = https://www.linkedin.com/pulse/what-webrtc-good-tsahi-levent-levi-upxcf/ 
+webrtc api docomentation = https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API 
+    -webrtc api documentation: signaling and video calling = https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
 https://learndjango.com/tutorials/django-custom-user-model#abstractuser-vs-abstractbaseuser
 https://learndjango.com/tutorials/django-log-in-email-not-username
 adding custom user model fields to admin page(also look at authentication admin in closed) - https://stackoverflow.com/questions/65046722/add-a-field-to-the-django-admin-for-a-custom-user-model
