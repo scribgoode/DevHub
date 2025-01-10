@@ -28,11 +28,52 @@
         <div class="chat-header">Chat Messages
             <div class="message-container">
                 <input type="text" class="message-input" placeholder="Enter your message">
-                <button type="button" class="send-button">Send</button>
+                {% if user.is_authenticated and user.email == profile.email %}
+                    <button type="button" class="send-button" disabled>Cannot send message to self</button>
+                {% elif not user.is_authenticated %}
+                    <button type="button" class="send-button" disabled>Please Login First</button>
+                {% else %}
+                    <button type="button" class="send-button">Send</button>
+                {% endif %}
             </div>
         </div>
         <div class="chat-background">
             where the messages goes
         </div>
 </body>
+
+<script>
+    const roomName = '2'
+    const socket = new WebSocket(
+        'ws://'
+            + window.location.host
+            + '/ws/chat/' + roomName + '/'
+    );;
+
+    socket.onmessage = function(event) {
+        console.log("Message from server:", event.data);
+    };
+
+    socket.onopen = function(event) {
+        console.log("WebSocket connection opened");
+    };
+
+    socket.onmessage = function(event) {
+        const chatBackground = document.querySelector('.chat-background');
+        const newMessage = document.createElement('div');
+        newMessage.textContent = event.data;
+        chatBackground.appendChild(newMessage);
+    };
+
+    document.querySelector('.send-button').addEventListener('click', function() {
+        console.log('send button clicked');
+        const messageInput = document.querySelector('.message-input');
+        const message = messageInput.value;
+        console.log(message)
+        if (message.trim() !== '') {
+            socket.send(message);
+            messageInput.value = '';
+        }
+    });
+</script>
 </html>
