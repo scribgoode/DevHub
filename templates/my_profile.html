@@ -43,8 +43,15 @@
 </body>
 
 <script>
-    let url = `ws://${window.location.host}/ws/socket-server/`
-    const socket = new WebSocket(url);
+    /* let url = `ws://${window.location.host}/ws/socket-server/` 
+    const socket = new WebSocket(url); */ 
+    const socket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/text_chat/'
+            + '{{profile.email}}'
+            + '/'
+        );
 
     socket.onmessage = function(event) {
         console.log("Message from server:", event.data);
