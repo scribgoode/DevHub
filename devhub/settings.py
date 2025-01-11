@@ -165,9 +165,19 @@ ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 
 ASGI_APPLICATION = 'devhub.asgi.application'
 
+#possibly will have to change channel layers in production
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer"
+#     }
+# }
+#changing the channels layers so django can interact with redis on docker image
+
 CHANNEL_LAYERS = {
     "default": {
-        "BACKEND": "channels.layers. InMemoryChannelLayer"
-    }
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("localhost", 6379)],
+        },
+    },
 }
-#possibly will have to change channel layers in production

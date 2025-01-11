@@ -42,14 +42,16 @@
         </div>
 </body>
 
+{{profile.id|json_script:"profile_id"}}
 <script>
     /* let url = `ws://${window.location.host}/ws/socket-server/` 
     const socket = new WebSocket(url); */ 
+    const profile_id = JSON.parse(document.getElementById('profile_id').textContent);
     const socket = new WebSocket(
             'ws://'
             + window.location.host
             + '/ws/text_chat/'
-            + '{{profile.email}}'
+            + profile_id
             + '/'
         );
 
@@ -74,7 +76,9 @@
         const message = messageInput.value;
         console.log(message)
         if (message.trim() !== '') {
-            socket.send(message);
+            socket.send(JSON.stringify({
+                'message': message
+            }));
             messageInput.value = '';
         }
     });

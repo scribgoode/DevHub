@@ -48,6 +48,7 @@ creating custom user model = https://docs.djangoproject.com/en/5.1/topics/auth/c
 authentication system = https://www.geeksforgeeks.org/user-authentication-system-using-django/
 real time chat system = https://career.proxify.io/article/real-time-chat-with-Django
 **real time chat systems that supports multiple rooms = https://medium.com/@abdullafajal/how-to-create-live-chat-project-in-django-using-django-channels-a87715a517d6 
+**channels docs that was the sole contributor in make text chat work = https://channels.readthedocs.io/en/latest/tutorial/part_2.html 
 https://learndjango.com/tutorials/django-custom-user-model#abstractuser-vs-abstractbaseuser
 https://learndjango.com/tutorials/django-log-in-email-not-username
 adding custom user model fields to admin page(also look at authentication admin in closed) - https://stackoverflow.com/questions/65046722/add-a-field-to-the-django-admin-for-a-custom-user-model
