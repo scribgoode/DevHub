@@ -18,6 +18,15 @@ class Room(models.Model):
         if not self.token:
             self.token = generate_random_string(20)
         return super(Room, self).save(*args, **kwargs)
+    
+    # roomDic = {}
+    # def get_chat(self, engineer1, engineer2):
+    #     if (engineer1, engineer2) in self.roomDic:
+    #         return self.roomDic[(engineer1, engineer2)]
+    #     else:
+    #         return None
+    # def set_chat(self, engineer1, engineer2, chat):
+    #     self.roomDic[(engineer1, engineer2)] = chat
 
 # Message model
 class Message(models.Model):

@@ -20,8 +20,9 @@ class Engineer(AbstractUser):
     # userlist=keylist save to db
     # userList = [test1, test2, test3]
 
-    # (user, userDic[user] = chatHistory) save to db
-    # userDic = {test1: chatHistory1, test2: chatHistory2, test3: chatHistory3}
+    # model for room
+    # roomDic = {(curUser, profileUser): chatHistory}
+
 
     def __str__(self):
         return self.email
