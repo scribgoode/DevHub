@@ -50,44 +50,22 @@ class ChatConsumer(WebsocketConsumer):
         )
         
     def receive(self, text_data): # When the WebSocket connection receives a message, this method is called.
+        # receive is called first
         text_data_json = json.loads(text_data)
-        message = text_data_json["message"]
 
+        # send data to send_message()
         async_to_sync(self.channel_layer.group_send)(
-            self.room_group_name, {"type": "chat.message", "message": message}
+            self.room_group_name, {"type": "chat.message", "msgObj": text_data_json}
         )
 
-        # self.send(text_data=json.dumps({"message": message}))
-
-        # msg = Message.objects.create(
-        #     room=self.room, sender=self.scope["Engineer"], message=message
-        # )
-
-        # async_to_sync(self.channel_layer.group_send)(
-        #     self.room_group_name,
-        #     {
-        #         "type": "chat_message",
-        #         "message": msg.message,
-        #         "sender": msg.sender.username,
-        #         "sender_full_name": msg.sender.get_full_name(),
-        #         "timestamp": msg.timestamp.isoformat(),
-        #     },
-        # )
-
     def chat_message(self, event): # This method sends the message to the WebSocket connection.
-        message = event["message"]
+        # recieve data from receive()
+        msgObj = event["msgObj"]
 
-        self.send(text_data=json.dumps({"message": message}))
-        # sender = event["sender"]
-        # sender_full_name = event["sender_full_name"]  # Get sender's full name
-        # timestamp = event["timestamp"]
-        # self.send(
-        #     text_data=json.dumps(
-        #         {
-        #             "message": message,
-        #             "sender": sender,
-        #             "sender_full_name": sender_full_name,  # Include sender's full name in the message payload
-        #             "timestamp": timestamp,
-        #         }
-        #     )
-        # )
+        # Send message to WebSocket
+        self.send(text_data=json.dumps({
+            "message": msgObj["message"],
+            "sender": msgObj["sender"],
+            "sender_full_name": msgObj["sender_full_name"],
+            "sender_id": msgObj["sender_id"],
+        }))

@@ -178,6 +178,21 @@ body {
     margin-top: 29%;
 }
 
+.dm-list {
+    float: left;
+    width: 20%;
+    outline: 5px dotted green;
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+}
+
+.chat-box {
+    float: left;
+    width: 80%;
+    outline: 5px dotted blue;
+}
+
 .online {
     position: absolute;
     color: black;

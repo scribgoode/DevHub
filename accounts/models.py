@@ -17,5 +17,11 @@ class Engineer(AbstractUser):
     address = models.CharField(max_length=255, blank=True, null=True)
     dob = models.DateField(default=date.today)
 
+    # userlist=keylist save to db
+    # userList = [test1, test2, test3]
+
+    # (user, userDic[user] = chatHistory) save to db
+    # userDic = {test1: chatHistory1, test2: chatHistory2, test3: chatHistory3}
+
     def __str__(self):
         return self.email
