@@ -12,7 +12,6 @@ from accounts.models import Engineer
 #
 class ChatConsumer(WebsocketConsumer):
     def connect(self): # When a new WebSocket connection is made, this method is called.
-        # self.accept()
 
         # self.send(text_data=json.dumps({
         #     'type': "connection_established",
