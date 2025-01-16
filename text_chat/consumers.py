@@ -35,7 +35,7 @@ class ChatConsumer(WebsocketConsumer):
         #         self.room = room_qs.first()
         #     self.room_group_name = self.room.token
 
-        self.room_name = self.scope["url_route"]["kwargs"]["profile_id"]
+        self.room_name = self.scope["url_route"]["kwargs"]["profile_id"] #this grabs the profile_id from the url
         self.room_group_name = f"chat_{self.room_name}"
 
         async_to_sync(self.channel_layer.group_add)(
