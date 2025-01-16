@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import myProfile, home
+from accounts.views import myProfile, home, index
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +24,6 @@ urlpatterns = [
     #path('', include('accounts.urls')), #moved the home views in accounts to here
     path('my_profile/<int:id>', myProfile, name='my_profile'),
     path('', home, name='home'),
+    path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
     #path('', include('chat.urls')),
 ]

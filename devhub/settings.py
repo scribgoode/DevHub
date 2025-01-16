@@ -31,7 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'chat',
+    'video_chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     'channels',
+    'devhub.apps.ChannelsPresence',
     'accounts',
 ]
 
@@ -161,11 +162,16 @@ ACCOUNT_FORMS = {
 LOGIN_REDIRECT_URL = "home"
 ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 
+WSGI_APPLICATION = 'devhub.wsgi.application'
 ASGI_APPLICATION = 'devhub.asgi.application'
 
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers. InMemoryChannelLayer"
-    }
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+            "capacity": 10000,
+        },
+    },
 }
 #possibly will have to change channel layers in production

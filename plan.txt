@@ -55,6 +55,7 @@ webrtc api docomentation = https://developer.mozilla.org/en-US/docs/Web/API/WebR
     -webrtc api documentation: signaling and video calling = https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
 confirmation from a expert that you have to use webrtc protocol to have live video chat = https://pretalx.com/djangocon-us-2024/talk/QERQDS/ 
 ken whitesells rtc demo to copy into my project = https://github.com/KenWhitesell/rtc_demo/blob/main/templates/base.html 
+**if i try implement webrtc in js and we cant get it to work like we want it to then maybe try aiortc or agora
 https://learndjango.com/tutorials/django-custom-user-model#abstractuser-vs-abstractbaseuser
 https://learndjango.com/tutorials/django-log-in-email-not-username
 adding custom user model fields to admin page(also look at authentication admin in closed) - https://stackoverflow.com/questions/65046722/add-a-field-to-the-django-admin-for-a-custom-user-model
