@@ -6,3 +6,4 @@
 -py .\manage.py migrate (update models)
 -pip install -r requirements.txt (Install in the virtual environment)
 -py .\manage.py runserver (start servers)
+-docker run --rm -p 6379:6379 redis:7

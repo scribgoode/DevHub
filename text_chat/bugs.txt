@@ -1,0 +1,2 @@
+1. model rooms name are not unique when two different users join the same room
+2. dmlist is not rendered when user joins the chat first time

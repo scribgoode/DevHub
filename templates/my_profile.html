@@ -38,8 +38,12 @@
             </div>
         </div>
         <div class="chat-background">
-            <div class="dm-list"">dm list</div>
-            <div class="chat-box">message</div>
+            <div class="dm-list"">dm list
+                {% for room in rooms %}
+                    <button class=".sender-button" id="{{ room.roomClient.id }}" onclick="openChatroom('{{ room.roomClient.id }}')">{{room.roomClient.first_name}}</button>
+                {% endfor %}
+            </div>
+            <div class="chat-box">select user from button list</div>
 
         </div>
 </body>
@@ -49,6 +53,7 @@
 {{user.last_name|json_script:"sender_last_name"}}
 {{user.email|json_script:"sender_email"}}
 {{user.id|json_script:"sender_id"}}
+
 <script>
     /* let url = `ws://${window.location.host}/ws/socket-server/` 
     const socket = new WebSocket(url); */ 
@@ -72,6 +77,7 @@
 
     socket.onopen = function(event) {
         console.log("WebSocket connection opened");
+
     };
 
     socket.onmessage = function(event) {
@@ -81,7 +87,8 @@
         const chatbox = document.querySelector('.chat-box');
         let msgOBj = JSON.parse(event.data);
         console.log(msgOBj.sender_id);
-        console.log("first time sender: ", dmList.contains(document.getElementById(msgOBj.sender_id)));    
+        //console.log("not first time sender: ", dmList.contains(document.getElementById(msgOBj.sender_id)));
+        
         if  (dmList.contains(document.getElementById(msgOBj.sender_id))) {
             // not first time sender
             // use the existing chatroom
@@ -107,32 +114,17 @@
                 </div>
             `;
             newChatroom.innerHTML = `
-                <div class="dm-list" id="${msgOBj.sender_id}">
-                    <div class="message">
-                        <button class="sender-button">${msgOBj.sender}</button>
-                    </div>
-
-                </div>
+                <button class=".sender-button" id="${msgOBj.sender_id}>${msgOBj.sender}</button>
             `;
 
             // save message to chatroom binding to sender_id and profile_id and into respective database
             dmList.appendChild(newChatroom);
             chatbox.appendChild(newMessage);
-        }   
+        }
+        
 
-        // const chatroom = document.querySelector('.dm-list');
-        // const newMessage = document.createElement('div');
-        // console.log(event.data);
-        // msgObj = JSON.parse(event.data);
-        // console.log(msgObj);
-        // newMessage.innerHTML = `
-        //     <div class="message">
-        //         ${msgObj.sender}: ${msgObj.message}
-        //     </div>
-        // `;
-        // chatBackground.appendChild(newMessage);
     };
-
+    
     document.querySelector('.send-button').addEventListener('click', function() {
         console.log('send button clicked');
         const messageInput = document.querySelector('.message-input');
@@ -149,5 +141,79 @@
             messageInput.value = '';
         }
     });
+
+    function openChatroom(id) {
+        console.log('open chat room: ', id);
+        const chatbox = document.querySelector('.chat-box');
+            chatbox.replaceChildren(); // clear chat box
+            // get the chatroom with sender_id
+            let selectedRoom = ''
+            fetch(`/rooms/${profile_id}?format=json`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(room => {
+                        console.log("current room:", room.roomClient)
+                        console.log("current id:", id)
+                        console.log(room.roomClient == id)
+                        if (room.roomClient == id) {
+                            console.log('found room: ', room.room_id);
+                            selectedRoom = room.room_id;
+                        }
+                    });
+                    console.log('selected room: ', selectedRoom);
+                    // get all message linked to that room
+                    fetch(`/messages/${selectedRoom}?format=json`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data)
+                            data.forEach(msg => {
+                                const newMessage = document.createElement('div');
+                                newMessage.innerHTML = `
+                                    <div class="message">
+                                        ${msg.sender.first_name}: ${msg.messageContent}
+                                    </div>
+                                `;
+                                chatbox.appendChild(newMessage);
+                            });
+                        })
+                        .catch(error => console.error('Error fetching message:', error));
+                })
+                .catch(error => console.error('Error fetching room:', error));
+    }
+
+
+
+    if (document.querySelector('.sender-button')) {
+        console.log('here')
+            document.querySelector('.sender-button').addEventListener('click', function() {
+            console.log('open chat room: ', event.target.id);
+            const chatbox = document.querySelector('.chat-box');
+            chatbox.replaceChildren(); // clear chat box
+            // get the chatroom with sender_id
+            const id = event.target.id;
+            const selectedRoom = ''
+            fetch(`room/${profile_id}/`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    selectedRoom = data.room;
+                })
+                .catch(error => console.error('Error fetching room:', error));
+            console.log('selected room: ', selectedRoom);
+
+            // get all message linked to that room
+            for (msg in message) {
+                if (msg.room == selectedRoom) {
+                    const newMessage = document.createElement('div');
+                    newMessage.innerHTML = `
+                        <div class="message">
+                            ${message.sender}: ${message.message}
+                        </div>
+                    `;
+                    chatroom.appendChild(newMessage);
+                }
+            }
+        })
+    };
 </script>
 </html>

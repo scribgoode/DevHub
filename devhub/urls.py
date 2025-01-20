@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from accounts.views import myProfile, home
+from accounts import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -24,5 +25,12 @@ urlpatterns = [
     #path('', include('accounts.urls')), #moved the home views in accounts to here
     path('my_profile/<int:id>', myProfile, name='my_profile'),
     path('', home, name='home'),
+    path('api-auth/', include('rest_framework.urls')),
+    path('profiles/', views.profile_list),
+    path('profiles/<int:pk>', views.profile_detail),
+    path('rooms/', views.room_list),
+    path('rooms/<int:pk>', views.get_room),
+    path('messages/', views.message_list),
+    path('messages/<uuid:pk>', views.get_chat),
     #path('', include('chat.urls')),
 ]
