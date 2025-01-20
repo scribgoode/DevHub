@@ -17,7 +17,7 @@ def generate_random_token(length=20):
 
 # Room model
 class Room(models.Model):
-    room_id = models.UUIDField(primary_key=True, unique=True, default=uuid4(), editable=False)
+    room_id = models.UUIDField(primary_key=True, unique=True, default=uuid4, editable=False)
     token = models.CharField(max_length=255, default=generate_random_token(20))
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -25,10 +25,10 @@ class Room(models.Model):
     roomOwner = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name="room_owner", null=True, blank=True)
     roomClient = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name="room_client", null=True, blank=True)
 
-    def save(self, *args, **kwargs):
-        if not self.room_id:
-            self.room_id = models.UUIDField(primary_key=True, unique=True, default=uuid4(), editable=False)
-        return super(Room, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.room_id:
+    #         self.room_id = uuid4()c
+    #     return super(Room, self).save(*args, **kwargs)
 
     # def __str__(self):
     #     return self.token

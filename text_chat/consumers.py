@@ -52,7 +52,9 @@ class ChatConsumer(WebsocketConsumer):
     def receive(self, text_data): # When the WebSocket connection receives a message, this method is called.
         # receive is called first
         text_data_json = json.loads(text_data)
+        print("text_data_json: ", text_data_json)
         # Create a new message instance and save it to the database
+        
         message = Message.objects.create(
             room=self.room,
             sender=self.scope["user"],
@@ -74,5 +76,5 @@ class ChatConsumer(WebsocketConsumer):
             "message": msgObj["message"],
             "sender": msgObj["sender"],
             "sender_full_name": msgObj["sender_full_name"],
-            "sender_id": msgObj["sender_id"],
+            "sender_id": msgObj["sender_id"]
         }))

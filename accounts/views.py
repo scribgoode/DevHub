@@ -21,19 +21,11 @@ def home(request):
 
 def Profile(request, id):
     profile = Engineer.objects.get(id=id)
-    all_profiles = Engineer.objects.all()
-    rooms = list(Room.objects.filter(users=profile))
-    messages = list(Message.objects.all())
-    context = {'profile': profile, 'all_profiles': all_profiles, 'rooms': rooms, 'messages': messages}
+    context = {'profile': profile}
     return render(request, 'profile.html', context)
 
-def myProfile(request, id):
-    profile = Engineer.objects.get(id=id)
-    all_profiles = Engineer.objects.all()
-    rooms = list(Room.objects.filter(users=profile))
-    messages = list(Message.objects.all())
-    context = {'profile': profile, 'all_profiles': all_profiles, 'rooms': rooms, 'messages': messages}
-    return render(request, 'my_profile.html', context)
+def myProfile(request):
+    return render(request, 'my_profile.html')
 
 @api_view(['GET'])
 def profile_list(request):

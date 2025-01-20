@@ -1,8 +1,23 @@
 Logic
+room
+
+same room 
+    Leland - test
+    test - Leland
+
+different room
+    Leland - test
+    Leland - test2
+
 my profile
 1. render page
 2. dm list should be everyone but the user
 3. able to send message after clicking on dm list buttons
+
+send Logic
+disable send button until
+    create socket to server based on dm list buttons
+    enable send button once socket is created
 
 other profile
 1. render page
@@ -15,4 +30,8 @@ other profile
         chatbox should populate with chat history
 
 Bugs
-1. model rooms name are not unique when two different users join the same room
+1. message sending more than once
+
+to-do
+1. scroll feature - chat overflow
+2. timestamps on messages

@@ -26,13 +26,14 @@ urlpatterns = [
     #path('', include('accounts.urls')), #moved the home views in accounts to here
 
     # user pages
+    path('my-profile/', myProfile, name='my-profile'),
     path('profile/<int:id>', Profile, name='profile'),
     path('', home, name='home'),
 
     # api pages
     path('api-auth/', include('rest_framework.urls')),
     path('api/profiles/', views.profile_list),
-    path('api/profiles/<int:pk>', views.profile_detail),
+    path('api/get-profile/<int:pk>', views.profile_detail),
     path('api/rooms/', views.room_list),
     path('api/get-rooms/<int:pk>', views.get_room),
     path('api/messages/', views.message_list),
