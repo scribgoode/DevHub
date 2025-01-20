@@ -19,6 +19,14 @@ def home(request):
     context = {'profiles': profiles,}
     return render(request, 'home.html', context)
 
+def Profile(request, id):
+    profile = Engineer.objects.get(id=id)
+    all_profiles = Engineer.objects.all()
+    rooms = list(Room.objects.filter(users=profile))
+    messages = list(Message.objects.all())
+    context = {'profile': profile, 'all_profiles': all_profiles, 'rooms': rooms, 'messages': messages}
+    return render(request, 'profile.html', context)
+
 def myProfile(request, id):
     profile = Engineer.objects.get(id=id)
     all_profiles = Engineer.objects.all()

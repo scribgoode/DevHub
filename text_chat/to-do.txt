@@ -1,0 +1,18 @@
+Logic
+my profile
+1. render page
+2. dm list should be everyone but the user
+3. able to send message after clicking on dm list buttons
+
+other profile
+1. render page
+2. no dm list - just chatbox
+3. if first time sender
+        chatbox = empty
+        after send message
+        chatbox is updated
+    else
+        chatbox should populate with chat history
+
+Bugs
+1. model rooms name are not unique when two different users join the same room

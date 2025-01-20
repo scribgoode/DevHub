@@ -67,7 +67,7 @@
             'ws://'
             + window.location.host
             + '/ws/text_chat/'
-            + profile_id // change to chatroom id (which is profile id + cur user id)
+            + profile_id
             + '/'
         );
 
@@ -148,7 +148,7 @@
             chatbox.replaceChildren(); // clear chat box
             // get the chatroom with sender_id
             let selectedRoom = ''
-            fetch(`/rooms/${profile_id}?format=json`)
+            fetch(`/api/get-rooms/${profile_id}?format=json`)
                 .then(response => response.json())
                 .then(data => {
                     data.forEach(room => {
@@ -162,7 +162,7 @@
                     });
                     console.log('selected room: ', selectedRoom);
                     // get all message linked to that room
-                    fetch(`/messages/${selectedRoom}?format=json`)
+                    fetch(`/api/get-chathistory/${selectedRoom}?format=json`)
                         .then(response => response.json())
                         .then(data => {
                             console.log(data)
