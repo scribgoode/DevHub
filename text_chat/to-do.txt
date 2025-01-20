@@ -30,7 +30,7 @@ other profile
         chatbox should populate with chat history
 
 Bugs
-1. message sending more than once
+1. message sending more than once (FIXED)
 
 to-do
 1. scroll feature - chat overflow
