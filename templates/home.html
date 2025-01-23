@@ -20,7 +20,7 @@
         <div class="website-header">
             {% if user.is_authenticated %}
             <div class="profile-link">
-                <a href="#" id="profileLink">My Profile</a>
+                <a href="my-profile" id="profileLink">My Profile - {{user.first_name}}</a>
             </div>
             <div class="website-header">
                 <div class="logout-link">

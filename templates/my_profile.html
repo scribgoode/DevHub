@@ -30,7 +30,7 @@
             </div>
         </div>
 
-        <div class="chat-background">Select chatroom
+        <div class="chat-background">
             <div class="dm-list"">dm list</div>
             <div class="chat-box">select user from button list</div>
         </div>
@@ -48,6 +48,7 @@
         console.log("DOM loaded");
         sendButton = document.querySelector(".send-button");
     });
+
     // chat elements
     const chatBackground = document.querySelector('.chat-background');
     const dmList = document.querySelector('.dm-list');
@@ -59,6 +60,7 @@
     // user info
     const user_id = JSON.parse(document.getElementById('user_id').textContent);
     let current_user = new Object();
+
     // get current logged in user info
     fetch(`/api/get-profile/${user_id}?format=json`)
         .then(response => response.json())
@@ -76,9 +78,14 @@
         .then(data => {
             // get all chatrooms that user is in and render them as buttons
             data.forEach(room => {
-                console.log('current room:', room.users[1].first_name);
+                console.log('current room:', room.room_id);
+                console.log(room)
+
+                // get the name of the other user in the chatroom
+                let newChatroomname = room.users[1 - room.users.findIndex(user => user.id === user_id)].first_name;
+
                 const newChatroom = document.createElement('button');
-                newChatroom.innerHTML = room.users[1].first_name;
+                newChatroom.innerHTML = newChatroomname;
                 
                 newChatroom.addEventListener('click', () => {
                     // disable send button
