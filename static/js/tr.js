@@ -9,6 +9,7 @@
     htmx.defineExtension('tr-ext', {
         transformResponse : function(text, xhr, elt) {
             const data = JSON.parse(text);
+            console.log(data, 'tr.js')
             for (var [app, message] of Object.entries(data)) {
                 var event = message.type;
                 apps._forward(app, event, message)

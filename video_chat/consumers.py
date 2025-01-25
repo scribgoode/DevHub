@@ -1,6 +1,6 @@
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
-from channels_presence.models import Presence, Room #maybe this is the problem
+from channels_presence.models import Presence, Room  #maybe this is the problem 
 from django.db.models import Case, F, Q, When, Value
 from django.db.models.functions import Concat, Right
 from django.template.loader import render_to_string
@@ -10,7 +10,7 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.function_dict = {
-            'rtc': self._rtc,
+            'video_chat': self._rtc,
             'join': self._join,
             'hangup': self._hangup,
         }
@@ -19,7 +19,7 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
     def _presence_connect(self, rtc_name):
         # Remove all existing connections to this room for this user.
         Presence.objects.leave_all(self.channel_name)
-        self.room = Room.objects.add(rtc_name, self.channel_name, self.scope["user"]) #room is created with rtc_name but where is rtc_name defined?
+        self.room = Room.objects.add(rtc_name, self.channel_name, self.scope["user"]) #room is created with rtc_name but where is rtc_name defined? and this code adds the presence(channel_name) to the room
 
     @database_sync_to_async
     def _presence_disconnect(self, channel_name):
@@ -59,17 +59,22 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
         rtc_name = self.scope['url_route']['kwargs']['rtc_name'] #how does the rtc_name get passed in?
-        await self._presence_disconnect(self.channel_name)
+        print(self.channel_name)
+        await self._presence_disconnect(self.channel_name) #connect is being ran as soon as the a new websocket is created(ws-connect= on index) and this particular line is deleting a presence if it has the same channel name
         self.rtc_call = 'rtc_%s' % rtc_name
+        print(self.rtc_call)
         await self._presence_connect(self.rtc_call)
 
         await self.accept()
-        await self.send_json({
-                'rtc': {'type': 'connect', 'channel_name': self.channel_name}
+        print(1)
+        await self.send_json({#i need to find out what is receiving this data
+                'video_chat': {'type': 'connect', 'channel_name': self.channel_name} #this is the app that is trying be called. The apps object is created in tr.js and used in client.js
         })
+        print(2)
         await self.send_json({
                 'html': render_to_string('video_chat/header.html', {'room': rtc_name}) #how the room name is displayed
         })
+        print(3)
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -79,7 +84,7 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
         await self._all_but_me(self.rtc_call,
             {
                 'type': 'rtc_message',
-                'rtc': {
+                'video_chat': {
                     'type': 'disconnected',
                     'channel_name': self.channel_name,
                 },
@@ -89,6 +94,7 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
     # Receive message from WebSocket
     async def receive_json(self, content):
         await self._presence_touch()
+        print(content, "print statement in receive_josn function in consumer.py") #this function does not receive data from send_json in this file
 
         for message_key, message_value in content.items():
             if message_key in self.function_dict:
@@ -100,7 +106,7 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
         await self._all_but_me(self.rtc_call,
             {
                 'type': 'rtc_message',
-                'rtc': {
+                'video_chat': {
                     'type': 'disconnected',
                     'channel_name': self.channel_name,
                 }
@@ -109,6 +115,8 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
         self.rtc_call = None
 
     async def _join(self, rtc_call):
+        print(rtc_call, "rtc_call in _join function in consumer.py")
+        print(self.rtc_call, "self.rtc_call in _join function in consumer.py")
         if self.rtc_call:
             await self._leave_room(self.rtc_call)
 
@@ -119,6 +127,8 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
 
         # Send list of connected peers (occupants) to self
         occupants = await self._room_occupants(self.rtc_call) #this is where the occupants are defined
+        if occupants:
+            print(occupants)
         all_divs = "\n".join([
             self._create_other_div(occupant)
             for occupant in occupants
@@ -132,8 +142,8 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
         await self.send_json({
                 'html': all_divs
         })
-        await self.send_json({
-                'rtc': {
+        await self.send_json({ #what is this doing? its calling the function in the client.js
+                'video_chat': {
                     'type': 'others',
                     'ids': occupants,
                 },
@@ -150,7 +160,7 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
         await self._all_but_me(self.rtc_call,
             {
                 'type': 'rtc_message',
-                'rtc': {
+                'video_chat': {
                     'type': 'other',
                     'channel_name': self.channel_name,
                     'user_name': self.user_name,
@@ -164,19 +174,22 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
     async def _rtc(self, rtc):
         # If there's a recipient, send to it.
         if 'recipient' in rtc:
+            print(rtc, "rtc in _rtc function in consumer.py")
+            print(self.channel_layer, "self.channel_name in _rtc function in consumer.py")
             await self.channel_layer.send(
                 rtc['recipient'], {
                     'type': 'rtc_message',
-                    'rtc': rtc,
+                    'video_chat': rtc,
                 }
             )
         else:
             await self._all_but_me(
                 self.rtc_call, {
                     'type': 'rtc_message',
-                    'rtc': rtc
+                    'video_chat': rtc
                 }
             )
+        print("sent to recipient")
 
 
     @database_sync_to_async
@@ -193,6 +206,13 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
 
     async def _all_but_me(self, room, message):
         occupants = await self._room_occupants(room)
+        '''
+        if occupants:
+            print(occupants)
+        
+        if message:
+            print(message, "message in _all_but_me function in consumer.py")
+        '''
         for occupant in occupants:
             if occupant['channel_name'] != self.channel_name:
                 await self.channel_layer.send(
@@ -201,8 +221,9 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
 
     async def rtc_message(self, event):
         # Send message to WebSocket
+        print(event, 'helloooooooooo') 
         await self.send_json({
-            'rtc': event['rtc']
+            'video_chat': event['video_chat'] #not sure how rtc_message is being called or what the event parameter is
         })
 
     async def html_message(self, event):

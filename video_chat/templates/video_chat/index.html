@@ -1,4 +1,6 @@
+<!DOCTYPE html>
 {% load static %}
+<link rel="stylesheet" href="{% static 'styling.css' %}">
 {% block page_scripts %}
 <script src="{% static 'lib/htmx.org/dist/htmx.js' %}"></script>
 <script src="{% static 'lib/htmx.org/dist/ext/ws.js' %}"></script>
@@ -8,7 +10,7 @@
 {% block app_content %}
 <div id="websocket-div" ws-connect="/ws/lobby/" hx-ext="tr-ext, ws">
   <main class="videoContent">
-    <div id="videos" class="row">
+    <div id="videos" class="video-row">
       <div class="col-sm-4 col-md-3 col-lg-3 col-xl-2">
         <button class="join" type="button" id="call-button" hx-on:click="handleCallButton(event)">Join Call</button>
         <div id="header">
@@ -20,7 +22,7 @@
           </figure>
           <button aria-label="Toggle camera" role="switch" aria-checked="true"
               type="button" id="toggle-cam" hx-on:click="toggleCam(event)">Cam</button>
-          <div class="row" style="margin-top: 10px;">
+          <div class="video-row" style="margin-top: 10px;">
             <form method="post" action="/logout/">
               {% csrf_token %}
               <button type="submit">Log out</button>
@@ -29,7 +31,7 @@
         </div>
       </div>
       <div class="col-sm-8 col-md-9 col-lg-9 col-xl-10">
-        <div id="others" class="row">
+        <div id="others" class="video-row">
         </div>
       </div>
     </div>

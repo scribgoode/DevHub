@@ -39,8 +39,10 @@ function element_id(id='self') {
 }
 
 function signal(recipient, signal) {
+    console.log('this is the signal function being called');
+    //singalled is not being called for some reason
     $self.ws_json(
-        {  'rtc': {
+        {  'video_chat': {
             'type': 'signal', 'recipient': recipient,
             'sender': $self.id, 'signal': signal
             }
@@ -49,12 +51,14 @@ function signal(recipient, signal) {
 };
 
 function connected({channel_name}) {
+    console.log(channel_name, "connected function client.js");
     if (channel_name) {
         $self.id = channel_name;
     }
 };
 
 function connected_other(conn_info) {
+    console.log("initialize_other: ", conn_info);
     initialize_other(conn_info, true);
     establish_features(conn_info.channel_name);
 };
@@ -78,6 +82,8 @@ async function signalled({sender,
     const id = sender;
     const other = $others.get(id);
     const self_state = other.self_states;
+    console.log('this is the signalled function being called the other one');
+    console.log('signalled:', id, candidate, description);//this is not being called
 
     if (description) {
         if (description.type === '_reset') {
@@ -135,14 +141,15 @@ async function signalled({sender,
     }
 }
 
-apps._add('rtc', 'connect', connected)
-apps._add('rtc', 'other', connected_other);
-apps._add('rtc', 'others', connected_others);
-apps._add('rtc', 'disconnected', disconnected_other);
-apps._add('rtc', 'signal', signalled);
+apps._add('video_chat', 'connect', connected)
+apps._add('video_chat', 'other', connected_other);
+apps._add('video_chat', 'others', connected_others);
+apps._add('video_chat', 'disconnected', disconnected_other);
+apps._add('video_chat', 'signal', signalled); //changed 'rtc' to 'video_chat' and the errors pertaniing to turning off the cam went away
 
 
 function display_stream(stream, id = 'self') {
+    console.log('display stream')
     var selector = `${element_id(id)} video`;
     var element = document.querySelector(selector);
     if (element) { element.srcObject = stream; };
@@ -175,6 +182,7 @@ function add_features(id) {
 	};
 	other.features_channel.onmessage = function(event) {
 		const features = JSON.parse(event.data);
+        console.log('features:', features);
         if ('video' in features) {
             manage_video(features['video']);
         }
@@ -191,7 +199,7 @@ function share_features(id, ...features) {
     for (let f of features) {
         shared_features[f] = $self.features[f];
     }
-
+    console.log('Features channel:', other.features_channel);
     try {
         other.features_channel.send(JSON.stringify(shared_features));
     } catch(e) {
@@ -226,6 +234,9 @@ function initialize_other({channel_name, user_name, short_name}, polite) {
             suppressing_offer: false
         }
     });
+    let keysArray = Array.from($others.keys());
+    console.log("Current connection state:", keysArray); //the RTC peer connection is not being established
+    console.log("Current connection state:", $others.get(channel_name)); //the RTC peer connection is not being established
 }
 
 function reset_other(channel_name, preserve) {
@@ -260,7 +271,7 @@ function retry_connection(channel_name) {
 }
 
 function register_rtc_callbacks(id) {
-    const other = $others.get(id);
+    const other = $others.get(id); //$others not inherting from $self
     other.connection.onconnectionstatechange = conn_state_change(id);
     other.connection.onnegotiationneeded = conn_negotiation(id);
     other.connection.onicecandidate = ice_candidate(id);
@@ -278,9 +289,11 @@ function conn_state_change(id) {
 }
 
 function conn_negotiation(id) {
+    console.log('this is the conn_negotiation function being called');
     return async function() {
         const other = $others.get(id);
         const self_state = other.self_states;
+        console.log(self_state)
         if (self_state.suppressing_offer) return;
         try {
             self_state.making_offer = true;
@@ -289,7 +302,9 @@ function conn_negotiation(id) {
             const offer = await other.connection.createOffer();
             await other.connection.setLocalDescription(offer);
         } finally {
+            console.log('this is the finally block of the conn_negotiation function being called');
             signal(id, {'description': other.connection.localDescription});
+            console.log('after signal call');
             self_state.making_offer = false;
         };
     }
