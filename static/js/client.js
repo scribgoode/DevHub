@@ -27,6 +27,8 @@ const $self = {
     features: { audio: false },
     ws: null,
     ws_json: function(data) {
+        console.log('this is the ws_json function being called');
+        console.log('sending:', JSON.stringify(data));
         this.ws.send(JSON.stringify(data));
     }
 };
@@ -42,6 +44,7 @@ function signal(recipient, signal) {
     console.log('this is the signal function being called');
     //singalled is not being called for some reason
     $self.ws_json(
+        
         {  'video_chat': {
             'type': 'signal', 'recipient': recipient,
             'sender': $self.id, 'signal': signal
@@ -69,6 +72,7 @@ function connected_others({ids}) {
         initialize_other(conn_info, false);
         establish_features(conn_info.channel_name);
     }
+    console.log('connected_others:', ids);
 };
 
 function disconnected_other({channel_name}) {
@@ -165,6 +169,7 @@ async function request_user_media(media_constraints) {
 
 function add_features(id) {
     const other = $others.get(id);
+    console.log('addi features:', other);
     function manage_video(video_feature) {
         other.features['video'] = video_feature;
         if (other.media_tracks.video) {
@@ -216,6 +221,7 @@ function establish_features(id) {
     for (let track in $self.media_tracks) {
         other.connection.addTrack($self.media_tracks[track]);
     }
+    console.log('finished establish_features');
 }
 
 function initialize_other({channel_name, user_name, short_name}, polite) {
@@ -293,7 +299,6 @@ function conn_negotiation(id) {
     return async function() {
         const other = $others.get(id);
         const self_state = other.self_states;
-        console.log(self_state)
         if (self_state.suppressing_offer) return;
         try {
             self_state.making_offer = true;
@@ -303,6 +308,7 @@ function conn_negotiation(id) {
             await other.connection.setLocalDescription(offer);
         } finally {
             console.log('this is the finally block of the conn_negotiation function being called');
+            console.log('local description:', other.connection.localDescription);
             signal(id, {'description': other.connection.localDescription});
             console.log('after signal call');
             self_state.making_offer = false;

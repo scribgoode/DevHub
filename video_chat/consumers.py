@@ -98,6 +98,7 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
 
         for message_key, message_value in content.items():
             if message_key in self.function_dict:
+                print(message_key, message_value, "message_key and message_value in receive_json function in consumer.py")
                 await self.function_dict[message_key](message_value)
 
     async def _hangup(self, hangup=None):
