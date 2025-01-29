@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'daphne',
     'django.contrib.staticfiles',
+    'rest_framework',
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
@@ -180,4 +181,15 @@ CHANNEL_LAYERS = {
             "hosts": [("localhost", 6379)],
         },
     },
+}
+
+# Rest Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # Default authentication (for sessions)
+        'rest_framework.authentication.BasicAuthentication',   # Basic authentication (for testing or APIs)
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Ensure only authenticated users can access the API
+    ],
 }

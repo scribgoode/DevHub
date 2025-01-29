@@ -25,4 +25,4 @@ class Engineer(AbstractUser):
 
 
     def __str__(self):
-        return self.email
+        return self.first_name

@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'styling.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <title>DevHub.io</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="website-header">
+            <div class="title">
+                <a href="#">DevHub.io</a>
+            </div>
+        {% if user.is_authenticated and user.email == profile.email %}
+            <button class="button1" type="button">Edit Profile</button>
+        {% else %}
+            <text>not login or not your own profile</text>
+        {% endif %}
+        
+        </div>
+        <br><br><br><br>
+        <div class="bio-background"></div>
+        <div class="elevator-pitch-video">This is {{profile.first_name}}'s profile page</div>
+        <div class="chat-header">Chat Messages
+            <div class="message-container">
+                <input type="text" class="message-input" placeholder="Enter your message">
+                {% if user.is_authenticated and user.email == profile.email %}
+                    <button type="button" class="send-button" disabled>Cannot send message to self</button>
+                {% elif not user.is_authenticated %}
+                    <button type="button" class="send-button" disabled>Please Login First</button>
+                {% else %}
+                    <button type="button" class="send-button">Send</button>
+                {% endif %}
+            </div>
+        </div>
+        <div class="chat-background">
+            <div class="dm-list"">dm list
+                {% for room in rooms %}
+                    <button class=".sender-button" id="{{ room.roomClient.id }}" onclick="openChatroom('{{ room.roomClient.id }}')">{{room.roomClient.first_name}}</button>
+                {% endfor %}
+            </div>
+            <div class="chat-box">select user from button list</div>
+
+        </div>
+</body>
+
+{{profile.id|json_script:"profile_id"}}
+{{user.first_name|json_script:"sender_first_name"}}
+{{user.last_name|json_script:"sender_last_name"}}
+{{user.email|json_script:"sender_email"}}
+{{user.id|json_script:"sender_id"}}
+
+<script>
+    /* let url = `ws://${window.location.host}/ws/socket-server/` 
+    const socket = new WebSocket(url); */ 
+    const profile_id = JSON.parse(document.getElementById('profile_id').textContent);
+    const sender_id = JSON.parse(document.getElementById('sender_id').textContent);
+    const sender_first_name = JSON.parse(document.getElementById('sender_first_name').textContent);
+    const sender_last_name = JSON.parse(document.getElementById('sender_last_name').textContent);
+    const sender_email = JSON.parse(document.getElementById('sender_email').textContent);
+
+    const socket = new WebSocket(
+            'ws://'
+            + window.location.host
+            + '/ws/text_chat/'
+            + profile_id
+            + '/'
+        );
+
+    socket.onmessage = function(event) {
+        console.log("Message from server:", event.data);
+    };
+
+    socket.onopen = function(event) {
+        console.log("WebSocket connection opened");
+
+    };
+
+    socket.onmessage = function(event) {
+        console.log("Message from server:", event.data);
+        const chatBackground = document.querySelector('.chat-background');
+        const dmList = document.querySelector('.dm-list');
+        const chatbox = document.querySelector('.chat-box');
+        let msgOBj = JSON.parse(event.data);
+        console.log(msgOBj.sender_id);
+        //console.log("not first time sender: ", dmList.contains(document.getElementById(msgOBj.sender_id)));
+        
+        if  (dmList.contains(document.getElementById(msgOBj.sender_id))) {
+            // not first time sender
+            // use the existing chatroom
+            const existingChatroom = document.getElementById(msgOBj.sender_id);
+            const newMessage = document.createElement('div');
+            newMessage.innerHTML = `
+                <div class="message">
+                    ${msgOBj.sender}: ${msgOBj.message}
+                </div>
+            `;
+             // save message to chatroom binding to sender_id and profile_id and into respective database
+            chatbox.appendChild(newMessage);
+
+        } else {
+            // first time sender
+            // create a new chatroom
+            console.log('first time sender');
+            const newChatroom = document.createElement('div');
+            const newMessage = document.createElement('div');
+            newMessage.innerHTML = `
+                <div class="message">
+                    ${msgOBj.sender}: ${msgOBj.message}
+                </div>
+            `;
+            newChatroom.innerHTML = `
+                <button class=".sender-button" id="${msgOBj.sender_id}>${msgOBj.sender}</button>
+            `;
+            console.log('new chatroom:', newChatroom);  
+
+            // save message to chatroom binding to sender_id and profile_id and into respective database
+            dmList.appendChild(newChatroom);
+            chatbox.appendChild(newMessage);
+        }
+        
+
+    };
+    
+    document.querySelector('.send-button').addEventListener('click', function() {
+        console.log('send button clicked');
+        const messageInput = document.querySelector('.message-input');
+        const message = messageInput.value;
+
+        if (message.trim() !== '') {
+            socket.send(JSON.stringify({
+                "message": message,
+                "sender": sender_first_name,
+                "sender_full_name": sender_first_name + " " + sender_last_name,
+                "sender_id" : sender_id,
+                //"timestamp": Date.now()
+            }));
+            messageInput.value = '';
+        }
+    });
+
+    function openChatroom(id) {
+        console.log('open chat room: ', id);
+        const chatbox = document.querySelector('.chat-box');
+            chatbox.replaceChildren(); // clear chat box
+            // get the chatroom with sender_id
+            let selectedRoom = ''
+            fetch(`/api/get-rooms/${profile_id}?format=json`)
+                .then(response => response.json())
+                .then(data => {
+                    data.forEach(room => {
+                        console.log("current room:", room.roomClient)
+                        console.log("current id:", id)
+                        console.log(room.roomClient == id)
+                        if (room.roomClient == id) {
+                            console.log('found room: ', room.room_id);
+                            selectedRoom = room.room_id;
+                        }
+                    });
+                    console.log('selected room: ', selectedRoom);
+                    // get all message linked to that room
+                    fetch(`/api/get-chathistory/${selectedRoom}?format=json`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data)
+                            data.forEach(msg => {
+                                const newMessage = document.createElement('div');
+                                newMessage.innerHTML = `
+                                    <div class="message">
+                                        ${msg.sender.first_name}: ${msg.messageContent}
+                                    </div>
+                                `;
+                                chatbox.appendChild(newMessage);
+                            });
+                        })
+                        .catch(error => console.error('Error fetching message:', error));
+                })
+                .catch(error => console.error('Error fetching room:', error));
+    }
+
+
+
+    if (document.querySelector('.sender-button')) {
+        console.log('here')
+            document.querySelector('.sender-button').addEventListener('click', function() {
+            console.log('open chat room: ', event.target.id);
+            const chatbox = document.querySelector('.chat-box');
+            chatbox.replaceChildren(); // clear chat box
+            // get the chatroom with sender_id
+            const id = event.target.id;
+            const selectedRoom = ''
+            fetch(`room/${profile_id}/`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    selectedRoom = data.room;
+                })
+                .catch(error => console.error('Error fetching room:', error));
+            console.log('selected room: ', selectedRoom);
+
+            // get all message linked to that room
+            for (msg in message) {
+                if (msg.room == selectedRoom) {
+                    const newMessage = document.createElement('div');
+                    newMessage.innerHTML = `
+                        <div class="message">
+                            ${message.sender}: ${message.message}
+                        </div>
+                    `;
+                    chatroom.appendChild(newMessage);
+                }
+            }
+        })
+    };
+</script>
+</html>

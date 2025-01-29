@@ -174,23 +174,37 @@ body {
     position: absolute;
     width: 1020px;
     height: 250px;
+    display: flex;  /* Makes the container a flex container */
     background-color: whitesmoke;
     margin-top: 29%;
+    border: 2px dotted #000;    
 }
 
 .dm-list {
-    float: left;
-    width: 20%;
-    outline: 5px dotted green;
-    display: flex;
-    justify-content: left;
-    flex-direction: column;
+    width: 250px;
+    background-color: #f4f4f4;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;          /* Apply flexbox */
+    flex-direction: column; /* Stack items vertically */
+    gap: 10px;              /* Optional: add spacing between buttons */
+    overflow-y: auto;
 }
 
 .chat-box {
-    float: left;
-    width: 80%;
-    outline: 5px dotted blue;
+    flex-grow: 1;    /* Takes up the remaining space after dmlist */
+    background-color: #fff;  /* Example background color */
+    padding: 10px;
+    overflow-y: auto;  /* Enables scrolling if the messages overflow */
+    box-sizing: border-box;
+    border: 2px dotted #000;  /* Dotted border around the chatbox */
+}
+
+.message {
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    margin-bottom: 10px;
 }
 
 .online {

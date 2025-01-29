@@ -20,7 +20,7 @@
         <div class="website-header">
             {% if user.is_authenticated %}
             <div class="profile-link">
-                <a href="#" id="profileLink">My Profile</a>
+                <a href="my-profile" id="profileLink">My Profile - {{user.first_name}}</a>
             </div>
             <div class="website-header">
                 <div class="logout-link">
@@ -44,7 +44,11 @@
             </div>
             {% for profile in profiles %}
             <div class="table-row-box">
-                <a name="profile-button" href="my_profile/{{profile.id}}">
+                {% if profile.id == user.id %}
+                    <a name="profile-button" href="my-profile/">
+                {% else %}
+                    <a name="profile-button" href="profile/{{profile.id}}">
+                {% endif %}
                     <div class="table-row">
                         <div class="row-background"></div>
                         <div class="status">{{ profile.status }}</div>
