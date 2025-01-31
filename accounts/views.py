@@ -72,4 +72,9 @@ def get_chat(request, pk):
     print(messages)
     serializer = MessageSerializer(messages, many=True)
     return Response(serializer.data)
+#this is apart of testing for the implementation of the video chat
+@login_required
+def index(request):
+    return render(request, 'video_chat/index.html', {})
+
 

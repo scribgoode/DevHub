@@ -1,6 +1,21 @@
 Mission
 -bring together all engineers not just software developers
 
+NEXT STEPS:
+-merge text and video chat, make sure the site can have multiple rooms of text and video chat, ringing notification
+-read about django testing and implement testing for the models
+-have logic to send a specifc type of meeting request
+-proposed meeting spot algorithm
+-search and filtering
+-calendar system/meeting request list
+-payment system
+-make ui seemless and pretty
+-invision secnarious and implement proper pay walls and access walls
+-prepare terraform file, create docker, migrate database, push to aws
+-test and set up our own accounnts
+-bring users to site/advertise and gage retention and brainstorm whats need to make website more seemless and friendly
+
+
 Key features
 -profiles
     1.60 second pitch about you(highly recommened for greater chance of connecting)
@@ -19,19 +34,20 @@ to request or join stream meeting must finish required profile fields(this also 
 
 
 MVP
--profile/account(change and add)
--dm system
+-devhub.io(this is likely going to be too expensive) or projectpal.io($32/yr on hostinger)(be careful searching domains because they probably increase the price based on hitcount) or developercentral.io
+-profile/account(change and add)✔️
+-dm system✔️
 -friends list
 -search and filtering
--live chat system
+-live chat system✔️
 -proposed meeting spot algorithm 
 -meetings/simple calendar page
 -rating system/strike system
--extensive testing on just functionality for now
--advertising plan
 -something to buy(payment when request to meet is accepted?)
 -once someone accepts a meeting invation you two become collaborators(messaging and video calling only become available once two people are collaborators)
 -only show the elevator pitch and current projects(basically undentifiable information(censor name in elevator pitch using ai))(to encourage people to meet in person might not pay for meeting invite if they request that type of meeting)
+-extensive testing on just functionality for now
+-advertising plan
 
 
 FUTURE IDEAS
@@ -49,10 +65,18 @@ authentication system = https://www.geeksforgeeks.org/user-authentication-system
 real time chat system = https://career.proxify.io/article/real-time-chat-with-Django
 **real time chat systems that supports multiple rooms = https://medium.com/@abdullafajal/how-to-create-live-chat-project-in-django-using-django-channels-a87715a517d6 
 **channels docs that was the sole contributor in make text chat work = https://channels.readthedocs.io/en/latest/tutorial/part_2.html 
+webrtc crashcourse = https://www.youtube.com/watch?v=FExZvpVvYxA 
+    -overview of web rtc = https://www.linkedin.com/pulse/what-webrtc-good-tsahi-levent-levi-upxcf/ 
+webrtc api docomentation = https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API 
+    -webrtc api documentation: signaling and video calling = https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Signaling_and_video_calling
+confirmation from a expert that you have to use webrtc protocol to have live video chat = https://pretalx.com/djangocon-us-2024/talk/QERQDS/ 
+ken whitesells rtc demo to copy into my project = https://github.com/KenWhitesell/rtc_demo/blob/main/templates/base.html 
+**if i try implement webrtc in js and we cant get it to work like we want it to then maybe try aiortc or agora
 https://learndjango.com/tutorials/django-custom-user-model#abstractuser-vs-abstractbaseuser
 https://learndjango.com/tutorials/django-log-in-email-not-username
 adding custom user model fields to admin page(also look at authentication admin in closed) - https://stackoverflow.com/questions/65046722/add-a-field-to-the-django-admin-for-a-custom-user-model
 show a profiles information on another page - https://www.w3schools.com/django/django_add_link_details.php
+meet halfway django app - https://github.com/cszc/Meet-Halfway?tab=readme-ov-file 
 
 
 THINGS TO FIX:

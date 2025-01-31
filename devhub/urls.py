@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import Profile, myProfile, home
+from accounts.views import Profile, myProfile, home, index
 from accounts import views
 
 urlpatterns = [
@@ -38,5 +38,6 @@ urlpatterns = [
     path('api/get-rooms/<int:pk>', views.get_room),
     path('api/messages/', views.message_list),
     path('api/get-chathistory/<uuid:pk>', views.get_chat),
+    path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
     #path('', include('chat.urls')),
 ]
