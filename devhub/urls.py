@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from accounts.views import Profile, myProfile, home, index
-from accounts import views
+from accounts import views as accounts_views
+from meetup_point import views as meetup_views
 
 urlpatterns = [
     # admin pages
@@ -32,12 +33,14 @@ urlpatterns = [
 
     # api pages
     path('api-auth/', include('rest_framework.urls')),
-    path('api/profiles/', views.profile_list),
-    path('api/get-profile/<int:pk>', views.profile_detail),
-    path('api/rooms/', views.room_list),
-    path('api/get-rooms/<int:pk>', views.get_room),
-    path('api/messages/', views.message_list),
-    path('api/get-chathistory/<uuid:pk>', views.get_chat),
+    path('api/profiles/', accounts_views.profile_list),
+    path('api/get-profile/<int:pk>', accounts_views.profile_detail),
+    path('api/rooms/', accounts_views.room_list),
+    path('api/get-rooms/<int:pk>', accounts_views.get_room),
+    path('api/messages/', accounts_views.message_list),
+    path('api/get-chathistory/<uuid:pk>', accounts_views.get_chat),
+
+    # chat pages
     path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
-    #path('', include('chat.urls')),
+    path('meetup_point/home.html', meetup_views.meetup_home, name='home'),
 ]

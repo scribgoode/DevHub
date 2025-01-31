@@ -1,4 +1,5 @@
 from django.views.generic import TemplateView
+from django.template.loader import get_template
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from .models import Engineer
 from text_chat.models import Room, Message
@@ -72,9 +73,8 @@ def get_chat(request, pk):
     print(messages)
     serializer = MessageSerializer(messages, many=True)
     return Response(serializer.data)
+
 #this is apart of testing for the implementation of the video chat
 @login_required
 def index(request):
     return render(request, 'video_chat/index.html', {})
-
-
