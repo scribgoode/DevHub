@@ -100,6 +100,7 @@ body {
 
 .table-row {
     display: flex;
+    height: 60px;
 }
 
 .table-row:hover{
@@ -129,6 +130,8 @@ body {
 
 .table-row .current-projects{
     flex: 40%;
+    overflow-y: auto;
+    scroll-behavior: smooth;
 }
 
 .table-row .meeting-preferences{
@@ -244,4 +247,60 @@ body {
     position: absolute;
     margin-left: 34%;
     margin-top: 4%;
+}
+
+/* search */
+.search-bar{
+    display: inline-block
+}
+
+/* filtering */
+
+.filterbar{
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: inline-block;
+}
+
+.status-filter{
+    border-radius: 10px;
+    font-size: 20px;
+    padding: 5px 10px;
+    transition: transform 0.05s ease-in-out;
+    margin-right: 10px;
+}
+
+.status-filter-content{
+    display: none;
+    position: absolute;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 10px;
+}
+
+
+#location-filter{
+    border-radius: 10px;
+    font-size: 20px;
+    padding: 5px 10px;
+    transition: transform 0.05s ease-in-out;
+    margin-right: 10px;
+}
+
+#meeting-preferences-filter{
+    border-radius: 10px;
+    font-size: 20px;
+    padding: 5px 10px;
+    transition: transform 0.05s ease-in-out;
+    margin-right: 10px;
+}
+
+#status-filter:active, #location-filter:active, #meeting-preferences-filter:active {
+    transform: scale(0.95);
+}
+
+.show {
+    display: block;
 }

@@ -13,7 +13,7 @@ class Engineer(AbstractUser):
         RECRUIT = 'recruit', 'recruit'
 
     status = models.CharField(max_length=7, choices=Status.choices, default=Status.RECRUIT)
-    current_project = models.CharField(max_length=200, blank=True, null=True)
+    current_project = models.TextField(max_length=4000, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
     dob = models.DateField(default=date.today)
 
