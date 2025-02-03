@@ -34,6 +34,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'cities_light',
     'text_chat',
     'video_chat',
     'django.contrib.admin',
@@ -200,3 +201,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.IsAuthenticated',  # Ensure only authenticated users can access the API
     ],
 }
+
+# CITIES_LIGHT_INCLUDE_COUNTRIES = ['US'] #un comment this line to only include US cities the name time we download the data and also look at the docs to see how to download only us cities

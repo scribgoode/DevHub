@@ -2,6 +2,7 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import Engineer
 from allauth.account.forms import SignupForm
 from django import forms
+from cities_light.models import City
 
 class CustomUserCreationForm(UserCreationForm):
 
@@ -25,6 +26,7 @@ class CustomSignupForm(SignupForm):
     address = forms.CharField(max_length=255)
     '''
     dob = forms.DateField()
+    city = forms.ModelChoiceField(queryset=City.objects.all(), empty_label="Select City")
 
     def save(self, request):
         user = super(CustomSignupForm, self).save(request)
@@ -37,5 +39,12 @@ class CustomSignupForm(SignupForm):
         user.address = self.cleaned_data['address']
         '''
         user.dob = self.cleaned_data['dob']
+        user.city = self.cleaned_data['city']
         user.save()
         return user
+    
+class LocationFilterForm(forms.Form):
+    city = forms.ModelChoiceField(queryset=City.objects.all(), empty_label="Select City")
+    def __init__(self, *args, **kwargs):
+        super(LocationFilterForm, self).__init__(*args, **kwargs)
+        self.fields['city'].required = False

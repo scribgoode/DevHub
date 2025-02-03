@@ -1,0 +1,4 @@
+-change city field in engineer model so the person signing up has a drop down list to choose from
+-add filter button at the top = status, meet preferences
+-add search box that searches for everything in a row, and search box for location
+-make name and current porjects come before filters

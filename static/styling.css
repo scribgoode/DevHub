@@ -100,6 +100,7 @@ body {
 
 .table-row {
     display: flex;
+    height: 60px;
 }
 
 .table-row:hover{
@@ -129,6 +130,8 @@ body {
 
 .table-row .current-projects{
     flex: 40%;
+    overflow-y: auto;
+    scroll-behavior: smooth;
 }
 
 .table-row .meeting-preferences{

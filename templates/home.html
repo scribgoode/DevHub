@@ -34,6 +34,38 @@
             {% endif %}
         </div>
         <br><br><br><br><br><br>
+        <div class="filtering-and-search">
+            <div class="search-bar">
+                <div class="search-bar-div">
+                    <form method="get">
+                        <input type="text" name="search" placeholder="Search for people, projects, etc..." id="searchBox">
+                        <button type="submit" id="searchButton">Search</button>
+                    </form>
+                </div>
+                <div class="location-bar-div">
+                    <form method="get">
+                        <i>&#128205;</i>
+                        <select name="city">
+                            {% for i in cities %}
+                            <option value="{{ i.name }}">{{ i.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Filter</button>
+                    </form>
+                </div>
+            </div>
+            <div class="filterbar">
+                <button class="status-filter">Status &#8964</button>
+                    <div class="status-filter-content">
+                        <form method="get">
+                            <button type="submit" name="option" value="any">Any</button>
+                            <button type="submit" name="option" value="creator">Creator</button>
+                            <button type="submit" name="option" value="recruit">Recruit</button>
+                        </form>
+                    </div>
+                <button id="meeting-preferences-filter">Meeting Preferences &#8964</button>
+            </div>
+        </div>
         <div class="engineer-table">
             <div class="table-head">
                 <div class ="status">Status(b/c and on/off)</div>
@@ -44,23 +76,60 @@
             </div>
             {% for profile in profiles %}
             <div class="table-row-box">
-                {% if profile.id == user.id %}
-                    <a name="profile-button" href="my-profile/">
+                {% if profile.id == user.id %} 
+                    <a name="profile-button" href="my-profile/"> <!--remove this if we dont want to show the current user page in the rows of profiles-->
                 {% else %}
                     <a name="profile-button" href="profile/{{profile.id}}">
                 {% endif %}
+                {% if profile.id != user.id %}
                     <div class="table-row">
                         <div class="row-background"></div>
                         <div class="status">{{ profile.status }}</div>
                         <div class="name">{{ profile.first_name }}</div>
-                        <div class="location">{{ profile.address }}</div>
-                        <div class="current-projects">{{ profile.current_project }}</div>
+                        <div class="location">{{ profile.city }}</div>
+                        <div class="current-projects" id="scrollBox">{{ profile.current_project }}</div>
                         <!--make that scrolly-->
                         <div class="meeting-preferences">in-person</div>
                     </div>
+                {% endif %}
                 </a>
             </div>
             {% endfor %}
+        <script>
+                document.addEventListener("DOMContentLoaded", function() {
+                    document.querySelector(".status-filter").addEventListener("click", function() {
+                        document.querySelector(".status-filter-content").classList.toggle("show");
+                    });
+                /*window.addEventListener("click", function(e) {
+                    if (!e.target.matches('.status-filter')) {
+                        let dropdowns = document.querySelectorAll(".status-filter-content");
+                        dropdowns.forEach(function(filterbar) {
+                            if (filterbar.classList.contains('show')) {
+                                filterbar.classList.remove('show');
+                            }
+                        });
+                    }
+                });*/
+            });
+        </script>
+
+        <script>
+            const scrollBox = document.getElementById('scrollBox');
+
+            // Limit scroll distance by modifying scroll step
+            scrollBox.addEventListener('wheel', function(event) {
+            event.preventDefault(); // Prevent default scrolling behavior
+
+            const scrollAmount = 10; // Set custom scroll step (e.g., 30px)
+
+            // Scroll by a limited amount based on wheel direction
+            if (event.deltaY > 0) {
+                scrollBox.scrollTop += scrollAmount;
+            } else {
+                scrollBox.scrollTop -= scrollAmount;
+            }
+            }, { passive: false });
+        </script>
             <script> /***
             <div class="table-row-box">
                 <a name="profile-button" href="#">

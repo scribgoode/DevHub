@@ -35,7 +35,7 @@ to request or join stream meeting must finish required profile fields(this also 
 
 MVP
 -devhub.io(this is likely going to be too expensive) or projectpal.io($32/yr on hostinger)(be careful searching domains because they probably increase the price based on hitcount) or developercentral.io
--profile/account(change and add)✔️
+-profile/account(change and add)✔️add last_online attribute to engineer model)
 -dm system✔️
 -friends list
 -search and filtering
@@ -81,3 +81,13 @@ meet halfway django app - https://github.com/cszc/Meet-Halfway?tab=readme-ov-fil
 
 THINGS TO FIX:
 -need to add address and meeting prefernce information to user model
+
+1st Payment Window
+-user clicks on send meeting request
+-right after they are prompted to customize their meeting request and before submiting are told that five dollars will be charged when and if the other user accepts the invitation
+-after the meeting request is sent, all hidden information about that user is revealed and chat capabilites are unlocked
+-the user who accepts the invite can be given a strike if they do not show up to the meeting without canceling 24 hours prior, however the sender cannot due to them spending money
+-all users videos need to be scanned by ai to remove names until after someone pays to have a meeting with them
+(THIS METHOD IS LIKELY GOING TO BE TOO EXPLOITABLE BUT THERE SHOULD BE SOME SORT OF INCENTIVE TO PAY BY THE PERSON TO ENSURE RELIABILITY ON BOTH ENDS)
+
+maybe add case study tab like successstory.com

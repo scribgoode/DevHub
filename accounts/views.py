@@ -1,6 +1,7 @@
 from django.views.generic import TemplateView
 from django.shortcuts import render, get_object_or_404, get_list_or_404
 from .models import Engineer
+from cities_light.models import City
 from text_chat.models import Room, Message
 from django.contrib.auth.decorators import login_required
 
@@ -10,14 +11,31 @@ from accounts.serializers import EngineerSerializer, RoomSerializer, MessageSeri
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
+from django.db.models import Q
 '''
 class HomePageView(TemplateView):
     template_name = "home.html"
 '''
 
 def home(request):
-    profiles = Engineer.objects.all()
-    context = {'profiles': profiles,}
+    if 'search' in request.GET:
+        search = request.GET['search']
+        profiles = Engineer.objects.filter(Q(first_name__icontains=search) | Q(current_project__icontains=search))
+    elif 'city' in request.GET:
+        city = request.GET['city']
+        profiles = Engineer.objects.filter(city__name=city)
+    elif 'option' in request.GET:
+        status = request.GET['option']
+        if status == 'any':
+            profiles = Engineer.objects.all()
+        else:
+            profiles = Engineer.objects.filter(status=status)
+    else:
+        profiles = Engineer.objects.all()
+    
+    cities = City.objects.all()
+    context = {'profiles': profiles,
+               'cities': cities,}
     return render(request, 'home.html', context)
 
 def Profile(request, id):
