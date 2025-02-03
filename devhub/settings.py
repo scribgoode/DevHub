@@ -202,5 +202,5 @@ REST_FRAMEWORK = {
     ],
 }
 
-CITIES_LIGHT_INCLUDE_COUNTRIES = ['US'] #un comment this line to only include US cities the name time we download the data and also look at the docs to see how to download only us cities
+CITIES_LIGHT_INCLUDE_COUNTRIES = ['us'] #un comment this line to only include US cities the name time we download the data and also look at the docs to see how to download only us cities
 #CITIES_LIGHT_INCLUDE_CITY_TYPES = ['PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLF', 'PPLG', 'PPLL', 'PPLR', 'PPLS', 'STLMT', 'PPLX',]
