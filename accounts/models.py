@@ -14,9 +14,9 @@ class Engineer(AbstractUser):
 
     status = models.CharField(max_length=7, choices=Status.choices, default=Status.RECRUIT)
     current_project = models.TextField(max_length=4000, blank=True, null=True)
-    address = models.CharField(max_length=255, blank=True, null=True)
     dob = models.DateField(default=date.today)
-
+    country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True) 
+    city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True)
     # userlist=keylist save to db
     # userList = [test1, test2, test3]
 

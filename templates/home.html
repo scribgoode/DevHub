@@ -36,18 +36,33 @@
         <br><br><br><br><br><br>
         <div class="filtering-and-search">
             <div class="search-bar">
-                <form action="search/" method="GET">
-                    <input type="text" name="search" placeholder="Search for people, projects, etc..." id="searchBox">
-                    <button type="submit" id="searchButton">Search</button>
-                </form>
+                <div class="search-bar-div">
+                    <form method="get">
+                        <input type="text" name="search" placeholder="Search for people, projects, etc..." id="searchBox">
+                        <button type="submit" id="searchButton">Search</button>
+                    </form>
+                </div>
+                <div class="location-bar-div">
+                    <form method="get">
+                        <i>&#128205;</i>
+                        <select name="city">
+                            {% for i in cities %}
+                            <option value="{{ i.name }}">{{ i.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">Filter</button>
+                    </form>
+                </div>
             </div>
             <div class="filterbar">
                 <button class="status-filter">Status &#8964</button>
                     <div class="status-filter-content">
-                        <a href="#">creators</a>
-                        <a href="#">recruits</a>
-                    </div>  
-                <button id="location-filter">Location &#8964</button>
+                        <form method="get">
+                            <button type="submit" name="option" value="any">Any</button>
+                            <button type="submit" name="option" value="creator">Creator</button>
+                            <button type="submit" name="option" value="recruit">Recruit</button>
+                        </form>
+                    </div>
                 <button id="meeting-preferences-filter">Meeting Preferences &#8964</button>
             </div>
         </div>
@@ -71,7 +86,7 @@
                         <div class="row-background"></div>
                         <div class="status">{{ profile.status }}</div>
                         <div class="name">{{ profile.first_name }}</div>
-                        <div class="location">{{ profile.address }}</div>
+                        <div class="location">{{ profile.city }}</div>
                         <div class="current-projects" id="scrollBox">{{ profile.current_project }}</div>
                         <!--make that scrolly-->
                         <div class="meeting-preferences">in-person</div>
@@ -85,7 +100,7 @@
                     document.querySelector(".status-filter").addEventListener("click", function() {
                         document.querySelector(".status-filter-content").classList.toggle("show");
                     });
-                window.addEventListener("click", function(e) {
+                /*window.addEventListener("click", function(e) {
                     if (!e.target.matches('.status-filter')) {
                         let dropdowns = document.querySelectorAll(".status-filter-content");
                         dropdowns.forEach(function(filterbar) {
@@ -94,7 +109,7 @@
                             }
                         });
                     }
-                });
+                });*/
             });
         </script>
 

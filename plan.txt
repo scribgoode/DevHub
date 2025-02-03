@@ -19,7 +19,7 @@ to request or join stream meeting must finish required profile fields(this also 
 
 
 MVP
--profile/account(change and add)
+-profile/account(change and add)(add last_online attribute to engineer model)
 -dm system
 -friends list
 -search and filtering

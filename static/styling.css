@@ -251,7 +251,10 @@ body {
 
 /* search */
 .search-bar{
-    display: inline-block
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    
 }
 
 /* filtering */
@@ -281,12 +284,22 @@ body {
 }
 
 
-#location-filter{
+.location-filter{
     border-radius: 10px;
     font-size: 20px;
     padding: 5px 10px;
     transition: transform 0.05s ease-in-out;
     margin-right: 10px;
+}
+
+.location-filter-content{
+    display: none;
+    position: ab;
+    background-color: white;
+    min-width: 150px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 10px;
 }
 
 #meeting-preferences-filter{
@@ -297,7 +310,7 @@ body {
     margin-right: 10px;
 }
 
-#status-filter:active, #location-filter:active, #meeting-preferences-filter:active {
+.status-filter:active, .location-filter:active, #meeting-preferences-filter:active {
     transform: scale(0.95);
 }
 
