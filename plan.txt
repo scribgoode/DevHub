@@ -35,7 +35,7 @@ to request or join stream meeting must finish required profile fields(this also 
 
 MVP
 -devhub.io(this is likely going to be too expensive) or projectpal.io($32/yr on hostinger)(be careful searching domains because they probably increase the price based on hitcount) or developercentral.io
--profile/account(change and add)✔️add last_online attribute to engineer model)
+-profile/account(change and add)✔️(add last_online attribute to engineer model)
 -dm system✔️
 -friends list
 -search and filtering
