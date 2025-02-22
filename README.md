@@ -1,5 +1,5 @@
 # DevHub
- a site where you can go to find other real people to be friend and do a project with that bettert ensures you complete a project
+A site with many feature such as video calling, text chat, a meeting location finder, and other useful tools to help people find projects to contribute to and to find people to contribute to your own projects.
 # Instructions
 -create virtual environment (python -m venv .venv) .venv is the name of your virtual environment
 -activate virtual environment (.\/.venv/Scripts/activate.ps1)
