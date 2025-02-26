@@ -1,0 +1,33 @@
+-change video_chat websockket connection to connect to text chat websocket instead
+-each user is allowed to join the meeting room at the allotted time when the meeting time is established(accepted by both users) by clicking the link in the upcoming meetings tab from the current users profile page
+
+logic=
+-need to establish a room name that is unique and linked to the people who created the room(look at whether i can fit this in lelands code)
+-after that it should work. then i need to format so that each connected users information is displayed below there video and a redirect as well
+-need to make new meetings attribute that is a foregin key to room and saves when a new meeting is accepted by both users
+-need to do a fetch on the my_profile page for all the meeting rooms in which the current user has meetings in and send the correct json through the url and handle it on the video_chat page
+
+
+
+Other ideas
+-person goes to their own profile to start meeting, at this moment, a join (so'n sos) meeting pops up on their profile page if the person is invited to the meeting if private meeting
+
+Video
+Everyone has there own room
+Someone sends meeting request for the other person to join there room
+Meeting creates the room token(token is used to create the room)
+The meeting object contains the information needed(room id) to join that persons room if it is the specified time(if either one cancel, the meeting receiver can no longer access the room)
+
+Text
+the way leland has it is ok
+just make a seperate VideoRoom model
+
+to do:
+-video button and microphone buttton
+DONE-leave call button
+DONE-text chat
+-pipe in important information into the page(meeting time)
+DONE-fix old window bug(run hangup if you leave the page)
+
+After that:
+meeting send system

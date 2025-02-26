@@ -1,3 +1,4 @@
+
 from channels.db import database_sync_to_async
 from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from channels_presence.models import Presence, Room  #maybe this is the problem 
@@ -60,7 +61,7 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         rtc_name = self.scope['url_route']['kwargs']['rtc_name'] #how does the rtc_name get passed in?
         print(self.channel_name)
-        await self._presence_disconnect(self.channel_name) #connect is being ran as soon as the a new websocket is created(ws-connect= on index) and this particular line is deleting a presence if it has the same channel name
+        await self._presence_disconnect(self.channel_name) #removes there channel from every room associated #connect is being ran as soon as the a new websocket is created(ws-connect= on index) and this particular line is deleting a presence if it has the same channel name
         self.rtc_call = 'rtc_%s' % rtc_name
         print(self.rtc_call)
         await self._presence_connect(self.rtc_call)

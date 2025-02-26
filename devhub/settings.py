@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     "allauth.account",
     "allauth.socialaccount",
     'channels',
-    'devhub.apps.ChannelsPresence',
+    #'devhub.apps.ChannelsPresence',
     'accounts',
 ]
 

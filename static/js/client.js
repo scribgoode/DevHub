@@ -19,8 +19,8 @@ const $self = {
         video: true,
     },
     video_constraints: {
-        height: {max:240, min:48, ideal:120},
-        width: {max:320, min:64, ideal:160}
+        height: {max:720, min:48, ideal:450},
+        width: {max:1280, min:64, ideal:800} 
     },
     media_stream: new MediaStream(),
     media_tracks: {},
@@ -332,30 +332,61 @@ function other_track(id) {
 }
 
 htmx.on('htmx:wsOpen', function(e) {
+    let room_token = document.getElementById('room_token').textContent;
+    console.log('this is the htmx:wsOpen event being called');
     $self.ws = e.detail.socketWrapper;
-    $self.ws_json({'room': 'lobby'});
+    $self.ws_json({'room_token': room_token}); //probably need to remove this
+    startRTC(room_token);
 });
 
-function handleCallButton(event) {
-    const call_button = event.target;
-    if (call_button.className === 'join') {
-        call_button.className = 'leave';
-        call_button.innerText = 'Leave Call';
-        if ($self.ws) {
-            $self.ws_json({'join': 'video'});
-        }
-    } else {
-        // Leave the call
-        call_button.className = 'join';
-        call_button.innerText = 'Join Call';
-        $self.ws_json({'hangup': true});
-        for (let channel_name of $others.keys()) {
-            reset_other(channel_name);
-        }
-        let node_list = document.querySelectorAll('[id^="other-"][id$="-div"]');
-        for (let node of node_list) { node.remove(); }
+// window.addEventListener('beforeunload', function (e) {
+//     // Display a confirmation dialog
+//     e.preventDefault();
+//     handleCallButton();
+//   });
+
+/*
+const chat_type = "video";
+document.addEventListener('DOMContentLoaded', function(e) {
+    console.log('this is the addEventListener event being called');
+    $self.ws = new WebSocket(
+        'ws://'
+        + window.location.host
+        + '/ws/chat/'
+        + chat_type
+        + '/'
+    );
+    console.log($self.ws, 'this is the addEventListener event being called');
+    $self.ws.addEventListener('open', function(e) {
+        console.log('this is the addEventListener event being called');
+        $self.ws_json({'room': 'lobby'}); //probably need to remove this
+        startRTC();
+    })
+});
+*/
+
+function startRTC(room_token) {
+    if ($self.ws) { //not finding websocket connection
+        $self.ws_json({'join': room_token}); //need to join the correct room
     }
-};
+}
+
+function handleCallButton(event) {
+    // console.log(call_button.className, "in handleCallButton function");
+    // if (call_button.className === 'join') {
+    //     call_button.className = 'leave';
+    //     call_button.innerText = 'Leave Call';
+    //     if ($self.ws) { //not finding websocket connection
+    //         $self.ws_json({'join': 'video'}); //need to join the correct room
+    //     }} 
+    // Leave the call
+    $self.ws_json({'hangup': true});
+    for (let channel_name of $others.keys()) {
+        reset_other(channel_name);
+    }
+    let node_list = document.querySelectorAll('[id^="other-"][id$="-div"]');
+    for (let node of node_list) { node.remove(); }
+    };
 
 function toggleCam(event) {
     const button = event.target;

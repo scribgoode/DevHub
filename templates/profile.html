@@ -21,6 +21,19 @@
         <br><br><br><br>
         <div class="bio-background"></div>
         <div class="elevator-pitch-video">This is {{profile.first_name}}'s profile page</div>
+        <form class= "meeting-request-form" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Send Meeting Request</button>
+        </form>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        
 
 
         <div class="chat-header">Chat Messages
@@ -107,15 +120,15 @@
         const socket = new WebSocket(
                 'ws://'
                 + window.location.host
-                + '/ws/text_chat/'
-                + profile_id
-                + '/'
+                + '/ws/chat/text/'
             );
+        
 
         // on message received
         socket.onmessage = function(event) {
             const message = JSON.parse(event.data)
-            console.log(message);
+            console.log(message, "message");
+            console.log("hello")
 
             // add message to chat history
             const messageDiv = document.createElement('div');
@@ -126,19 +139,24 @@
         // on socket open
         socket.onopen = function(event) {
             console.log("WebSocket connection opened");
+            socket.send(JSON.stringify({
+            "profile_id": profile_id,
+            }));
         };
 
         function sendMessage() {
             const messageInput = document.querySelector('.message-input');
             const message = messageInput.value;
-
-            if (message.trim() !== '') {
-                socket.send(JSON.stringify({
+            const everything = {
                     "message": message,
                     "sender": current_user.first_name,
                     "sender_full_name": current_user.first_name + ' ' + current_user.last_name,
                     "sender_id" : sender_id,
-                }));
+                }
+            console.log(everything);
+
+            if (message.trim() !== '') {
+                socket.send(JSON.stringify({"text": everything}));
                 messageInput.value = '';
             }
         }

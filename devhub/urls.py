@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import Profile, myProfile, home, index
+from accounts.views import Profile, myProfile, home, index, videoChat
 from accounts import views
 
 urlpatterns = [
@@ -38,6 +38,10 @@ urlpatterns = [
     path('api/get-rooms/<int:pk>', views.get_room),
     path('api/messages/', views.message_list),
     path('api/get-chathistory/<uuid:pk>', views.get_chat),
-    path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
     #path('', include('chat.urls')),
+
+    # video pages
+    path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
+    path('my-profile/video_chat/<str:room_token>', videoChat, name='video_chat'),#i need to serialize the room object into json i think leland has already done this do i need to figure how to use the rest framework #actually nope
+    #path('my-profile/video_chat/', videoChat, name='video_chat'),
 ]

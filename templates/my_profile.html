@@ -19,8 +19,38 @@
         </div>
 
         <br><br><br><br>
-        <div class="bio-background"></div>
-        <div class="elevator-pitch-video">This is {{user.first_name}}'s profile page</div>
+
+        <div class="profile-header">
+            <div class="bio-background"></div>
+            <div class="elevator-pitch-video">This is {{user.first_name}}'s profile page</div>
+            <div class="meetings-list">
+                <header>Upcoming Meetings</header>
+                {% for meeting in meetings %}
+                {% if meeting.sender.id == user.id %}
+                    <a href="video_chat/{{ meeting.room_token }}">You and {{ meeting.recipient.first_name }}'s video meeting</a><br>
+                {% else %}
+                    <a href="video_chat/{{ meeting.room_token }}"> You and {{ meeting.sender.first_name }}'s video meeting</a><br>
+                {% endif %}
+                {% endfor %}
+            </div>
+            <div class="meeting-requests-list">
+                <header>Meeting Requests</header>
+                {% for meeting_request in meeting_requests %}
+                {% if meeting_request.status == "pending" %}
+                    {% if meeting_request.sender.id != user.id %}
+                        <p>{{ meeting_request.sender.first_name }} wants to meet with you</p>
+                        <form class="meeting-request-decision" method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="meeting_request_sender_id" value="{{ meeting_request.sender.id }}">
+                            <input type="hidden" name="meeting_request_recipient_id" value="{{ meeting_request.recipient.id }}">
+                            <button type="submit">Accept</button>
+                            <button type="submit" name="decline" value="reject">Decline</button>
+                        </form>
+                    {% endif %}
+                {% endif %}
+                {% endfor %}
+            </div> 
+
 
 
         <div class="chat-header">Chat Messages
@@ -31,7 +61,7 @@
         </div>
 
         <div class="chat-background">
-            <div class="dm-list"">dm list</div>
+            <div class="dm-list">dm list</div>
             <div class="chat-box">select user from button list</div>
         </div>
 
@@ -122,12 +152,11 @@
                                 newChat.innerHTML = `<div class="message">${chat.sender.first_name}: ${chat.messageContent}</div>`;
                                 chatbox.appendChild(newChat);
                             });
+                            chat_type = "text";
                             socket = new WebSocket(
                                 'ws://'
                                 + window.location.host
-                                + '/ws/text_chat/'
-                                + receiver_id
-                                + '/'
+                                + '/ws/chat/text/'
                             );
                             waitForOpenSocket(socket).then(() => {
                                 console.log('socket opened');
@@ -144,6 +173,9 @@
                                 socket.onopen = function(event) {
                                     console.log("WebSocket connection opened");
                                     sendButton.disabled = false;
+                                    socket.send(JSON.stringify({
+                                        "profile_id": room.users[1 - room.users.findIndex(user => user.id === user_id)].id,
+                                    }));
                                 };
                             });
                         });
@@ -162,18 +194,18 @@
         }
     // send message
     function sendMessage() {
-        console.log('send button clicked');
         const messageInput = document.querySelector('.message-input');
         const message = messageInput.value;
-
-        if (message.trim() !== '') {
-            socket.send(JSON.stringify({
+        const everything = {
                 "message": message,
                 "sender": current_user.first_name,
-                "sender_full_name": current_user.first_name + " " + current_user.last_name,
-                "sender_id" : current_user.id
-                //"timestamp": Date.now()
-            }));
+                "sender_full_name": current_user.first_name + ' ' + current_user.last_name,
+                "sender_id" : current_user.id,
+            }
+        console.log(everything);
+
+        if (message.trim() !== '') {
+            socket.send(JSON.stringify({"text": everything}));
             messageInput.value = '';
         }
     }

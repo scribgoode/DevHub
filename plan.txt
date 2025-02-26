@@ -37,17 +37,19 @@ MVP
 -devhub.io(this is likely going to be too expensive) or projectpal.io($32/yr on hostinger)(be careful searching domains because they probably increase the price based on hitcount) or developercentral.io
 -profile/account(change and add)✔️(add last_online attribute to engineer model)
 -dm system✔️
--friends list
--search and filtering
+-friends list✔️
+-search and filtering✔️
 -live chat system✔️
 -proposed meeting spot algorithm 
--meetings/simple calendar page
+-meetings/simple calendar page✔️
 -rating system/strike system
 -something to buy(payment when request to meet is accepted?)
 -once someone accepts a meeting invation you two become collaborators(messaging and video calling only become available once two people are collaborators)
 -only show the elevator pitch and current projects(basically undentifiable information(censor name in elevator pitch using ai))(to encourage people to meet in person might not pay for meeting invite if they request that type of meeting)
 -extensive testing on just functionality for now
 -advertising plan
+-people pay for access after they send three meeting invites they pay for access again
+-meeting reports and selling ratings to recruiters
 
 
 FUTURE IDEAS
@@ -80,7 +82,7 @@ meet halfway django app - https://github.com/cszc/Meet-Halfway?tab=readme-ov-fil
 
 
 THINGS TO FIX:
--need to add address and meeting prefernce information to user model
+-need to add address and meeting prefernce information to user model, send email to users email when they get a meeting request or a message
 
 1st Payment Window
 -user clicks on send meeting request
@@ -91,3 +93,18 @@ THINGS TO FIX:
 (THIS METHOD IS LIKELY GOING TO BE TOO EXPLOITABLE BUT THERE SHOULD BE SOME SORT OF INCENTIVE TO PAY BY THE PERSON TO ENSURE RELIABILITY ON BOTH ENDS)
 
 maybe add case study tab like successstory.com
+
+video chat feature logic
+-button beside send that says call(call can only be used if during there meeting time)
+-a pop up window shows up on the other users screen sayin that the user is calling
+-yes redirects them to their chat room(each personjoins the chat room and sees the others information)(the video cameras are placed above all the other information)
+
+
+Filtering
+-filter people by uploaded elevator pitch
+
+Webscokets and WebRTC
+-we need to be careful when launching this because i am not sure exactly if we are supposed to create a new web socket everytime or if its supposed to be like one websocket that everyone can connect to(ive been reading that 
+you can accrue a lot of costs from opening a lot of websocket connections)(make sure we have llc set up)
+-just found out you only need one websocket endpoint(however need one for text chat and need one for video chat)
+-should i only have one websocket connection text_chat and video_chat? or a websocket endpoint for both (just one for both now that handles message and webrtc)
