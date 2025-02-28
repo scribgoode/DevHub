@@ -43,4 +43,5 @@ urlpatterns = [
     # chat pages
     path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
     path('meetup_point/home.html', meetup_views.meetup_home, name='home'),
+    path("meetup_point/find-halfway", meetup_views.find_halfway_view, name="find_halfway"),
 ]

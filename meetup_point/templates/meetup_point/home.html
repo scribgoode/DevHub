@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meetup Point</title>
-    <link rel="stylesheet" href="/static/css/styles.css">
+    <link rel="stylesheet" href="/static/styling.css">
 </head>
 <body>
     <header>
@@ -16,6 +16,57 @@
             <p>Date: <span id="meetup-date">TBD</span></p>
             <p>Location: <span id="meetup-location">TBD</span></p>
         </section>
+
+        <section id="input-address">
+            <h2>Input Address</h2>
+            <form id="address-form">
+                <label for="state">State:</label>
+                <input type="text" id="state" name="state" required>
+
+                <label for="city">City:</label>
+                <input type="text" id="city" name="city" required>
+
+                <label for="zipcode">Zipcode:</label>
+                <input type="text" id="zipcode" name="zipcode" required>
+                <label for="street">Street:</label>
+                <input type="text" id="street" name="street" required>
+                <!-- <button type="button" onclick="captureAddress()">Capture Address</button> -->
+            </form>
+
+            
+        </section>
+
+        <section id="input-address">
+            <h2>Input 2nd Address</h2>
+            <form id="address-form">
+                <label for="state">State:</label>
+                <input type="text" id="state2" name="state" required>
+
+                <label for="city">City:</label>
+                <input type="text" id="city2" name="city" required>
+
+                <label for="zipcode">Zipcode:</label>
+                <input type="text" id="zipcode2" name="zipcode" required>
+                <label for="street">Street:</label>
+                <input type="text" id="street2" name="street" required>
+                <!-- <button type="button" onclick="captureAddress()">Capture Address</button> -->
+            </form>
+        </section>
+
+        <section id="transportation-mode">
+            <h2>Select Transportation Mode</h2>
+            <form id="transportation-form">
+                <label for="mode">Mode of Transportation:</label>
+                <select id="mode" name="mode" required>
+                    <option value="car">Car</option>
+                    <option value="bike">Bike</option>
+                    <option value="public-transport">Public Transport</option>
+                    <option value="walking">Walking</option>
+                </select>
+                <button type="button" onclick="captureUserInput()">Submit</button>
+            </form>
+        </section>
+
         <section id="attendees">
             <h2>Attendees</h2>
             <ul id="attendee-list">
@@ -24,8 +75,49 @@
         </section>
     </main>
     <footer>
-        <p>&copy; 2023 Meetup Point</p>
+        <p>&copy; 2025 Meetup Point</p>
     </footer>
-    <script src="/static/js/scripts.js"></script>
+    <script>
+        function captureUserInput() {
+            const street = document.getElementById('street').value;
+            const city = document.getElementById('city').value;
+            const state = document.getElementById('state').value;
+            const zipcode = document.getElementById('zipcode').value;
+            console.log(street, city, state, zipcode);
+
+            const addressData1 = {
+                street: street,
+                city: city,
+                state: state,
+                zipcode: zipcode
+            };
+
+            const street2 = document.getElementById('street2').value;
+            const city2 = document.getElementById('city2').value;
+            const state2 = document.getElementById('state2').value;
+            const zipcode2 = document.getElementById('zipcode2').value;
+            console.log(street2, city2, state2, zipcode2);
+
+            const addressData2 = {
+                street: street2,
+                city: city2,
+                state: state2,
+                zipcode: zipcode2
+            };
+
+            // Assuming you have a model or a way to save this data
+            // For example, you could send it to a server using fetch
+            fetch('/meetup_point/find-halfway', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({"addressOne": addressData1, "addressTwo": addressData2})
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
 </body>
 </html>
