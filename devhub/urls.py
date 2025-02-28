@@ -18,6 +18,8 @@ from django.contrib import admin
 from django.urls import path, include
 from accounts.views import Profile, myProfile, home, index, videoChat
 from accounts import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     # admin pages
@@ -44,4 +46,4 @@ urlpatterns = [
     path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
     path('my-profile/video_chat/<str:room_token>', videoChat, name='video_chat'),#i need to serialize the room object into json i think leland has already done this do i need to figure how to use the rest framework #actually nope
     #path('my-profile/video_chat/', videoChat, name='video_chat'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

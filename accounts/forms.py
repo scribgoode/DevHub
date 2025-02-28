@@ -48,3 +48,8 @@ class LocationFilterForm(forms.Form):
     def __init__(self, *args, **kwargs):
         super(LocationFilterForm, self).__init__(*args, **kwargs)
         self.fields['city'].required = False
+
+class ElevatorPitchForm(forms.ModelForm):
+    class Meta:
+        model = Engineer
+        fields = ['elevator_pitch']

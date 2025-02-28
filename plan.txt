@@ -108,3 +108,6 @@ Webscokets and WebRTC
 you can accrue a lot of costs from opening a lot of websocket connections)(make sure we have llc set up)
 -just found out you only need one websocket endpoint(however need one for text chat and need one for video chat)
 -should i only have one websocket connection text_chat and video_chat? or a websocket endpoint for both (just one for both now that handles message and webrtc)
+
+UI Buffs
+-make projects on my profile where you can add multiple projects, the project you want to display, the projects you want to show on your profile, and the ability to add people to projects

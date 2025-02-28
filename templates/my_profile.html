@@ -1,57 +1,63 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'styling.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
-    <title>DevHub.io</title>
-</head>
-
-<body>
-    <div class="container">
-        <div class="website-header">
-            <div class="title">
-                <a href="#">DevHub.io</a>
-            </div>
-        </div>
-
-        <br><br><br><br>
-
-        <div class="profile-header">
-            <div class="bio-background"></div>
-            <div class="elevator-pitch-video">This is {{user.first_name}}'s profile page</div>
-            <div class="meetings-list">
-                <header>Upcoming Meetings</header>
-                {% for meeting in meetings %}
-                {% if meeting.sender.id == user.id %}
-                    <a href="video_chat/{{ meeting.room_token }}">You and {{ meeting.recipient.first_name }}'s video meeting</a><br>
+{% extends 'base.html' %}
+{% block content %}
+            <div class="profile-data">
+                {% if user.elevator_pitch %}
+                    <video id="elevator-pitch-video">This is {{user.first_name}}'s profile page</video>
+                    <source src="{{ user.elevator_pitch.url }}" type="video/mp4">
                 {% else %}
-                    <a href="video_chat/{{ meeting.room_token }}"> You and {{ meeting.sender.first_name }}'s video meeting</a><br>
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="form_type" value="video_upload">
+                        {{ video_form.as_p }}
+                        <button type="submit">Upload Video</button>
+                    </form>
                 {% endif %}
-                {% endfor %}
-            </div>
-            <div class="meeting-requests-list">
-                <header>Meeting Requests</header>
-                {% for meeting_request in meeting_requests %}
-                {% if meeting_request.status == "pending" %}
-                    {% if meeting_request.sender.id != user.id %}
-                        <p>{{ meeting_request.sender.first_name }} wants to meet with you</p>
-                        <form class="meeting-request-decision" method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="meeting_request_sender_id" value="{{ meeting_request.sender.id }}">
-                            <input type="hidden" name="meeting_request_recipient_id" value="{{ meeting_request.recipient.id }}">
-                            <button type="submit">Accept</button>
-                            <button type="submit" name="decline" value="reject">Decline</button>
-                        </form>
+                <div class="profile-info">
+                    <b>Name: {{user.first_name}}</b>
+                    <b>Status: {{user.status}}>>|</b>
+                </div>
+                <div class="meetings-list">
+                    <header>Upcoming Meetings</header>
+                    {% for meeting in meetings %}
+                    {% if meeting.sender.id == user.id %}
+                        <a href="video_chat/{{ meeting.room_token }}">You and {{ meeting.recipient.first_name }}'s video meeting</a><br>
+                    {% else %}
+                        <a href="video_chat/{{ meeting.room_token }}"> You and {{ meeting.sender.first_name }}'s video meeting</a><br>
                     {% endif %}
-                {% endif %}
-                {% endfor %}
-            </div> 
+                    {% endfor %}
+                </div>
+            </div>
 
+            <br>
 
+            <div class="projects-and-requests">
+                <div class="projects">
+                    <header>Projects</header>
+                </div>
+                <div class="incoming-meeting-invites">
+                    <header>Incoming Meeting Invites</header>
+                    {% for meeting_request in meeting_requests %}
+                    {% if meeting_request.status == "pending" %}
+                        {% if meeting_request.sender.id != user.id %}
+                            <p>{{ meeting_request.sender.first_name }} wants to meet with you</p>
+                            <form class="meeting-request-decision" method="post">
+                                <input type="hidden" name="form_type" value="meeting_request_decision">
+                                {% csrf_token %}
+                                <input type="hidden" name="meeting_request_sender_id" value="{{ meeting_request.sender.id }}">
+                                <input type="hidden" name="meeting_request_recipient_id" value="{{ meeting_request.recipient.id }}">
+                                <button type="submit">Accept</button>
+                                <button type="submit" name="decline" value="reject">Decline</button>
+                            </form>
+                        {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                </div>
+                <div class="sent-meeting-invites">
+                    <header>Sent Meeting Invites</header>
+                </div>
+            </div>
+
+        <br>
 
         <div class="chat-header">Chat Messages
             <div class="message-container">
@@ -64,8 +70,7 @@
             <div class="dm-list">dm list</div>
             <div class="chat-box">select user from button list</div>
         </div>
-
-</body>
+{% endblock %}
 
 
 {{user.id|json_script:"user_id"}}

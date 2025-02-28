@@ -2,6 +2,9 @@ from django.db import models
 from datetime import date
 from django.contrib.auth.models import AbstractUser
 
+def video_upload_path(instance, filename):
+    return f'videos/{filename}'
+
 class Engineer(AbstractUser):
     class Meta:
         verbose_name = 'Engineer'
@@ -17,6 +20,7 @@ class Engineer(AbstractUser):
     dob = models.DateField(default=date.today)
     country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True) 
     city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True)
+    elevator_pitch = models.FileField(upload_to=video_upload_path, null=True)
     # userlist=keylist save to db
     # userList = [test1, test2, test3]
 

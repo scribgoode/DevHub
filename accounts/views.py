@@ -15,6 +15,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from video_chat.forms import MeetingRequestForm
 from django.contrib import messages
+from accounts.forms import ElevatorPitchForm
 '''
 class HomePageView(TemplateView):
     template_name = "home.html"
@@ -61,15 +62,31 @@ def Profile(request, id):
 
 def myProfile(request):
     if request.method == 'POST':
-        meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
-        meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message)
-        meeting.save()
-        meeting_request.status = 'resolved'
-        meeting_request.save()
+        form_type = request.POST.get("form_type")
+        print(form_type)
+        if form_type ==  "meeting_request_decision":
+            meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
+            meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message)
+            meeting.save()
+            meeting_request.status = 'resolved'
+            meeting_request.save()
+        if form_type == "video_upload":
+            video_form = ElevatorPitchForm(request.POST, request.FILES)
+            print("yo")
+            if video_form.is_valid():
+                print("yea")
+                video_form.save()
+            else:
+                print(video_form.errors)
+    else:
+        video_form = ElevatorPitchForm()
+
     meetings = Meeting.objects.filter( Q(recipient=request.user) | Q(sender=request.user) )
     meeting_requests = MeetingRequest.objects.filter( Q(recipient=request.user) | Q(sender=request.user) ) #maybe make meeting_requests and sent_meetings_requests
     context = {'meetings': meetings,
-               'meeting_requests': meeting_requests,}
+               'meeting_requests': meeting_requests,
+               'video_form': video_form,}
+
     return render(request, 'my_profile.html', context)
 
 @api_view(['GET'])

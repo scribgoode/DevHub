@@ -1,39 +1,6 @@
-{% load static %}
+{% extends "base.html" %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'styling.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
-    <title>ProjectPals</title>
-</head>
-
-<body>
-    <div class="container">
-        <div class="website-header">
-            <div class="title">
-                <a href="#">ProjectPals</a>
-            </div>
-        </div>
-        <div class="website-body">
-            {% if user.is_authenticated %}
-            <div class="profile-link">
-                <a href="my-profile" id="profileLink">My Profile</a>
-            </div>
-            <div class="website-header">
-                <div class="logout-link">
-                    <a href="{% url 'account_logout' %}" id="logoutLink">Logout</a>
-                </div>
-            </div>
-            {% else %}
-            <div class="login-link">
-                <a href="{% url 'account_login' %}" id="loginLink">Login</a>
-            </div>
-            {% endif %}
-        </div>
-        <br><br><br><br><br><br>
+{% block content %}
         <div class="filtering-and-search">
             <div class="search-bar">
                 <div class="search-bar-div">
@@ -53,7 +20,7 @@
                         <button type="submit">Filter</button>
                     </form>
                 </div>
-                <button class="status-filter">Status &#8964</button>
+                <button class="status-filter">Status &#8964;</button>
                     <div class="status-filter-content">
                         <form method="get">
                             <button type="submit" name="option" value="any">Any</button>
@@ -61,7 +28,7 @@
                             <button type="submit" name="option" value="recruit">Recruit</button>
                         </form>
                     </div>
-                <button id="meeting-preferences-filter">Meeting Preferences &#8964</button>
+                <button id="meeting-preferences-filter">Meeting Preferences &#8964;</button>
             </div>
         </div>
         <div class="engineer-table">
@@ -93,6 +60,8 @@
                     </a>
             </div>
             {% endfor %}
+        </div>
+    </div>
         <script>
                 document.addEventListener("DOMContentLoaded", function() {
                     document.querySelector(".status-filter").addEventListener("click", function() {
@@ -128,7 +97,7 @@
             }
             }, { passive: false });
         </script>
-            <script> /***
+        <script> /***
             <div class="table-row-box">
                 <a name="profile-button" href="#">
                     <div class="table-row">
@@ -142,7 +111,5 @@
                 </a>
             </div>
             ***/ </script>
-        </div>
-    </div>
-</body>
-</html>
+{% endblock %}
+
