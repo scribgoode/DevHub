@@ -50,9 +50,8 @@ urlpatterns = [
     path('meetup_point/home.html', meetup_views.meetup_home, name='home'),
     #path("meetup_point/find-halfway", meetup_views.find_halfway_view, name="find_halfway"),
     path("meetup_point/find_halfway", meetup_views.find_halfway_view, name="find_halfway_view"),
-    #path("meetup_point/find_meetup_spot/?lat=<str:lat>&lng=<str:lng>&places=<str:places_query>", meetup_views.find_meetup_spot, name="find_meetup_spot")
-    path("meetup_point/find_meetup_spot/", meetup_views.find_meetup_spot, name="find_meetup_spot")
-
-        path('my-profile/video_chat/<str:room_token>', videoChat, name='video_chat'),#i need to serialize the room object into json i think leland has already done this do i need to figure how to use the rest framework #actually nope
+    #path("meetup_point/find_meetup_spot/?lat=<str:lat>&lng=<str:lng>&places=<str:places_query>", meetup_views.find_meetup_spot, name="find_meetup_spot"),
+    path("meetup_point/find_meetup_spot/", meetup_views.find_meetup_spot, name="find_meetup_spot"),
+    path('my-profile/video_chat/<str:room_token>', videoChat, name='video_chat'),#i need to serialize the room object into json i think leland has already done this do i need to figure how to use the rest framework #actually nope
     #path('my-profile/video_chat/', videoChat, name='video_chat'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
