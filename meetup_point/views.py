@@ -32,7 +32,6 @@ def find_halfway_view(request):
                 midpoint = calculate_midpoint(addressOne.lat, addressOne.lng, addressTwo.lat, addressTwo.lng)
                 print("midpoint:", midpoint)
             #midpoint = {"lat": 41.8907275, "lng": -87.64590630000001}
-            print('after finding midpoint')
             # Fetch nearby places (cafes/restaurants)
             #nearby_places = get_nearby_places(midpoint["lat"], midpoint["lng"], "cafe|restaurant")
             #nearby_places = ["hello"]
@@ -40,8 +39,6 @@ def find_halfway_view(request):
 
             # Redirect to the find_meetup_spot view with lat, lng, and places as query parameters - &places={places_query}
             redirect_url = f"/meetup_point/find_meetup_spot/?lat={midpoint['lat']}&lng={midpoint['lng']}&places={places_query}"
-        
-            print(type(redirect_url))
             print("redirect_url:", redirect_url)
             return JsonResponse({"redirect_url": redirect_url})
            # return redirect(redirect_url, {"midpoint": midpoint, "places": nearby_places}, permanent=True)
@@ -62,6 +59,7 @@ def find_meetup_spot(request):
 
     # Debugging output
     print(f"Latitude: {lat}, Longitude: {lng}")
+    print(f"Places query: {places_query}")
 
     return render(request, 'meetup_point/find_meetup_spot.html', {
         'lat': lat,
