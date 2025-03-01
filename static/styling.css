@@ -233,6 +233,10 @@ transform: scale(1.05) translateY(.125rem);
     flex: 1%;
 }
 
+.spacer2{
+    width: 0.5%;
+}
+
 .meetings-list{
     background-color: whitesmoke;
     flex: 39%;
@@ -244,10 +248,25 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .projects{
+    display: flex;
     background-color: white;
     height: 25vh;
     flex: 61%;
     border: 0.5vh solid black;
+}
+
+.projects-header{
+    height: 20%;
+    width: 100%;
+    border-bottom: 0.5vh solid black;
+    font-size: 4vh;
+}
+
+#add-project{
+    font-size: 3vh;
+    /* border: none;
+    background-color: white;*/
+    margin-left: 82%;
 }
 
 /* meeting request */
@@ -287,14 +306,16 @@ transform: scale(1.05) translateY(.125rem);
     width: 1020px;
     height: 50px;
     background-color: darkgray;
+    display: none;
 }
 
 .chat-background {
     width: 1020px;
     height: 250px;
-    display: flex;  /* Makes the container a flex container */
+    /*display: flex;   Makes the container a flex container */
     background-color: whitesmoke;
-    border: 2px dotted #000;    
+    border: 2px dotted #000;
+    display: none;   
 }
 
 .dm-list {
