@@ -1,3 +1,6 @@
+/* https://stackoverflow.com/questions/52682812/django-css-not-updating */
+/* crtl+f5 or ctrl+shift+r to refresh css file  cache */
+
 body {
     font-family: Arial, sans-serif;
     background-color:cornflowerblue;
@@ -159,7 +162,7 @@ body {
     margin-left: 32%;
 }
 
-.repository-header {
+.chat-header {
     position: absolute;
     width: 1020px;
     height: 50px;
@@ -167,12 +170,41 @@ body {
     margin-top: 25%;
 }
 
-.repository-background {
+.chat-background {
     position: absolute;
     width: 1020px;
     height: 250px;
+    display: flex;  /* Makes the container a flex container */
     background-color: whitesmoke;
     margin-top: 29%;
+    border: 2px dotted #000;    
+}
+
+.dm-list {
+    width: 250px;
+    background-color: #f4f4f4;
+    padding: 10px;
+    box-sizing: border-box;
+    display: flex;          /* Apply flexbox */
+    flex-direction: column; /* Stack items vertically */
+    gap: 10px;              /* Optional: add spacing between buttons */
+    overflow-y: auto;
+}
+
+.chat-box {
+    flex-grow: 1;    /* Takes up the remaining space after dmlist */
+    background-color: #fff;  /* Example background color */
+    padding: 10px;
+    overflow-y: auto;  /* Enables scrolling if the messages overflow */
+    box-sizing: border-box;
+    border: 2px dotted #000;  /* Dotted border around the chatbox */
+}
+
+.message {
+    display: flex;
+    justify-content: left;
+    flex-direction: column;
+    margin-bottom: 10px;
 }
 
 .online {
@@ -213,3 +245,71 @@ body {
     margin-left: 34%;
     margin-top: 4%;
 }
+
+/*css from ken whitesells code*/
+
+html {
+	margin: 0;
+	padding: 0;
+	font-family: "Lucida Grande", Arial, sans-serif;
+	font-size: 18px;
+	font-weight: bold;
+	line-height: 22px;
+}
+/*
+body {
+	color: #666666;
+	background-color: #c7d8df;
+}
+*/
+video {
+	background-color: #ddd;
+	display: block;
+	width: 160px;
+	height: 120px;
+}
+
+#appContent {
+    margin-top: 20px;
+	margin-left: 20px;
+}
+
+.join {
+	background-color: green;
+	color: white;
+}
+
+.leave {
+	background-color: #CA0;
+	color: black;
+}
+
+#call-button {
+	width: 143px;
+	margin-right: 11px;
+}
+
+#header {
+	margin-bottom: 11px;
+}
+
+button[aria-checked="false"] {
+	text-decoration: line-through;
+	color: white;
+	background: red;
+}
+
+figure {
+	position: relative;
+}
+
+figcaption {
+	color: #eee;
+	background: rgba(16,16,16,0.6);
+	font-weight: normal;
+	font-size: 14px;
+	bottom: 0;
+	left: 0;
+	width: 160px;
+}
+

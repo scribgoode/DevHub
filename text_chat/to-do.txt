@@ -1,0 +1,38 @@
+Logic
+room
+
+same room 
+    Leland - test
+    test - Leland
+
+different room
+    Leland - test
+    Leland - test2
+
+my profile
+1. render page
+2. dm list should be everyone but the user
+3. able to send message after clicking on dm list buttons
+
+send Logic
+disable send button until
+    create socket to server based on dm list buttons
+    enable send button once socket is created
+
+other profile
+1. render page
+2. no dm list - just chatbox
+3. if first time sender
+        chatbox = empty
+        after send message
+        chatbox is updated
+    else
+        chatbox should populate with chat history
+
+Bugs
+1. message sending more than once (FIXED)
+2. message sending to user is not saving
+
+to-do
+1. scroll feature - chat overflow
+2. timestamps on messages

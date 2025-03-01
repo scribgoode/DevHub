@@ -16,13 +16,28 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import myProfile, home
+from accounts.views import Profile, myProfile, home, index
+from accounts import views
 
 urlpatterns = [
+    # admin pages
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     #path('', include('accounts.urls')), #moved the home views in accounts to here
-    path('my_profile/<int:id>', myProfile, name='my_profile'),
+
+    # user pages
+    path('my-profile/', myProfile, name='my-profile'),
+    path('profile/<int:id>', Profile, name='profile'),
     path('', home, name='home'),
+
+    # api pages
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/profiles/', views.profile_list),
+    path('api/get-profile/<int:pk>', views.profile_detail),
+    path('api/rooms/', views.room_list),
+    path('api/get-rooms/<int:pk>', views.get_room),
+    path('api/messages/', views.message_list),
+    path('api/get-chathistory/<uuid:pk>', views.get_chat),
+    path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
     #path('', include('chat.urls')),
 ]

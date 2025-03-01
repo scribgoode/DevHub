@@ -52,11 +52,11 @@ atlassian-ide-plugin.xml
 # Distribution / packaging 
 .Python build/ 
 develop-eggs/ 
-dist/ 
+#dist/ 
 downloads/ 
 eggs/ 
-.eggs/ 
-lib/ 
+.eggs/
+#lib/ 
 lib64/ 
 parts/ 
 sdist/ 
@@ -100,6 +100,7 @@ celerybeat-schedule.*
 # Environments 
 .env 
 .venv 
+.devvenv
 env/ 
 venv/ 
 ENV/ 

@@ -26,11 +26,16 @@ SECRET_KEY = 'django-insecure-6!j-wxl$har123c%thwgom0z2^-lq%089fce7pf5munp!&^qyj
 DEBUG = True
 
 ALLOWED_HOSTS = []
+CSRF_TRUSTED_ORIGINS = [
+    'http://127.0.0.1', 'http://localhost', 'http://MSI.local'
+]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'text_chat',
+    'video_chat',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -38,10 +43,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'daphne',
     'django.contrib.staticfiles',
+    'rest_framework',
     "allauth",
     "allauth.account",
     "allauth.socialaccount",
     'channels',
+    'devhub.apps.ChannelsPresence',
     'accounts',
 ]
 
@@ -75,7 +82,9 @@ TEMPLATES = [
 ]
 
 
-WSGI_APPLICATION = 'devhub.wsgi.application'
+#WSGI_APPLICATION = 'devhub.wsgi.application' tutorial says to comment this out and add below line
+# Daphne
+ASGI_APPLICATION = "devhub.asgi.application"
 
 
 # Database
@@ -160,10 +169,34 @@ ACCOUNT_FORMS = {
 LOGIN_REDIRECT_URL = "home"
 ACCOUNT_LOGOUT_REDIRECT_URL = "home"
 
+WSGI_APPLICATION = 'devhub.wsgi.application'
 ASGI_APPLICATION = 'devhub.asgi.application'
 
+#possibly will have to change channel layers in production
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels.layers.InMemoryChannelLayer"
+#     }
+# }
+#changing the channels layers so django can interact with redis on docker image
+
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "channels.layers. InMemoryChannelLayer"
-    }
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
+            "capacity": 10000,
+        },
+    },
+}
+
+# Rest Framework
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.SessionAuthentication',  # Default authentication (for sessions)
+        'rest_framework.authentication.BasicAuthentication',   # Basic authentication (for testing or APIs)
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',  # Ensure only authenticated users can access the API
+    ],
 }

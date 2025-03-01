@@ -1,9 +1,11 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styling.css">
+    <link rel="stylesheet" href="{% static 'styling.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <title>DevHub.io</title>
 </head>
@@ -15,19 +17,140 @@
                 <a href="#">DevHub.io</a>
             </div>
         </div>
-        <div class="website-header">
-            <div class="profile-link">
-                <a href="#">My Profile</a>
-            </div>
-        </div>
+
         <br><br><br><br>
         <div class="bio-background"></div>
-        <div class="elevator-pitch-video">Elevator Pitch Video</div>
-        <span class="search-meeting-spots"><a href="#">Search meeting spots</a></span>
-        <div class="repository-header">Name's Repositories</div>
-        <div class="repository-background"></div>
-        <span class="online">&#128994 Online:</span>
-        <span class="join-breakout-room"><a href="#">Join breakout room</a></span>
-        <span class="or">or</span>
-        <span class="direct-message"><a href="#">Direct Message</a></span>
-        <span class="send-offer-for-online-meeting"><a href="#">Send offer for online meeting</a></span>
+        <div class="elevator-pitch-video">This is {{profile.first_name}}'s profile page</div>
+
+
+        <div class="chat-header">Chat Messages
+            <div class="message-container">
+                <input type="text" class="message-input" placeholder="Enter your message">
+                    <button type="button" class="send-button" onClick=sendMessage()>Send</button>
+            </div>
+        </div>
+
+        <div class="chat-background">
+            <div class="chat-box">Chat history</div>
+        </div>
+
+</body>
+
+
+{{profile.id|json_script:"profile_id"}}
+{{user.id|json_script:"sender_id"}}
+{{ user.is_authenticated|json_script:"is_authenticated" }};
+
+<script>
+    const is_authenticated = JSON.parse(document.getElementById('is_authenticated').textContent);
+    // wait for DOM to load
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log("DOM loaded");
+        // make sure DOM is loaded
+        const sendButton = document.querySelector('.send-button');
+        sendButton.disabled = !is_authenticated;
+    });
+
+    // user authentication
+    if (is_authenticated) {
+        // chat elements
+        const chatBackground = document.querySelector('chat-background');
+        const chatbox = document.querySelector('.chat-box');
+
+        const profile_id = JSON.parse(document.getElementById('profile_id').textContent);
+        const sender_id = JSON.parse(document.getElementById('sender_id').textContent);
+        let current_user = new Object();
+        // get current logged in user info
+        fetch(`/api/get-profile/${sender_id}?format=json`)
+            .then(response => response.json())
+            .then(data => {
+                current_user.first_name = data.first_name;
+                current_user.last_name = data.last_name;
+                current_user.email = data.email;
+                current_user.id = data.id;
+            });
+        
+        // render chat history
+        let selectedChatroom = null;
+        fetch(`/api/get-rooms/${sender_id}?format=json`)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data)
+                // does chat room exist?
+                console.log('data:', data[0].users[0].id)
+                
+                console.log('sender id:', sender_id)
+
+                // go through users in chatroom, find both users in the chatroom, and get the room_id
+                const selectedChatroom = data.find(room => 
+                    room.users.some(user => user.id === profile_id) && 
+                    room.users.some(user => user.id === sender_id)
+                )?.room_id;
+
+                console.log("select chat:", selectedChatroom)
+                if (selectedChatroom) {
+                    fetch(`/api/get-chathistory/${selectedChatroom}?format=json`)
+                        .then(response => response.json())
+                        .then(data => {
+                            console.log(data)
+                            data.forEach(message => {
+                                const messageDiv = document.createElement('div');
+                                messageDiv.innerHTML = `<div class="message">${message.sender.first_name}: ${message.messageContent}</div>`;
+                                chatbox.appendChild(messageDiv);
+                            });
+                        }); 
+                }
+            })
+
+        
+        // create socket connection
+        const socket = new WebSocket(
+                'ws://'
+                + window.location.host
+                + '/ws/text_chat/'
+                + profile_id
+                + '/'
+            );
+
+        // on message received
+        socket.onmessage = function(event) {
+            const message = JSON.parse(event.data)
+            console.log(message);
+
+            // add message to chat history
+            const messageDiv = document.createElement('div');
+            messageDiv.innerHTML = `<div class="message">${message.sender}: ${message.message}</div>`;
+            chatbox.appendChild(messageDiv);
+        };
+
+        // on socket open
+        socket.onopen = function(event) {
+            console.log("WebSocket connection opened");
+        };
+
+        function sendMessage() {
+            const messageInput = document.querySelector('.message-input');
+            const message = messageInput.value;
+
+            if (message.trim() !== '') {
+                socket.send(JSON.stringify({
+                    "message": message,
+                    "sender": current_user.first_name,
+                    "sender_full_name": current_user.first_name + ' ' + current_user.last_name,
+                    "sender_id" : sender_id,
+                }));
+                messageInput.value = '';
+            }
+        }
+    } else {
+        console.log('User not authenticated');
+
+        // make sure DOM is loaded
+
+        const sendButton = document.querySelector('.send-button');
+        
+    }
+
+</script>
+
+</html>
