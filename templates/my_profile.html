@@ -2,20 +2,30 @@
 {% block content %}
             <div class="profile-data">
                 {% if user.elevator_pitch %}
-                    <video id="elevator-pitch-video">This is {{user.first_name}}'s profile page</video>
-                    <source src="{{ user.elevator_pitch.url }}" type="video/mp4">
-                {% else %}
-                    <form method="post" enctype="multipart/form-data">
+                    <form method="post">
                         {% csrf_token %}
-                        <input type="hidden" name="form_type" value="video_upload">
-                        {{ video_form.as_p }}
-                        <button type="submit">Upload Video</button>
+                        <input type="hidden" name="form_type" value="video_remove">
+                        <button type="submit "id="remove-button">Remove</button>
                     </form>
+                    <video id="elevator-pitch-video" controls>
+                        <source src="{{ user.elevator_pitch.url }}" type="video/mp4">
+                    </video>
+                {% else %}
+                    <div class="video-placeholder">
+                        <form method="post" enctype="multipart/form-data">
+                            {% csrf_token %}
+                            <input type="hidden" name="form_type" value="video_upload">
+                            <input type="file" name="elevator_pitch" accept="video/*" required>
+                            <button type="submit">Upload Video</button>
+                        </form>
+                    </div>
                 {% endif %}
                 <div class="profile-info">
                     <b>Name: {{user.first_name}}</b>
                     <b>Status: {{user.status}}>>|</b>
+                    <button type="submit">Edit Personal Info</button>
                 </div>
+                <div class="spacer"></div>
                 <div class="meetings-list">
                     <header>Upcoming Meetings</header>
                     {% for meeting in meetings %}
@@ -28,12 +38,11 @@
                 </div>
             </div>
 
-            <br>
-
             <div class="projects-and-requests">
                 <div class="projects">
                     <header>Projects</header>
                 </div>
+                <div class="spacer"></div>
                 <div class="incoming-meeting-invites">
                     <header>Incoming Meeting Invites</header>
                     {% for meeting_request in meeting_requests %}

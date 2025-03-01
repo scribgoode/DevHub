@@ -199,22 +199,44 @@ transform: scale(1.05) translateY(.125rem);
 
 .profile-data{
     display: flex;
-    background-color: white;
+}
+
+.profile-data2{
+    width: 32.2%;
+    height: 18%;
+}
+
+#remove-button{
+    position: absolute;
+    z-index: 1000;
 }
 
 #elevator-pitch-video {
-    width: 32%;
+    width: 32.2%;
     height: 18%;
     background-color: black;
 }
 
+/* .video-placeholder{
+    width: 32.2%;
+    height: 18%;
+    background-color: black;
+    position: absolute;
+} */
+
 .profile-info {
-    flex: 28%
+    flex: 28%;
+    background-color: white;
+}
+
+.spacer{
+    flex: 1%;
 }
 
 .meetings-list{
     background-color: whitesmoke;
-    flex: 40%
+    flex: 39%;
+    border: 0.5vh solid black;
 }
 
 .projects-and-requests{
@@ -224,7 +246,7 @@ transform: scale(1.05) translateY(.125rem);
 .projects{
     background-color: white;
     height: 25vh;
-    flex: 60%;
+    flex: 61%;
     border: 0.5vh solid black;
 }
 
@@ -236,12 +258,14 @@ transform: scale(1.05) translateY(.125rem);
 
 .incoming-meeting-invites{
     background-color: whitesmoke;
-    flex: 20%
+    flex: 19.5%;
+    border: 0.5vh solid black;
 }
 
 .sent-meeting-invites{
     background-color: whitesmoke;
-    flex: 20%
+    flex: 19.5%;
+    border: 0.5vh solid black;
 }
 
 .warning{

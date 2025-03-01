@@ -71,21 +71,17 @@ def myProfile(request):
             meeting_request.status = 'resolved'
             meeting_request.save()
         if form_type == "video_upload":
-            video_form = ElevatorPitchForm(request.POST, request.FILES)
-            print("yo")
-            if video_form.is_valid():
-                print("yea")
-                video_form.save()
-            else:
-                print(video_form.errors)
-    else:
-        video_form = ElevatorPitchForm()
+            user = request.user
+            user.elevator_pitch = request.FILES['elevator_pitch']
+            user.save()
+        if form_type == "video_remove":
+            user = request.user
+            user.elevator_pitch.delete()
 
     meetings = Meeting.objects.filter( Q(recipient=request.user) | Q(sender=request.user) )
     meeting_requests = MeetingRequest.objects.filter( Q(recipient=request.user) | Q(sender=request.user) ) #maybe make meeting_requests and sent_meetings_requests
     context = {'meetings': meetings,
-               'meeting_requests': meeting_requests,
-               'video_form': video_form,}
+               'meeting_requests': meeting_requests,}
 
     return render(request, 'my_profile.html', context)
 

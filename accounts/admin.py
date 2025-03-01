@@ -14,7 +14,7 @@ class CustomUserAdmin(UserAdmin):
     model = Engineer
 
     fieldsets = (
-        (None, {'fields': ('email', 'password', 'dob', 'first_name', 'last_name', 'status', 'current_project', 'country', 'city')}),
+        (None, {'fields': ('email', 'password', 'dob', 'first_name', 'last_name', 'status', 'current_project', 'country', 'city', 'elevator_pitch')}),
     )
     list_display = ["email", "status"]
 
