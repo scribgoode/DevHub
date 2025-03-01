@@ -107,12 +107,17 @@
 
             // Assuming you have a model or a way to save this data
             // For example, you could send it to a server using fetch
-            fetch('/meetup_point/find-halfway', {
+            fetch('/meetup_point/find_halfway', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({"addressOne": addressData1, "addressTwo": addressData2})
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                window.location.href = data.redirect_url;
             })
             .catch((error) => {
                 console.error('Error:', error);

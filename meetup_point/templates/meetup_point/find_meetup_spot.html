@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meetup Spot</title>
+</head>
+<body>
+    <h1>Meetup Spot</h1>
+    <p>Latitude: {{ lat }}</p>
+    <p>Longitude: {{ lng }}</p>
+
+    <h2>Nearby Places:</h2>
+    <ul>
+        {% for place in nearby_places %}
+            <li>{{ place }}</li>
+        {% empty %}
+            <li>No places found</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
