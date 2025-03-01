@@ -1,6 +1,7 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,11 +16,166 @@
             <div class="title">
                 <a href="#">DevHub.io</a>
             </div>
-        <button class="button1" type="button">Edit Profile</button>
         </div>
+
         <br><br><br><br>
         <div class="bio-background"></div>
-        <div class="elevator-pitch-video">Elevator Pitch Video what up yo {{profile.first_name}}</div>
-        <div class="repository-header">My Repositories</div>
-        <div class="repository-background"></div>
-        <span class="direct-message"><a href="#">Messages</a></span>
+        <div class="elevator-pitch-video">This is {{user.first_name}}'s profile page</div>
+
+
+        <div class="chat-header">Chat Messages
+            <div class="message-container">
+                <input type="text" class="message-input" placeholder="Enter your message">
+                    <button type="button" class="send-button" onClick=sendMessage() disabled>Send</button>
+            </div>
+        </div>
+
+        <div class="chat-background">
+            <div class="dm-list"">dm list</div>
+            <div class="chat-box">select user from button list</div>
+        </div>
+
+</body>
+
+
+{{user.id|json_script:"user_id"}}
+
+<script>
+    // wait for DOM to load
+    let sendButton = null;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Your code to run since DOM is loaded and ready
+        console.log("DOM loaded");
+        sendButton = document.querySelector(".send-button");
+    });
+
+    // chat elements
+    const chatBackground = document.querySelector('.chat-background');
+    const dmList = document.querySelector('.dm-list');
+    const chatbox = document.querySelector('.chat-box');
+    let socket;
+
+    // event listenter for socket initialization
+
+    // user info
+    const user_id = JSON.parse(document.getElementById('user_id').textContent);
+    let current_user = new Object();
+
+    // get current logged in user info
+    fetch(`/api/get-profile/${user_id}?format=json`)
+        .then(response => response.json())
+        .then(data => {
+            current_user.first_name = data.first_name;
+            current_user.last_name = data.last_name;
+            current_user.email = data.email;
+            current_user.id = data.id;
+        });
+    
+
+    // render dm list
+    fetch(`/api/get-rooms/${user_id}?format=json`)
+        .then(response => response.json())
+        .then(data => {
+            // get all chatrooms that user is in and render them as buttons
+            data.forEach(room => {
+                console.log('current room:', room.room_id);
+                console.log(room)
+
+                // get the name of the other user in the chatroom
+                let newChatroomname = room.users[1 - room.users.findIndex(user => user.id === user_id)].first_name;
+
+                const newChatroom = document.createElement('button');
+                newChatroom.innerHTML = newChatroomname;
+                
+                newChatroom.addEventListener('click', () => {
+                    // disable send button
+                    newChatroom.disabled = true;
+
+                    // enable every other button
+                    const chatroomButtons = document.querySelectorAll('button');
+                    chatroomButtons.forEach(button => {
+                        if (button !== newChatroom) {
+                            button.disabled = false;
+                        }
+                    });
+
+                    // close existing socket
+                    if (socket) {
+                        socket.close();
+                        console.log('previous socket closed');
+                    }
+
+                    // get chat history
+                    console.log('selected chatroom:', room);
+                    fetch(`/api/get-chathistory/${room.room_id}?format=json`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // render chat history in chatbox depending on selected chatroom
+                            console.log('chat history:', data);
+                            // empty chatbox
+                            chatbox.innerHTML = '';
+
+                            let receiver_id = room.users[1].id;
+                            console.log(typeof receiver_id);
+                            data.forEach(chat => {
+                                const newChat = document.createElement('div');
+                                newChat.innerHTML = `<div class="message">${chat.sender.first_name}: ${chat.messageContent}</div>`;
+                                chatbox.appendChild(newChat);
+                            });
+                            socket = new WebSocket(
+                                'ws://'
+                                + window.location.host
+                                + '/ws/text_chat/'
+                                + receiver_id
+                                + '/'
+                            );
+                            waitForOpenSocket(socket).then(() => {
+                                console.log('socket opened');
+                                // on message received
+                                socket.onmessage = function(event) {
+                                    const message = JSON.parse(event.data)
+                                    console.log(message);
+                                    // add message to chat history
+                                    const messageDiv = document.createElement('div');
+                                    messageDiv.innerHTML = `<div class="message">${message.sender}: ${message.message}</div>`;
+                                    chatbox.appendChild(messageDiv);
+                                };
+                                // on socket open
+                                socket.onopen = function(event) {
+                                    console.log("WebSocket connection opened");
+                                    sendButton.disabled = false;
+                                };
+                            });
+                        });
+                });
+                console.log('new chatroom:', newChatroom);
+                dmList.appendChild(newChatroom);
+            })
+        });
+    // wait for socket to open
+        function waitForOpenSocket(socket) {
+            return new Promise((resolve, _reject) => {
+                console.log('waiting for socket to open');
+                while (socket === null) { /* no-op */ }
+                return resolve()
+            });
+        }
+    // send message
+    function sendMessage() {
+        console.log('send button clicked');
+        const messageInput = document.querySelector('.message-input');
+        const message = messageInput.value;
+
+        if (message.trim() !== '') {
+            socket.send(JSON.stringify({
+                "message": message,
+                "sender": current_user.first_name,
+                "sender_full_name": current_user.first_name + " " + current_user.last_name,
+                "sender_id" : current_user.id
+                //"timestamp": Date.now()
+            }));
+            messageInput.value = '';
+        }
+    }
+</script>
+</html>

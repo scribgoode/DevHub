@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import date
 from django.contrib.auth.models import AbstractUser
+from meetup_point.models import Address
 
 class Engineer(AbstractUser):
     class Meta:
@@ -15,7 +16,15 @@ class Engineer(AbstractUser):
     status = models.CharField(max_length=7, choices=Status.choices, default=Status.RECRUIT)
     current_project = models.CharField(max_length=200, blank=True, null=True)
     address = models.CharField(max_length=255, blank=True, null=True)
+    # models.OneToOneField(Address, on_delete=models.CASCADE)
     dob = models.DateField(default=date.today)
 
+    # userlist=keylist save to db
+    # userList = [test1, test2, test3]
+
+    # model for room
+    # roomDic = {(curUser, profileUser): chatHistory}
+
+
     def __str__(self):
-        return self.email
+        return self.first_name

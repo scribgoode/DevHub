@@ -16,13 +16,35 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import myProfile, home
+from accounts.views import Profile, myProfile, home, index
+from accounts import views as accounts_views
+from meetup_point import views as meetup_views
 
 urlpatterns = [
+    # admin pages
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     #path('', include('accounts.urls')), #moved the home views in accounts to here
-    path('my_profile/<int:id>', myProfile, name='my_profile'),
+
+    # user pages
+    path('my-profile/', myProfile, name='my-profile'),
+    path('profile/<int:id>', Profile, name='profile'),
     path('', home, name='home'),
-    #path('', include('chat.urls')),
+
+    # api pages
+    path('api-auth/', include('rest_framework.urls')),
+    path('api/profiles/', accounts_views.profile_list),
+    path('api/get-profile/<int:pk>', accounts_views.profile_detail),
+    path('api/rooms/', accounts_views.room_list),
+    path('api/get-rooms/<int:pk>', accounts_views.get_room),
+    path('api/messages/', accounts_views.message_list),
+    path('api/get-chathistory/<uuid:pk>', accounts_views.get_chat),
+
+    # chat pages
+    path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
+    path('meetup_point/home.html', meetup_views.meetup_home, name='home'),
+    #path("meetup_point/find-halfway", meetup_views.find_halfway_view, name="find_halfway"),
+    path("meetup_point/find_halfway", meetup_views.find_halfway_view, name="find_halfway_view"),
+    #path("meetup_point/find_meetup_spot/?lat=<str:lat>&lng=<str:lng>&places=<str:places_query>", meetup_views.find_meetup_spot, name="find_meetup_spot")
+    path("meetup_point/find_meetup_spot/", meetup_views.find_meetup_spot, name="find_meetup_spot")
 ]
