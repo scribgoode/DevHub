@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'channels',
     #'devhub.apps.ChannelsPresence',
     'accounts',
+    'meetup_point',
 ]
 
 MIDDLEWARE = [

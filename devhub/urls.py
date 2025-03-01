@@ -17,7 +17,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from accounts.views import Profile, myProfile, home, index, videoChat
-from accounts import views
+from accounts import views as accounts_views
+from meetup_point import views as meetup_views
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -34,16 +35,24 @@ urlpatterns = [
 
     # api pages
     path('api-auth/', include('rest_framework.urls')),
-    path('api/profiles/', views.profile_list),
-    path('api/get-profile/<int:pk>', views.profile_detail),
-    path('api/rooms/', views.room_list),
-    path('api/get-rooms/<int:pk>', views.get_room),
-    path('api/messages/', views.message_list),
-    path('api/get-chathistory/<uuid:pk>', views.get_chat),
+    path('api/profiles/', accounts_views.profile_list),
+    path('api/get-profile/<int:pk>', accounts_views.profile_detail),
+    path('api/rooms/', accounts_views.room_list),
+    path('api/get-rooms/<int:pk>', accounts_views.get_room),
+    path('api/messages/', accounts_views.message_list),
+    path('api/get-chathistory/<uuid:pk>', accounts_views.get_chat),
+
+    # chat pages
     #path('', include('chat.urls')),
 
     # video pages
     path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
-    path('my-profile/video_chat/<str:room_token>', videoChat, name='video_chat'),#i need to serialize the room object into json i think leland has already done this do i need to figure how to use the rest framework #actually nope
+    path('meetup_point/home.html', meetup_views.meetup_home, name='home'),
+    #path("meetup_point/find-halfway", meetup_views.find_halfway_view, name="find_halfway"),
+    path("meetup_point/find_halfway", meetup_views.find_halfway_view, name="find_halfway_view"),
+    #path("meetup_point/find_meetup_spot/?lat=<str:lat>&lng=<str:lng>&places=<str:places_query>", meetup_views.find_meetup_spot, name="find_meetup_spot")
+    path("meetup_point/find_meetup_spot/", meetup_views.find_meetup_spot, name="find_meetup_spot")
+
+        path('my-profile/video_chat/<str:room_token>', videoChat, name='video_chat'),#i need to serialize the room object into json i think leland has already done this do i need to figure how to use the rest framework #actually nope
     #path('my-profile/video_chat/', videoChat, name='video_chat'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

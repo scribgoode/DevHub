@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import date
 from django.contrib.auth.models import AbstractUser
+from meetup_point.models import Address
 
 def video_upload_path(instance, filename):
     return f'videos/{filename}'
@@ -16,6 +17,9 @@ class Engineer(AbstractUser):
         RECRUIT = 'recruit', 'recruit'
 
     status = models.CharField(max_length=7, choices=Status.choices, default=Status.RECRUIT)
+    current_project = models.CharField(max_length=200, blank=True, null=True)
+    address = models.CharField(max_length=255, blank=True, null=True)
+    # models.OneToOneField(Address, on_delete=models.CASCADE)
     current_project = models.TextField(max_length=4000, blank=True, null=True)
     dob = models.DateField(default=date.today)
     country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True) 
