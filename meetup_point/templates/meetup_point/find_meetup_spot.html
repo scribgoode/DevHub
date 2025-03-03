@@ -10,13 +10,154 @@
     <p>Latitude: {{ lat }}</p>
     <p>Longitude: {{ lng }}</p>
 
-    <h2>Nearby Places:</h2>
+    <div id="map" style="height: 500px; width: 100%;"></div>
+
+    <h2>Currently Selected Meetup Spot:</h2>
+    <div id="selected-spot">
+        <p>Select a marker to see details here.</p>
+    </div>
+    </div>
+
+    <!-- <h2>Nearby Places:</h2>
     <ul>
         {% for place in nearby_places %}
-            <li>{{ place }}</li>
+            <li>{{ place.name }}</li>
         {% empty %}
             <li>No places found</li>
         {% endfor %}
-    </ul>
+    </ul> -->
 </body>
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&libraries=geometry,places&callback=initMap" async defer></script>
+
+{{ nearby_places |json_script:"nearby_places" }}
+<script>
+    let map, polyline = null, requestPolyline = null;
+    function initMap() {
+        var latLng = { lat: parseFloat("{{ lat }}"), lng: parseFloat("{{ lng }}") };
+        map = new google.maps.Map(document.getElementById('map'), {
+            zoom: 14,
+            center: latLng
+        });
+
+        var infoWindow = new google.maps.InfoWindow();
+
+        var nearbyPlaces = JSON.parse(document.getElementById('nearby_places').textContent);
+
+        console.log(nearbyPlaces);
+
+        nearbyPlaces.forEach(function(place) {
+            var marker = new google.maps.Marker({
+                position: { lat: place.geometry.location.lat, lng: place.geometry.location.lng },
+                map: map,
+                title: place.name
+            });
+
+            marker.addListener('click', function() {
+                var service = new google.maps.places.PlacesService(map);
+                var markerInfo;
+                service.getDetails({ placeId: place.place_id }, function(result, status) {
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                        infoWindow.setContent(
+                            '<div><strong>' + result.name + '</strong><br>' +
+                            '<img src="' + result.photos[0].getUrl({maxWidth: 100, maxHeight: 100}) + '" alt="Place image"><br>' +
+                            'Rating: ' + result.rating + '<br>' +
+                            result.formatted_address + '</div>'
+                            + '<br><a href="https://www.google.com/maps/place/?q=place_id:' + result.place_id + '" target="_blank">View on Google Maps</a>'
+                        );
+                        infoWindow.open(map, marker);
+
+                        selected_spot = document.getElementById('selected-spot')
+
+                        directionsBtn = document.createElement('button')
+                        directionsBtn.innerHTML = 'Get Directions'
+                        directionsBtn.addEventListener('click', function() {
+                            getRoute(place.geometry.location);
+                        });
+                        
+                        
+                        selected_spot.innerHTML = '';
+                        
+                        if (polyline) {
+                            polyline.setMap(null);
+                        }
+                        if (requestPolyline) {
+                            requestPolyline.setMap(null);
+                        }
+
+                        newInfoBox = document.createElement('div')
+                        newInfoBox.innerHTML = '<div><strong>' + result.name + '</strong><br>' +
+                            'Rating: ' + result.rating + '<br>' +
+                            result.formatted_address + '</div>'
+
+                        confirmBtn = document.createElement('button')
+                        confirmBtn.innerHTML = 'Confirm this spot'
+
+                        confirmBtn.addEventListener('click', function() {
+                            alert('You have confirmed ' + result.name + ' as your meetup spot.');
+                        });
+
+                        selected_spot.appendChild(newInfoBox)
+                        selected_spot.appendChild(confirmBtn)
+                        selected_spot.appendChild(directionsBtn);
+                    } else {
+                        selected_spot = document.getElementById('selected-spot')
+                        selected_spot.innerHTML = '';
+                        selected_spot.innerHTML = '<p>No details found for this place.</p>';
+                    }
+                });
+            });
+        });
+    }
+
+    // Function to get the route between the user's location and the selected place
+    function getRoute(destination) {
+        var origin = { lat: 41.8745, lng: -87.6603 };
+
+        // Make an API request to get the route
+        fetch(`get-directions/?oriLat=${origin.lat}&oriLng=${origin.lng}&destLat=${destination.lat}&destLng=${destination.lng}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log(data)
+            routeData = data.user_route[0];
+            routeReqData = data.request_route[0];
+
+            var path = google.maps.geometry.encoding.decodePath(routeData.polyline.encodedPolyline);
+            // Create a polyline using the decoded path
+            polyline = new google.maps.Polyline({
+                path: path,
+                geodesic: true,
+                strokeColor: '#FF0000',
+                strokeOpacity: 1.0,
+                strokeWeight: 5
+            });
+
+            // other user path
+            var requestPath = google.maps.geometry.encoding.decodePath(routeReqData.polyline.encodedPolyline);
+            requestPolyline = new google.maps.Polyline({
+                path: requestPath,
+                geodesic : true,
+                strokeColor: '#002aff',
+                strokeOpacity: 1.0,
+                strokeWeight: 5
+            });
+
+            polyline.setMap(map);
+            requestPolyline.setMap(map);
+            
+            // get selected spot
+            selected_spot = document.getElementById('selected-spot')
+            // create new div
+            routeInfo = document.createElement('div')
+            // add route info to div
+            routeInfo.innerHTML = 'This will take you ' + routeData.duration + ' (' + routeData.distanceMeters + 'km) to get to the meetup spot.'
+            + '\nand the other user will take ' + routeReqData.duration + ' (' + routeReqData.distanceMeters + 'km) to get to the meetup spot.'
+            // append div to selected spot
+            selected_spot.appendChild(routeInfo)
+        })
+        .catch(error => {
+            console.error('Error fetching the route:', error);
+        });
+    }
+</script>
 </html>

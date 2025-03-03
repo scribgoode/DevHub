@@ -2,11 +2,7 @@ import os
 from django.db import models
 from django.forms import ValidationError
 import googlemaps
-from dotenv import load_dotenv
-
-# Load environment variables from the .env file (if present)
-load_dotenv(verbose=True, override=True)
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+from django.conf import settings
 
 # Create your models here.
 class Address(models.Model):
@@ -20,10 +16,8 @@ class Address(models.Model):
     def verify_address(self):
         # Get the Google Maps API key from environment variables
         try:
-            api_key = os.getenv('GOOGLE_API_KEY')
-            if not api_key:
-                raise ValueError("Google Maps API key not found in environment variables")
-
+            api_key = settings.GOOGLE_API_KEY
+            
             # Initialize the Google Maps client
             gmaps = googlemaps.Client(key=api_key)
 
