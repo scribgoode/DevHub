@@ -1,86 +1,87 @@
 {% extends 'base.html' %}
 {% block content %}
-            <div class="profile-data">
-                {% if user.elevator_pitch %}
-                    <form method="post">
-                        {% csrf_token %}
-                        <input type="hidden" name="form_type" value="video_remove">
-                        <button type="submit "id="remove-button">Remove</button>
-                    </form>
-                    <video id="elevator-pitch-video" controls>
-                        <source src="{{ user.elevator_pitch.url }}" type="video/mp4">
-                    </video>
-                {% else %}
-                    <div class="video-placeholder">
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            <input type="hidden" name="form_type" value="video_upload">
-                            <input type="file" name="elevator_pitch" accept="video/*" required>
-                            <button type="submit">Upload Video</button>
-                        </form>
-                    </div>
-                {% endif %}
-                <div class="profile-info">
-                    <b>Name: {{user.first_name}}</b>
-                    <b>Status: {{user.status}}>>|</b>
-                    <button type="submit">Edit Personal Info</button>
-                </div>
-                <div class="spacer"></div>
-                <div class="meetings-list">
-                    <header>Upcoming Meetings</header>
-                    {% for meeting in meetings %}
-                    {% if meeting.sender.id == user.id %}
-                        <a href="video_chat/{{ meeting.room_token }}">You and {{ meeting.recipient.first_name }}'s video meeting</a><br>
-                    {% else %}
-                        <a href="video_chat/{{ meeting.room_token }}"> You and {{ meeting.sender.first_name }}'s video meeting</a><br>
-                    {% endif %}
-                    {% endfor %}
-                </div>
-            </div>
-
-            <div class="projects-and-requests">
-                <div class="projects">
-                    <div class="projects-header">Projects
-                        <button id="add-project">&#43;</button>
-                    </div>
-                </div>
-                <div class="spacer"></div>
-                <div class="incoming-meeting-invites">
-                    <header>Incoming Meeting Invites</header>
-                    {% for meeting_request in meeting_requests %}
-                    {% if meeting_request.status == "pending" %}
-                        {% if meeting_request.sender.id != user.id %}
-                            <p>{{ meeting_request.sender.first_name }} wants to meet with you</p>
-                            <form class="meeting-request-decision" method="post">
-                                <input type="hidden" name="form_type" value="meeting_request_decision">
-                                {% csrf_token %}
-                                <input type="hidden" name="meeting_request_sender_id" value="{{ meeting_request.sender.id }}">
-                                <input type="hidden" name="meeting_request_recipient_id" value="{{ meeting_request.recipient.id }}">
-                                <button type="submit">Accept</button>
-                                <button type="submit" name="decline" value="reject">Decline</button>
-                            </form>
-                        {% endif %}
-                    {% endif %}
-                    {% endfor %}
-                </div>
-                <div class="sent-meeting-invites">
-                    <header>Sent Meeting Invites</header>
-                </div>
-            </div>
-
-        <br>
-
-        <div class="chat-header">Chat Messages
-            <div class="message-container">
-                <input type="text" class="message-input" placeholder="Enter your message">
-                    <button type="button" class="send-button" onClick=sendMessage() disabled>Send</button>
-            </div>
+<div class="profile-data">
+    {% if user.elevator_pitch %}
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="video_remove">
+            <button type="submit "id="remove-button">Remove</button>
+        </form>
+        <video id="elevator-pitch-video" controls>
+            <source src="{{ user.elevator_pitch.url }}" type="video/mp4">
+        </video>
+    {% else %}
+        <div class="video-placeholder">
+            <form method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="video_upload">
+                <input type="file" name="elevator_pitch" accept="video/*" required>
+                <button type="submit">Upload Video</button>
+            </form>
         </div>
+    {% endif %}
+    <div class="profile-info">
+        <b>Name: {{user.first_name}}</b>
+        <b>Status: {{user.status}}>>|</b>
+        <button type="submit">Edit Personal Info</button>
+    </div>
+    <div class="spacer"></div>
+    <div class="meetings-list">
+        <header>Upcoming Meetings</header>
+        {% for meeting in meetings %}
+        {% if meeting.sender.id == user.id %}
+            <a href="video_chat/{{ meeting.room_token }}">You and {{ meeting.recipient.first_name }}'s video meeting</a><br>
+        {% else %}
+            <a href="video_chat/{{ meeting.room_token }}"> You and {{ meeting.sender.first_name }}'s video meeting</a><br>
+        {% endif %}
+        {% endfor %}
+    </div>
+</div>
 
-        <div class="chat-background">
-            <div class="dm-list">dm list</div>
-            <div class="chat-box">select user from button list</div>
+<div class="projects-and-requests">
+    <div class="projects">
+        <div class="projects-header">Projects
+            <button id="add-project">&#43;</button>
         </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="incoming-meeting-invites">
+        <header>Incoming Meeting Invites</header>
+        {% for meeting_request in meeting_requests %}
+        {% if meeting_request.status == "pending" %}
+            {% if meeting_request.sender.id != user.id %}
+                <p>{{ meeting_request.sender.first_name }} wants to meet with you</p>
+                <form class="meeting-request-decision" method="post">
+                    <input type="hidden" name="form_type" value="meeting_request_decision">
+                    {% csrf_token %}
+                    <input type="hidden" name="meeting_request_sender_id" value="{{ meeting_request.sender.id }}">
+                    <input type="hidden" name="meeting_request_recipient_id" value="{{ meeting_request.recipient.id }}">
+                    <button type="submit">Accept</button>
+                    <button type="submit" name="decline" value="reject">Decline</button>
+                </form>
+            {% endif %}
+        {% endif %}
+        {% endfor %}
+    </div>
+    <div class="sent-meeting-invites">
+        <header>Sent Meeting Invites</header>
+    </div>
+</div>
+
+<br>
+
+
+<div class="chat-header">Chat Messages
+    <div class="message-container">
+        <input type="text" class="message-input" placeholder="Enter your message">
+            <button type="button" class="send-button" onClick=sendMessage() disabled>Send</button>
+    </div>
+</div>
+
+<div class="chat-background">
+    <div class="dm-list">dm list</div>
+    <div class="chat-box">select user from button list</div>
+</div>
 
 <script>
     console.log('loaded')
@@ -96,8 +97,8 @@
 </script>
 
 
-{{user.id|json_script:"user_id"}}
-
+{% comment %} {{user.id|json_script:"user_id"}} {% endcomment %}
+{% comment %} 
 <script>
     // wait for DOM to load
     let sendButton = null;
@@ -237,6 +238,6 @@
             messageInput.value = '';
         }
     }
-</script>
+</script> {% endcomment %}
 {% endblock %}
 </html>

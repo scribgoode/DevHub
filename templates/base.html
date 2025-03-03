@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
     <link rel="stylesheet" href="{% static 'styling.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <title>ProjectPals</title>
@@ -30,6 +30,177 @@
                 </form>
             {% endif %}
         </div>
+        <div class="text-chat">
+            <header id="text-chat-header">Messages</header>
+            <div class="contacts-and-messages">
+                <section id="contacts">
+                    <header id="contacts-header">Contacts</header>
+                </section>
+                <section id="messages">
+                    <header id="messages-header">{name}</header>
+                    <div class="text-box">
+                        <input type="text" class="message-input" placeholder="Enter your message">
+                        <button type="button" class="send-button" onClick=sendMessage() disabled>Send</button>
+                    </div>
+                </section>
+            </div>
+        </div>
     {% block content %}
     {% endblock %}
+
+<script>
+    console.log('loaded')
+    let button = document.querySelector('.message-button')
+    console.log(button)
+    document.querySelector('.message-button').addEventListener('click', function() {
+        console.log('heck')
+        let div = document.querySelector('.chat-header');
+        let div2 = document.querySelector('.chat-background');
+        div.style.display = div.style.display === 'none' ? 'block': 'none';
+        div2.style.display = div2.style.display === 'none' ? 'flex': 'none';
+    });
+</script>
+
+{{user.id|json_script:"user_id"}}
+
+<script>
+    // wait for DOM to load
+    let sendButton = null;
+    document.addEventListener('DOMContentLoaded', function() {
+        // Your code to run since DOM is loaded and ready
+        console.log("DOM loaded");
+        sendButton = document.querySelector(".send-button");
+    });
+
+    // chat elements
+    const chatBackground = document.querySelector('.contacts-and-messages');
+    const dmList = document.querySelector('#contacts');
+    const chatbox = document.querySelector('.messages');
+    let socket;
+
+    // event listenter for socket initialization
+
+    // user info
+    const user_id = JSON.parse(document.getElementById('user_id').textContent);
+    let current_user = new Object();
+
+    // get current logged in user info
+    fetch(`/api/get-profile/${user_id}?format=json`)
+        .then(response => response.json())
+        .then(data => {
+            current_user.first_name = data.first_name;
+            current_user.last_name = data.last_name;
+            current_user.email = data.email;
+            current_user.id = data.id;
+        });
+    
+
+    // render dm list
+    fetch(`/api/get-rooms/${user_id}?format=json`)
+        .then(response => response.json())
+        .then(data => {
+            // get all chatrooms that user is in and render them as buttons
+            data.forEach(room => {
+                console.log('current room:', room.room_id);
+                console.log(room)
+
+                // get the name of the other user in the chatroom
+                let newChatroomname = room.users[1 - room.users.findIndex(user => user.id === user_id)].first_name;
+
+                const newChatroom = document.createElement('button');
+                newChatroom.innerHTML = newChatroomname;
+                
+                newChatroom.addEventListener('click', () => {
+                    // disable send button
+                    newChatroom.disabled = true;
+
+                    // enable every other button
+                    const chatroomButtons = document.querySelectorAll('button');
+                    chatroomButtons.forEach(button => {
+                        if (button !== newChatroom) {
+                            button.disabled = false;
+                        }
+                    });
+
+                    // close existing socket
+                    if (socket) {
+                        socket.close();
+                        console.log('previous socket closed');
+                    }
+
+                    // get chat history
+                    console.log('selected chatroom:', room);
+                    fetch(`/api/get-chathistory/${room.room_id}?format=json`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // render chat history in chatbox depending on selected chatroom
+                            console.log('chat history:', data);
+                            // empty chatbox
+                            chatbox.innerHTML = '';
+
+                            let receiver_id = room.users[1].id;
+                            console.log(typeof receiver_id);
+                            data.forEach(chat => {
+                                const newChat = document.createElement('div');
+                                newChat.innerHTML = `<div class="message">${chat.sender.first_name}: ${chat.messageContent}</div>`;
+                                chatbox.appendChild(newChat);
+                            });
+                            chat_type = "text";
+                            socket = new WebSocket(
+                                'ws://'
+                                + window.location.host
+                                + '/ws/chat/text/'
+                            );
+                            waitForOpenSocket(socket).then(() => {
+                                console.log('socket opened');
+                                // on message received
+                                socket.onmessage = function(event) {
+                                    const message = JSON.parse(event.data)
+                                    console.log(message);
+                                    // add message to chat history
+                                    const messageDiv = document.createElement('div');
+                                    messageDiv.innerHTML = `<div class="message">${message.sender}: ${message.message}</div>`;
+                                    chatbox.appendChild(messageDiv);
+                                };
+                                // on socket open
+                                socket.onopen = function(event) {
+                                    console.log("WebSocket connection opened");
+                                    sendButton.disabled = false;
+                                    socket.send(JSON.stringify({
+                                        "profile_id": room.users[1 - room.users.findIndex(user => user.id === user_id)].id,
+                                    }));
+                                };
+                            });
+                        });
+                });
+                console.log('new chatroom:', newChatroom);
+                dmList.appendChild(newChatroom);
+            })
+        });
+    // wait for socket to open
+        function waitForOpenSocket(socket) {
+            return new Promise((resolve, _reject) => {
+                console.log('waiting for socket to open');
+                while (socket === null) { /* no-op */ }
+                return resolve()
+            });
+        }
+    // send message
+    function sendMessage() {
+        const messageInput = document.querySelector('.message-input');
+        const message = messageInput.value;
+        const everything = {
+                "message": message,
+                "sender": current_user.first_name,
+                "sender_full_name": current_user.first_name + ' ' + current_user.last_name,
+                "sender_id" : current_user.id,
+            }
+        console.log(everything);
+
+        if (message.trim() !== '') {
+            socket.send(JSON.stringify({"text": everything}));
+            messageInput.value = '';
+        }
+    }
+</script>
 </body>

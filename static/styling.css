@@ -296,6 +296,89 @@ transform: scale(1.05) translateY(.125rem);
     position: absolute;
 }
 
+.text-chat{
+    position: fixed;
+    width: 100vh;
+    height:82vh;
+    background-color: white;
+    margin-left: auto;
+    z-index: 1000;
+    top: 11vh;
+    right: 10vh;
+    border-radius: 1%;
+    box-shadow: 30px 30px 40px 10px rgba(0, 0, 0, 0.7);
+    border: 2px solid black;
+}
+
+#text-chat-header{
+    font-size: 5vh;
+    height: 6vh;
+    background-color: cornflowerblue;
+    border-radius: 1%;
+    border-bottom: 2px solid black;
+    font-weight: bold;
+}
+
+.contacts-and-messages{
+    top: 6vh;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+}
+
+#contacts{
+    flex: 1 1 33%;
+    height: 100%;
+    border-right: 5px solid black;
+}
+
+#contacts-header{
+    font-size: 3vh;
+    border-bottom: 5px solid black;
+}
+
+#messages{
+    position: relative; /* needed to the child elements will position themselves relative to itself */
+    flex: 1 1 67%;
+}
+
+#messages-header{
+    font-size: 6vh;
+    border-bottom: 2px solid black;
+}
+
+.text-box{
+    position: absolute;
+    bottom: 2vh;
+    left: 1vh;
+    right: 1vh;
+    height: 4vh;
+    border: 2px solid black;
+    border-radius: 1vh;  
+}
+
+.message-input{
+    font-size: 3vh;
+    border-radius: 1vh;
+    width: 85%;
+    border: none;
+    height: 100%;
+    padding: 0 8.8vh 0 1vh;
+}
+
+.send-button{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 8vh;
+    border-radius: 1vh;
+    font-size: 2vh;
+    background-color: cornflowerblue;
+}
+
 .search-meeting-spots a{
     position: absolute;
     color: black;
