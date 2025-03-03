@@ -1,10 +1,7 @@
 from meetup_point.models import Address
 import googlemaps
 from dotenv import load_dotenv
-import os
-# Load environment variables from the .env file (if present)
-load_dotenv(verbose=True, override=True)
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
+from django.conf import settings
 
 def calculate_midpoint(lat1, lng1, lat2, lng2):
     """
@@ -40,10 +37,7 @@ def get_nearby_places(lat, lng, place_type):
     """Uses Google Places API to find cafes & restaurants near the midpoint."""
 
     try:
-        api_key = os.getenv('GOOGLE_API_KEY')
-        if not api_key:
-            raise ValueError("Google Maps API key not found in environment variables")
-
+        api_key = settings.GOOGLE_API_KEY
         # Initialize the Google Maps client
         gmaps = googlemaps.Client(key=api_key)
         places_result = gmaps.places_nearby(
@@ -52,16 +46,17 @@ def get_nearby_places(lat, lng, place_type):
             type=place_type  # "cafe|restaurant"
         )
 
-        places = []
-        for place in places_result.get("results", []):
-            places.append({
-                "name": place["name"],
-                "address": place.get("vicinity", "No address available"),
-                "lat": place["geometry"]["location"]["lat"],
-                "lng": place["geometry"]["location"]["lng"]
-            })
+        # places = []
+        # for place in places_result.get("results", []):
+        #     places.append({
+        #         "name": place["name"],
+        #         "address": place.get("vicinity", "No address available"),
+        #         "place_id": place["place_id"],
+        #         "lat": place["geometry"]["location"]["lat"],
+        #         "lng": place["geometry"]["location"]["lng"]
+        #     })
 
-        return places
+        return places_result["results"]
     except Exception as e:
         print(e)
         return False
