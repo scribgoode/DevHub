@@ -24,7 +24,7 @@ class Engineer(AbstractUser):
     dob = models.DateField(default=date.today)
     country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True) 
     city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True)
-    elevator_pitch = models.FileField(upload_to=video_upload_path, null=True)
+    elevator_pitch = models.FileField(upload_to=video_upload_path, null=True, blank=True)
     # userlist=keylist save to db
     # userList = [test1, test2, test3]
 

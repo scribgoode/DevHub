@@ -12,14 +12,18 @@
     <div class="container">
         <div class="head">
             <h1><a href="/">ProjectPals</a></h1>
-            {% if user.is_authenticated and request.path == '/my-profile/'%}
+            {% if user.is_authenticated and request.path == '/my-profile/' %}
                 <form id="login-form" action="{% url 'account_logout' %}" method="get">
-                    <button type="submit" id="loginLink">Logout</button>
+                    <button type="submit" id="loginLink" >Logout</button>
                 </form>
-            {% elif user.is_authenticated %}
+                <div class="spacer2"></div>
+                <button type="submit" id="loginLink" class="message-button">&#9993;</button>
+            {% elif user.is_authenticated and request.path != '/my-profile/' %}
                 <form id="login-form" action="my-profile" method="get">
-                    <button type="submit" id="loginLink">My Profile</button>
+                    <button type="submit" id="loginLink" >My Profile</button>
                 </form>
+                <div class="spacer2"></div>
+                <button type="submit" id="loginLink" class="message-button">&#9993;</button>
             {% else %}
                 <form id="login-form" action="{% url 'account_login' %}" method="get">
                     <button type="submit" id="loginLink">Login</button>

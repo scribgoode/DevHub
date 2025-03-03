@@ -40,7 +40,9 @@
 
             <div class="projects-and-requests">
                 <div class="projects">
-                    <header>Projects</header>
+                    <div class="projects-header">Projects
+                        <button id="add-project">&#43;</button>
+                    </div>
                 </div>
                 <div class="spacer"></div>
                 <div class="incoming-meeting-invites">
@@ -79,7 +81,19 @@
             <div class="dm-list">dm list</div>
             <div class="chat-box">select user from button list</div>
         </div>
-{% endblock %}
+
+<script>
+    console.log('loaded')
+    let button = document.querySelector('.message-button')
+    console.log(button)
+    document.querySelector('.message-button').addEventListener('click', function() {
+        console.log('heck')
+        let div = document.querySelector('.chat-header');
+        let div2 = document.querySelector('.chat-background');
+        div.style.display = div.style.display === 'none' ? 'block': 'none';
+        div2.style.display = div2.style.display === 'none' ? 'flex': 'none';
+    });
+</script>
 
 
 {{user.id|json_script:"user_id"}}
@@ -224,4 +238,5 @@
         }
     }
 </script>
+{% endblock %}
 </html>

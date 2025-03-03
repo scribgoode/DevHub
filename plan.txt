@@ -111,3 +111,4 @@ you can accrue a lot of costs from opening a lot of websocket connections)(make 
 
 UI Buffs
 -make projects on my profile where you can add multiple projects, the project you want to display, the projects you want to show on your profile, and the ability to add people to projects
+-ability to favorite profiles incase you want to send a meeting request to them later
