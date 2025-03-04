@@ -310,6 +310,10 @@ transform: scale(1.05) translateY(.125rem);
     border: 2px solid black;
 }
 
+.hidden{
+    display:none;
+}
+
 #text-chat-header{
     font-size: 5vh;
     height: 6vh;
@@ -332,11 +336,18 @@ transform: scale(1.05) translateY(.125rem);
     flex: 1 1 33%;
     height: 100%;
     border-right: 5px solid black;
+    overflow-y: auto;    /* Enables vertical scrolling */
+    overflow-x: hidden;
 }
 
 #contacts-header{
     font-size: 3vh;
     border-bottom: 5px solid black;
+}
+
+#contact-button{
+    width: 100%;
+    height: 7%;
 }
 
 #messages{
@@ -347,6 +358,44 @@ transform: scale(1.05) translateY(.125rem);
 #messages-header{
     font-size: 6vh;
     border-bottom: 2px solid black;
+}
+
+.messages-box{
+    display: flex;
+    flex-direction: column;
+    top: 6vh;
+    bottom: 6vh;
+    left: 0vh;
+    right: 0vh;
+    height: 80%;
+    overflow-y: auto;    /* Enables vertical scrolling */
+    overflow-x: hidden; 
+}
+
+.user-message{
+    height: auto; 
+    background-color: cornflowerblue;
+    width: max-content;
+    max-width: 40vh;
+    word-wrap: break-word; /* Break words if too long */
+    overflow-wrap: break-word;
+    padding: 1vh;
+    border-radius: 1vh;
+    margin-left: auto;
+    margin-top: 1vh;
+    margin-right: 1vh;
+}
+
+.contact-message{
+    background-color: gainsboro;
+    width: max-content;
+    max-width: 40vh;
+    padding: 1vh;
+    border-radius: 1vh;
+    margin-top: 1vh;
+    word-wrap: break-word; /* Break words if too long */
+    overflow-wrap: break-word;
+    margin-left: 1vh;
 }
 
 .text-box{
@@ -362,7 +411,7 @@ transform: scale(1.05) translateY(.125rem);
 .message-input{
     font-size: 3vh;
     border-radius: 1vh;
-    width: 85%;
+    width: 84.8%;
     border: none;
     height: 100%;
     padding: 0 8.8vh 0 1vh;
