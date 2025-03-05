@@ -212,7 +212,7 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 #elevator-pitch-video {
-    width: 32.2%;
+    width: 32%;
     height: 18%;
     background-color: black;
 }
@@ -227,6 +227,8 @@ transform: scale(1.05) translateY(.125rem);
 .profile-info {
     flex: 28%;
     background-color: white;
+    border-right: 0.5vh solid black;
+    border-top: 0.5vh solid black;
 }
 
 .spacer{
@@ -238,8 +240,8 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .meetings-list{
-    background-color: whitesmoke;
-    flex: 39%;
+    background-color: white;
+    flex: 40%;
     border: 0.5vh solid black;
 }
 
@@ -250,8 +252,8 @@ transform: scale(1.05) translateY(.125rem);
 .projects{
     display: flex;
     background-color: white;
-    height: 25vh;
-    flex: 61%;
+    height: 51vh;
+    flex: 59%;
     border: 0.5vh solid black;
 }
 
@@ -271,24 +273,30 @@ transform: scale(1.05) translateY(.125rem);
 
 /* meeting request */
 .meeting-request-form {
-    background-color: whitesmoke;
+    background-color: white;
     margin-left: 65%;
 }
 
+.incoming-and-sent-invites{
+    display: flex;
+    flex-direction: column;
+    flex: 40%;
+}
+
 .incoming-meeting-invites{
-    background-color: whitesmoke;
-    flex: 19.5%;
+    background-color: white;
     border: 0.5vh solid black;
+    height: 25vh;
 }
 
 .sent-meeting-invites{
-    background-color: whitesmoke;
-    flex: 19.5%;
+    background-color: white;
     border: 0.5vh solid black;
+    height: 25vh;
 }
 
 .warning{
-    background-color: whitesmoke;
+    background-color: white;
     height: 100px;
     width: 300px;
     margin-left: 66%;

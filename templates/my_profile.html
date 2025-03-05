@@ -30,9 +30,9 @@
         <header>Upcoming Meetings</header>
         {% for meeting in meetings %}
         {% if meeting.sender.id == user.id %}
-            <a href="video_chat/{{ meeting.room_token }}">You and {{ meeting.recipient.first_name }}'s video meeting</a><br>
+            <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at video chat</a><br>
         {% else %}
-            <a href="video_chat/{{ meeting.room_token }}"> You and {{ meeting.sender.first_name }}'s video meeting</a><br>
+            <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at video chat</a><br>
         {% endif %}
         {% endfor %}
     </div>
@@ -45,26 +45,28 @@
         </div>
     </div>
     <div class="spacer"></div>
-    <div class="incoming-meeting-invites">
-        <header>Incoming Meeting Invites</header>
-        {% for meeting_request in meeting_requests %}
-        {% if meeting_request.status == "pending" %}
-            {% if meeting_request.sender.id != user.id %}
-                <p>{{ meeting_request.sender.first_name }} wants to meet with you</p>
-                <form class="meeting-request-decision" method="post">
-                    <input type="hidden" name="form_type" value="meeting_request_decision">
-                    {% csrf_token %}
-                    <input type="hidden" name="meeting_request_sender_id" value="{{ meeting_request.sender.id }}">
-                    <input type="hidden" name="meeting_request_recipient_id" value="{{ meeting_request.recipient.id }}">
-                    <button type="submit">Accept</button>
-                    <button type="submit" name="decline" value="reject">Decline</button>
-                </form>
+    <div class="incoming-and-sent-invites">
+        <div class="incoming-meeting-invites">
+            <header>Incoming Meeting Invites</header>
+            {% for meeting_request in meeting_requests %}
+            {% if meeting_request.status == "pending" %}
+                {% if meeting_request.sender.id != user.id %}
+                    <p>{{ meeting_request.sender.first_name }} wants to meet with you</p>
+                    <form class="meeting-request-decision" method="post">
+                        <input type="hidden" name="form_type" value="meeting_request_decision">
+                        {% csrf_token %}
+                        <input type="hidden" name="meeting_request_sender_id" value="{{ meeting_request.sender.id }}">
+                        <input type="hidden" name="meeting_request_recipient_id" value="{{ meeting_request.recipient.id }}">
+                        <button type="submit">Accept</button>
+                        <button type="submit" name="decline" value="reject">Decline</button>
+                    </form>
+                {% endif %}
             {% endif %}
-        {% endif %}
-        {% endfor %}
-    </div>
-    <div class="sent-meeting-invites">
-        <header>Sent Meeting Invites</header>
+            {% endfor %}
+        </div>
+        <div class="sent-meeting-invites">
+            <header>Sent Meeting Invites</header>
+        </div>
     </div>
 </div>
 
