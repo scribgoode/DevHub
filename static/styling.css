@@ -212,7 +212,7 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 #elevator-pitch-video {
-    width: 32.2%;
+    width: 32%;
     height: 18%;
     background-color: black;
 }
@@ -227,6 +227,8 @@ transform: scale(1.05) translateY(.125rem);
 .profile-info {
     flex: 28%;
     background-color: white;
+    border-right: 0.5vh solid black;
+    border-top: 0.5vh solid black;
 }
 
 .spacer{
@@ -238,8 +240,8 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .meetings-list{
-    background-color: whitesmoke;
-    flex: 39%;
+    background-color: white;
+    flex: 40%;
     border: 0.5vh solid black;
 }
 
@@ -250,8 +252,8 @@ transform: scale(1.05) translateY(.125rem);
 .projects{
     display: flex;
     background-color: white;
-    height: 25vh;
-    flex: 61%;
+    height: 51vh;
+    flex: 59%;
     border: 0.5vh solid black;
 }
 
@@ -271,29 +273,167 @@ transform: scale(1.05) translateY(.125rem);
 
 /* meeting request */
 .meeting-request-form {
-    background-color: whitesmoke;
+    background-color: white;
     margin-left: 65%;
 }
 
+.incoming-and-sent-invites{
+    display: flex;
+    flex-direction: column;
+    flex: 40%;
+}
+
 .incoming-meeting-invites{
-    background-color: whitesmoke;
-    flex: 19.5%;
+    background-color: white;
     border: 0.5vh solid black;
+    height: 25vh;
 }
 
 .sent-meeting-invites{
-    background-color: whitesmoke;
-    flex: 19.5%;
+    background-color: white;
     border: 0.5vh solid black;
+    height: 25vh;
 }
 
 .warning{
-    background-color: whitesmoke;
+    background-color: white;
     height: 100px;
     width: 300px;
     margin-left: 66%;
     margin-top: 25%;
     position: absolute;
+}
+
+.text-chat{
+    position: fixed;
+    width: 100vh;
+    height:82vh;
+    background-color: white;
+    margin-left: auto;
+    z-index: 1000;
+    top: 11vh;
+    right: 10vh;
+    border-radius: 1%;
+    box-shadow: 30px 30px 40px 10px rgba(0, 0, 0, 0.7);
+    border: 2px solid black;
+}
+
+.hidden{
+    display:none;
+}
+
+#text-chat-header{
+    font-size: 5vh;
+    height: 6vh;
+    background-color: cornflowerblue;
+    border-radius: 1%;
+    border-bottom: 2px solid black;
+    font-weight: bold;
+}
+
+.contacts-and-messages{
+    top: 6vh;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+}
+
+#contacts{
+    flex: 1 1 33%;
+    height: 100%;
+    border-right: 5px solid black;
+    overflow-y: auto;    /* Enables vertical scrolling */
+    overflow-x: hidden;
+}
+
+#contacts-header{
+    font-size: 3vh;
+    border-bottom: 5px solid black;
+}
+
+#contact-button{
+    width: 100%;
+    height: 7%;
+}
+
+#messages{
+    position: relative; /* needed to the child elements will position themselves relative to itself */
+    flex: 1 1 67%;
+}
+
+#messages-header{
+    font-size: 6vh;
+    border-bottom: 2px solid black;
+}
+
+.messages-box{
+    display: flex;
+    flex-direction: column;
+    top: 6vh;
+    bottom: 6vh;
+    left: 0vh;
+    right: 0vh;
+    height: 80%;
+    overflow-y: auto;    /* Enables vertical scrolling */
+    overflow-x: hidden; 
+}
+
+.user-message{
+    height: auto; 
+    background-color: cornflowerblue;
+    width: max-content;
+    max-width: 40vh;
+    word-wrap: break-word; /* Break words if too long */
+    overflow-wrap: break-word;
+    padding: 1vh;
+    border-radius: 1vh;
+    margin-left: auto;
+    margin-top: 1vh;
+    margin-right: 1vh;
+}
+
+.contact-message{
+    background-color: gainsboro;
+    width: max-content;
+    max-width: 40vh;
+    padding: 1vh;
+    border-radius: 1vh;
+    margin-top: 1vh;
+    word-wrap: break-word; /* Break words if too long */
+    overflow-wrap: break-word;
+    margin-left: 1vh;
+}
+
+.text-box{
+    position: absolute;
+    bottom: 2vh;
+    left: 1vh;
+    right: 1vh;
+    height: 4vh;
+    border: 2px solid black;
+    border-radius: 1vh;  
+}
+
+.message-input{
+    font-size: 3vh;
+    border-radius: 1vh;
+    width: 84.8%;
+    border: none;
+    height: 100%;
+    padding: 0 8.8vh 0 1vh;
+}
+
+.send-button{
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 8vh;
+    border-radius: 1vh;
+    font-size: 2vh;
+    background-color: cornflowerblue;
 }
 
 .search-meeting-spots a{
