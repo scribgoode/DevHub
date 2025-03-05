@@ -1,4 +1,5 @@
 from meetup_point.models import Address
+from cities_light.models import City, Country
 import googlemaps
 from dotenv import load_dotenv
 from django.conf import settings
@@ -19,11 +20,26 @@ def calculate_midpoint(lat1, lng1, lat2, lng2):
     return {'lat': midpoint_lat, 'lng': midpoint_lng}
 
 def saveAddress(data):
+    # Look up the City object based on the provided city name and country name
+    city_name = data.get("city")
+    country_name = data.get("country")
+
+    try:
+        country = Country.objects.get(name=country_name)
+        city = City.objects.get(name=city_name, country=country)
+    except Country.DoesNotExist:
+        print(f"Country '{country_name}' does not exist.")
+        return None
+    except City.DoesNotExist:
+        print(f"City '{city_name}' in country '{country_name}' does not exist.")
+        return None
+
     new_address = Address(
         street=data.get("street"),
-        city=data.get("city"),
+        city=city,
         state=data.get("state"),
         zip_code=data.get("zipcode"),
+        country=country
     )
     print("before verify_address()")
     if new_address.verify_address():
@@ -32,6 +48,7 @@ def saveAddress(data):
         return new_address
     else:
         print("Address is invalid -- not saving to database")
+        return None
 
 def get_nearby_places(lat, lng, place_type):
     """Uses Google Places API to find cafes & restaurants near the midpoint."""

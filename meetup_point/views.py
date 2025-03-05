@@ -40,6 +40,8 @@ def find_halfway_view(request):
             if addressOne and addressTwo:
                 midpoint = calculate_midpoint(addressOne.lat, addressOne.lng, addressTwo.lat, addressTwo.lng)
                 print("midpoint:", midpoint)
+            else:
+                return JsonResponse({"error": "Invalid address data"}, status=400)
             #midpoint = {"lat": 41.8907275, "lng": -87.64590630000001}
             # Fetch nearby places (cafes/restaurants)
             #nearby_places = get_nearby_places(midpoint["lat"], midpoint["lng"], "cafe|restaurant")
