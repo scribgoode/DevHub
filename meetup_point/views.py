@@ -31,7 +31,10 @@ def find_halfway_view(request):
     if request.method == "POST":
         try:
             data = json.loads(request.body)
-            
+
+            x = data.get("addressOne")
+            print("x:", x.get("city"))
+
             addressOne = saveAddress(data.get("addressOne"))
             addressTwo = saveAddress(data.get("addressTwo"))
 
@@ -139,21 +142,10 @@ def get_directions_view(request):
 
     # Use the helper function
     response = get_directions(origin, destination)
-    request_orig = {
-        "lat": 41.8747,
-        "lng": -87.6486
-    }
-    response_request = get_directions(request_orig, destination)
 
     # Check response
-    if response.status_code == 200 and response_request.status_code == 200:
-        route_user_data = response.json()
-        route_request_data = response_request.json()
-        route_data = {
-            "user_route": route_user_data.get("routes", []),
-            "request_route": route_request_data.get("routes", [])
-        }
-        return JsonResponse(route_data)
+    if response.status_code == 200:
+        return JsonResponse(response.json())
     else:   
         print(f"Error: {response.status_code}")
         print(response.text)

@@ -24,7 +24,7 @@
         <form class= "meeting-request-form" method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit">Send Meeting Request</button>
+            <button type="submit" id="send-meeting-request" onclick="sendMeetingRequest()">Send Meeting Request</button>
         </form>
         {% if messages %}
             <ul class="messages">
@@ -52,7 +52,7 @@
 
 {{profile.id|json_script:"profile_id"}}
 {{user.id|json_script:"sender_id"}}
-{{ user.is_authenticated|json_script:"is_authenticated" }};
+{{user.is_authenticated|json_script:"is_authenticated" }};
 
 <script>
     const is_authenticated = JSON.parse(document.getElementById('is_authenticated').textContent);
@@ -71,16 +71,31 @@
         const chatbox = document.querySelector('.chat-box');
 
         const profile_id = JSON.parse(document.getElementById('profile_id').textContent);
+        let profile_user = new Object();
+        // get profile user info
+        fetch(`/api/get-profile/${profile_id}?format=json`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('data:', data.address);
+                profile_user.first_name = data.first_name;
+                profile_user.last_name = data.last_name;
+                profile_user.email = data.email;
+                profile_user.id = data.id;
+                profile_user.address = data.address;
+            });
+
         const sender_id = JSON.parse(document.getElementById('sender_id').textContent);
         let current_user = new Object();
         // get current logged in user info
         fetch(`/api/get-profile/${sender_id}?format=json`)
             .then(response => response.json())
             .then(data => {
+                console.log('data:', data.address);
                 current_user.first_name = data.first_name;
                 current_user.last_name = data.last_name;
                 current_user.email = data.email;
                 current_user.id = data.id;
+                current_user.address = data.address;
             });
         
         // render chat history
@@ -158,6 +173,29 @@
             if (message.trim() !== '') {
                 socket.send(JSON.stringify({"text": everything}));
                 messageInput.value = '';
+            }
+        }
+
+        function sendMeetingRequest() {
+            console.log('Current User Address:', current_user.address);
+            console.log('Profile Address:', profile_user.address);
+
+            // to-do: logic if no addrss is attacted to the profiles
+            if (current_user.address && profile_user.address) {
+                fetch('/meetup_point/find_halfway', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "addressOne": current_user.address,
+                        "addressTwo": profile_user.address
+                    })
+                }).then(response => response.json())
+                  .then(data => {
+                    window.location.href = data.redirect_url;
+                  })
+                  .catch(error => console.error('Error:', error));
             }
         }
     } else {

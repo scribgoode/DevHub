@@ -21,27 +21,50 @@ def calculate_midpoint(lat1, lng1, lat2, lng2):
 
 def saveAddress(data):
     # Look up the City object based on the provided city name and country name
-    city_name = data.get("city")
-    country_name = data.get("country")
-
+    
+    city = data.get("city")
+    country = data.get("country")
+    print("data:", data)
+    print("country:",country.get("name"))
     try:
-        country = Country.objects.get(name=country_name)
-        city = City.objects.get(name=city_name, country=country)
+        country = Country.objects.get(name=country.get("name"))
+        print('got country;')
+        city = City.objects.get(name=city.get("name"), country=country)
+        print('got city;')
     except Country.DoesNotExist:
-        print(f"Country '{country_name}' does not exist.")
+        print(f"Country '{country.get("name")}' does not exist.")
         return None
     except City.DoesNotExist:
-        print(f"City '{city_name}' in country '{country_name}' does not exist.")
+        print(f"City '{city.get("name")}' in country '{country.get("name")}' does not exist.")
+        return None
+    except Exception as e:
+        print(e)
         return None
 
+    # Check if the address already exists in the database
+    existing_address = Address.objects.filter(
+        street=data.get("street"),
+        city=city,
+        state=data.get("state"),
+        zip_code=data.get("zip_code"),
+        country=country
+    ).first()
+
+    print("exist:", existing_address)
+
+    if existing_address and existing_address.verify_address():
+        print("Address already exists in the database")
+        return existing_address
+    
+    # Create a new Address object
     new_address = Address(
         street=data.get("street"),
         city=city,
         state=data.get("state"),
-        zip_code=data.get("zipcode"),
+        zip_code=data.get("zip_code"),
         country=country
     )
-    print("before verify_address()")
+
     if new_address.verify_address():
         print("Address is valid -- saving to database")
         new_address.save()

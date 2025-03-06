@@ -1,16 +1,35 @@
 from rest_framework import serializers
 from text_chat.models import Room, Message
 from accounts.models import Engineer
+from meetup_point.models import Address
+from cities_light.models import City, Country
+
+class CountrySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Country
+        fields = ['id', 'name']
+
+class CitySerializer(serializers.ModelSerializer):
+    country = CountrySerializer()
+
+    class Meta:
+        model = City
+        fields = ['id', 'name', 'country']
+
+class AddressSerializer(serializers.ModelSerializer):
+    city = CitySerializer()
+    country = CountrySerializer()
+
+    class Meta:
+        model = Address
+        fields = ['street', 'city', 'state', 'zip_code', 'country', 'lat', 'lng']
 
 class EngineerSerializer(serializers.ModelSerializer):
+    address = AddressSerializer()
+
     class Meta:
         model = Engineer
-        fields = (
-            'first_name',
-            'last_name',
-            'email',
-            'id',
-        )
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'status', 'current_project', 'dob', 'country', 'city', 'elevator_pitch', 'address']
 
 class RoomSerializer(serializers.ModelSerializer):
     users = EngineerSerializer(many=True)

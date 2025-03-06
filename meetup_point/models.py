@@ -18,6 +18,7 @@ class Address(models.Model):
         return f"{self.street}, {self.city.name if self.city else ''}, {self.state} {self.zip_code}, {self.country.name if self.country else ''}"
 
     def verify_address(self):
+        print('here')
         # Get the Google Maps API key from environment variables
         try:
             api_key = settings.GOOGLE_API_KEY
@@ -44,6 +45,7 @@ class Address(models.Model):
                 return False
             
             # Get latitude and longitude
+            print("validation_result:", validation_result[0]['geometry']['location'])
             self.lat = validation_result[0]['geometry']['location']['lat']
             self.lng = validation_result[0]['geometry']['location']['lng']
 
@@ -52,6 +54,7 @@ class Address(models.Model):
             if not reverse_results or "street_number" not in {comp["types"][0] for comp in reverse_results[0]["address_components"]}:
                 return False
 
+            self.save()
             return True
         except Exception as e:
             print(e)
