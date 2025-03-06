@@ -78,7 +78,7 @@ transform: scale(1.05) translateY(.125rem);
 
 .row {
     height: 50px;
-    background-color: #ffffff;
+    background-color: #fff;
     padding: 10px;
     margin: 5px 0;
     border-radius: 5px;
@@ -112,7 +112,7 @@ transform: scale(1.05) translateY(.125rem);
     padding: 5px; 
     margin: 2px;
     background-color:black;
-    color:white;
+    color:#fff;
     font-weight: bold;
 }
 
@@ -154,31 +154,36 @@ transform: scale(1.05) translateY(.125rem);
 .table-row .status, .table-row .name, .table-row .location, .table-row .current-projects, .table-row .meeting-preferences{
     padding: 5px;
     margin: 2px;;
-    background-color: whitesmoke;
+    background-color: #fff;
     border-radius: 5px;
 }
 
 .table-row .status{
     flex: 10%;
     text-align: center;
+    background-color: #fff;
 }
 
 .table-row .name{
     flex: 20%;
+    background-color: #fff;
 }
 
 .table-row .location{
     flex: 20%;
+    background-color: #fff;
 }
 
 .table-row .current-projects{
     flex: 40%;
     overflow-y: auto;
     scroll-behavior: smooth;
+    background-color: #fff;
 }
 
 .table-row .meeting-preferences{
     flex: 10%;
+    background-color: #fff;
 }
 
 .table-row-box a{
@@ -194,7 +199,7 @@ transform: scale(1.05) translateY(.125rem);
     position: absolute;
     width: 1020px;
     height: 250px;
-    background-color: whitesmoke;
+    background-color: #fff;
 }
 
 .profile-data{
@@ -226,7 +231,7 @@ transform: scale(1.05) translateY(.125rem);
 
 .profile-info {
     flex: 28%;
-    background-color: white;
+    background-color: #fff;
     border-right: 0.5vh solid black;
     border-top: 0.5vh solid black;
 }
@@ -240,9 +245,32 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .meetings-list{
-    background-color: white;
+    background-color: #fff;
     flex: 40%;
     border: 0.5vh solid black;
+}
+
+.upcoming-meetings-box{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;    /* Enables vertical scrolling */
+    overflow-x: hidden;
+    height: 20vh;
+}
+
+.meetings-row{
+    height: 5vh;
+    border-top: 0.5vh solid black;
+    border-bottom: 0.5vh solid black;
+    padding: 0.5vh;
+    text-align: center;
+    font-size: 2vh;
+}
+
+.meeting-headers{
+    font-weight: bold;
+    font-size: 3vh;
+    border-bottom: 0.5vh solid black;
 }
 
 .projects-and-requests{
@@ -251,14 +279,14 @@ transform: scale(1.05) translateY(.125rem);
 
 .projects{
     display: flex;
-    background-color: white;
+    background-color: #fff;
     height: 51vh;
     flex: 59%;
     border: 0.5vh solid black;
 }
 
 .projects-header{
-    height: 20%;
+    height: 10%;
     width: 100%;
     border-bottom: 0.5vh solid black;
     font-size: 4vh;
@@ -273,7 +301,7 @@ transform: scale(1.05) translateY(.125rem);
 
 /* meeting request */
 .meeting-request-form {
-    background-color: white;
+    background-color: #fff;
     margin-left: 65%;
 }
 
@@ -284,19 +312,39 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .incoming-meeting-invites{
-    background-color: white;
+    background-color: #fff;
     border: 0.5vh solid black;
     height: 25vh;
+}
+
+.incoming-meetings-box{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;    /* Enables vertical scrolling */
+    overflow-x: hidden;
+    height: 20vh;
 }
 
 .sent-meeting-invites{
-    background-color: white;
+    background-color: #fff;
     border: 0.5vh solid black;
     height: 25vh;
 }
 
+.meetings-popup{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 40vh;
+    width: 90vh;
+    background-color: #fff;
+    border: 0.5vh solid black;
+    display: none;
+}
+
 .warning{
-    background-color: white;
+    background-color: #fff;
     height: 100px;
     width: 300px;
     margin-left: 66%;
@@ -308,7 +356,7 @@ transform: scale(1.05) translateY(.125rem);
     position: fixed;
     width: 100vh;
     height:82vh;
-    background-color: white;
+    background-color: #fff;
     margin-left: auto;
     z-index: 1000;
     top: 11vh;
@@ -453,7 +501,7 @@ transform: scale(1.05) translateY(.125rem);
     width: 1020px;
     height: 250px;
     /*display: flex;   Makes the container a flex container */
-    background-color: whitesmoke;
+    background-color:#fff;
     border: 2px dotted #000;
     display: none;   
 }
@@ -560,7 +608,7 @@ video {
 
 button[aria-checked="false"] {
 	text-decoration: line-through;
-	color: white;
+	color: #fff;
 	background: red;
 }
 
@@ -605,12 +653,13 @@ figcaption {
     padding: 5px 10px;
     transition: transform 0.05s ease-in-out;
     margin-right: 10px;
+    background-color: #fff;
 }
 
 .status-filter-content{
     display: none;
     position: absolute;
-    background-color: white;
+    background-color: #fff;
     min-width: 150px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -624,12 +673,13 @@ figcaption {
     padding: 5px 10px;
     transition: transform 0.05s ease-in-out;
     margin-right: 10px;
+    background-color: #fff;
 }
 
 .location-filter-content{
     display: none;
     position: ab;
-    background-color: white;
+    background-color:#fff;
     min-width: 150px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -642,6 +692,7 @@ figcaption {
     padding: 5px 10px;
     transition: transform 0.05s ease-in-out;
     margin-right: 10px;
+    background-color: #fff;
 }
 
 .status-filter:active, .location-filter:active, #meeting-preferences-filter:active {

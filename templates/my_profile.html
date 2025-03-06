@@ -27,14 +27,35 @@
     </div>
     <div class="spacer"></div>
     <div class="meetings-list">
-        <header>Upcoming Meetings</header>
-        {% for meeting in meetings %}
-        {% if meeting.sender.id == user.id %}
-            <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at video chat</a><br>
-        {% else %}
-            <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at video chat</a><br>
-        {% endif %}
-        {% endfor %}
+        <header class="meeting-headers">Upcoming Meetings</header>
+        <div class="upcoming-meetings-box">
+                {% comment %} {% for meeting in meetings %}
+                {% if meeting.sender.id == user.id %}
+                    <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at video chat</a><br>
+                {% else %}
+                    <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at video chat</a><br>
+                {% endif %}
+                {% endfor %} {% endcomment %}
+                {% for meeting in meetings %}
+                <button class="meetings-row" data-id="{{meeting.id}}">
+                {% if meeting.sender.id == user.id %}
+                    {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at video chat
+                {% else %}
+                    {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at video chat
+                <div class="meetings-popup" id="meetings-popup-{{meeting.id}}">
+                    <h1>{{meeting.sender}} and {{meeting.recipient}}'s Meeting Information
+                    <p>Time: {{meeting.start_time}} - {{meeting.end_time}}</p>
+                    <p>Description: {{meeting.description}}</p>
+                    {% if meeting.type == 'video' %}
+                        <p>Location: <a href="video_chat/{{ meeting.room_token }}">{{meeting.type}}</a></p>
+                    {% elif meeting.type == 'in-person' %}
+                        <p>Location: location to be added when meeting algorithom done </p>
+                    {% endif %}
+                </div>
+                {% endif %}
+                {% endfor %}
+            </button>
+        </div>
     </div>
 </div>
 
@@ -47,11 +68,15 @@
     <div class="spacer"></div>
     <div class="incoming-and-sent-invites">
         <div class="incoming-meeting-invites">
-            <header>Incoming Meeting Invites</header>
+            <header class="meeting-headers">Incoming Meeting Invites</header>
+            <div class="incoming-meetings-box">
             {% for meeting_request in meeting_requests %}
             {% if meeting_request.status == "pending" %}
                 {% if meeting_request.sender.id != user.id %}
-                    <p>{{ meeting_request.sender.first_name }} wants to meet with you</p>
+                <button class="meetings-row">
+                    {{ meeting_request.sender.first_name }} wants to meet with you
+                </button> 
+                <div class="meetings-popup" id="meetings-popup">
                     <form class="meeting-request-decision" method="post">
                         <input type="hidden" name="form_type" value="meeting_request_decision">
                         {% csrf_token %}
@@ -60,17 +85,17 @@
                         <button type="submit">Accept</button>
                         <button type="submit" name="decline" value="reject">Decline</button>
                     </form>
+                </div>   
                 {% endif %}
             {% endif %}
             {% endfor %}
+            </div>
         </div>
         <div class="sent-meeting-invites">
-            <header>Sent Meeting Invites</header>
+            <header class="meeting-headers">Sent Meeting Invites</header>
         </div>
     </div>
 </div>
-
-<br>
 
 
 {% comment %} <div class="chat-header">Chat Messages
@@ -86,16 +111,16 @@
 </div> {% endcomment %}
 
 <script>
-    console.log('loaded')
-    let button = document.querySelector('.message-button')
-    console.log(button)
-    document.querySelector('.message-button').addEventListener('click', function() {
-        console.log('heck')
-        let div = document.querySelector('.chat-header');
-        let div2 = document.querySelector('.chat-background');
-        div.style.display = div.style.display === 'none' ? 'block': 'none';
-        div2.style.display = div2.style.display === 'none' ? 'flex': 'none';
+document.addEventListener("DOMContentLoaded", function () {
+    const openButtons = document.querySelectorAll(".meetings-row");
+    openButtons.forEach(button => {
+        button.addEventListener('click', function () {
+        let id = this.getAttribute("data-id");
+        console.log("piggy")
+        document.getElementById(`meetings-popup-${id}`).classList.toggle('hidden');
+        })
     });
+});
 </script>
 
 

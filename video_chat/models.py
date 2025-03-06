@@ -19,6 +19,7 @@ class Meeting(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     status = models.CharField(max_length=50, default='upcoming')
+    type = models.CharField(max_length=50)
     #room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='room')
     #create the room as soon the meeting is created
     #create room token regardless of the meeting type
