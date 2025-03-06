@@ -1,6 +1,7 @@
 from django.contrib import admin
-
 from meetup_point.models import Address
 
-# Register your models here.
-admin.site.register(Address)
+class AddressAdmin(admin.ModelAdmin):
+    list_display = ['street', 'city', 'country']
+
+admin.site.register(Address, AddressAdmin)
