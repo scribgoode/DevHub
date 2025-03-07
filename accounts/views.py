@@ -91,7 +91,6 @@ def myProfile(request):
 @api_view(['GET'])
 @permission_classes([IsAdminUser])  # Only admin users can access this view
 def profile_list(request):
-    print('here')
     profiles = Engineer.objects.all()
     serializer = EngineerSerializer(profiles, many=True)
     return Response(serializer.data)
