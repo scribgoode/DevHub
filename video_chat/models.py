@@ -25,6 +25,7 @@ class Meeting(models.Model):
     #create room token regardless of the meeting type
     room_token = models.CharField(max_length=255, default=generate_random_token(20))
 
+#we need to be sure but we may only need a meeting model for meetings and meeting requests as long as we have enough switches
 class MeetingRequest(models.Model):
     sender = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name='request_sender')
     recipient = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name='request_recipient')

@@ -81,8 +81,10 @@ def myProfile(request):
 
     meetings = Meeting.objects.filter( Q(recipient=request.user) | Q(sender=request.user) )
     meeting_requests = MeetingRequest.objects.filter( Q(recipient=request.user) | Q(sender=request.user) ) #maybe make meeting_requests and sent_meetings_requests
+    sent_meetings = MeetingRequest.objects.filter(sender=request.user)
     context = {'meetings': meetings,
-               'meeting_requests': meeting_requests,}
+               'meeting_requests': meeting_requests,
+               'sent_meetings': sent_meetings}
 
     return render(request, 'my_profile.html', context)
 

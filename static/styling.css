@@ -267,6 +267,15 @@ transform: scale(1.05) translateY(.125rem);
     font-size: 2vh;
 }
 
+.incoming-meetings-row{
+    height: 5vh;
+    border-top: 0.5vh solid black;
+    border-bottom: 0.5vh solid black;
+    padding: 0.5vh;
+    text-align: center;
+    font-size: 2vh;
+}
+
 .meeting-headers{
     font-weight: bold;
     font-size: 3vh;
@@ -331,6 +340,15 @@ transform: scale(1.05) translateY(.125rem);
     height: 25vh;
 }
 
+.sent-meetings-row{
+    height: 5vh;
+    border-top: 0.5vh solid black;
+    border-bottom: 0.5vh solid black;
+    padding: 0.5vh;
+    text-align: center;
+    font-size: 2vh;
+}
+
 .meetings-popup{
     position: absolute;
     top: 50%;
@@ -340,8 +358,19 @@ transform: scale(1.05) translateY(.125rem);
     width: 90vh;
     background-color: #fff;
     border: 0.5vh solid black;
-    display: none;
 }
+
+.incoming-meetings-popup{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 40vh;
+    width: 90vh;
+    background-color: #fff;
+    border: 0.5vh solid black;
+}
+
 
 .warning{
     background-color: #fff;
