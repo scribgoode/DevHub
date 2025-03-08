@@ -12,17 +12,20 @@
         </video>
     {% else %}
         <div class="video-placeholder">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" name="form_type" value="video_upload">
-                <input type="file" name="elevator_pitch" accept="video/*" required>
-                <button type="submit">Upload Video</button>
-            </form>
+            <div class="video-upload-form-container">
+                <form method="post" enctype="multipart/form-data" class="video-upload-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="video_upload">
+                    <input type="file" name="elevator_pitch" accept="video/*" required>
+                    <button type="submit">Upload Video</button>
+                </form>
+            </div>
         </div>
     {% endif %}
     <div class="profile-info">
-        <b>Name: {{user.first_name}}</b>
-        <b>Status: {{user.status}}>>|</b>
+        <p><b>Name:</b> {{user.first_name}}</p>
+        <p><b>Status:</b> {{user.status}}</p>
+        <p><b>City:</b> {{user.city}}</p>
         <button type="submit">Edit Personal Info</button>
     </div>
     <div class="spacer"></div>
@@ -42,9 +45,10 @@
                     {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at video chat
                 {% else %}
                     {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at video chat
+                {% endif %}
                 </button>
                 <div class="meetings-popup hidden" id="meetings-popup-{{meeting.id}}">
-                    <h1>{{meeting.sender}} and {{meeting.recipient}}'s Meeting Information
+                    <p>{{meeting.sender}} and {{meeting.recipient}}'s Meeting Information</p>
                     <p>Time: {{meeting.start_time}} - {{meeting.end_time}}</p>
                     <p>Description: {{meeting.description}}</p>
                     {% if meeting.type == 'video' %}
@@ -53,7 +57,6 @@
                         <p>Location: location to be added when meeting algorithom done </p>
                     {% endif %}
                 </div>
-                {% endif %}
                 {% endfor %}
         </div>
     </div>
@@ -97,14 +100,16 @@
         </div>
         <div class="sent-meeting-invites">
             <header class="meeting-headers">Sent Meeting Invites</header>
-            {% for sent_meeting in sent_meetings %}
-            <button class="sent-meetings-row" data-id="{{sent_meeting.id}}">
-                Meeting sent to {{sent_meeting.recipient}}
-            </button>
-            <div class="sent-meetings-popup hidden" id="sent-meetings-popup-{{meeting.id}}">
-                Status: {{sent_meeting.status}}
+            <div class="sent-meetings-box">
+                {% for sent_meeting in sent_meetings %}
+                <button class="sent-meetings-row" data-id="{{sent_meeting.id}}">
+                    Meeting sent to {{sent_meeting.recipient}}
+                </button>
+                <div class="sent-meetings-popup hidden" id="sent-meetings-popup-{{sent_meeting.id}}">
+                    Status: {{sent_meeting.status}}
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
         </div>
     </div>
 </div>
@@ -137,6 +142,14 @@ document.addEventListener("DOMContentLoaded", function () {
         button.addEventListener('click', function () {
         let id = this.getAttribute("data-id");
         document.getElementById(`incoming-meetings-popup-${id}`).classList.toggle('hidden');
+        })
+    });
+
+    const openButtons3 = document.querySelectorAll(".sent-meetings-row");
+    openButtons3.forEach(button => {
+        button.addEventListener('click', function () {
+        let id = this.getAttribute("data-id");
+        document.getElementById(`sent-meetings-popup-${id}`).classList.toggle('hidden');
         })
     });
 });

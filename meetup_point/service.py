@@ -32,11 +32,11 @@ def saveAddress(data):
         city = City.objects.get(name=city.get("name"), country=country)
         print('got city;')
     except Country.DoesNotExist:
-        print(f"Country '{country.get("name")}' does not exist.")
+        print(f"Country '{country.get('name')}' does not exist.")
         return None
     except City.DoesNotExist:
-        print(f"City '{city.get("name")}' in country '{country.get("name")}' does not exist.")
-        return None
+        print(f"City '{city.get('name')}' in country '{country.get('name')}' does not exist.")
+        return None 
     except Exception as e:
         print(e)
         return None

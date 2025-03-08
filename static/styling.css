@@ -204,6 +204,7 @@ transform: scale(1.05) translateY(.125rem);
 
 .profile-data{
     display: flex;
+    height: 29vh;
 }
 
 .profile-data2{
@@ -222,12 +223,16 @@ transform: scale(1.05) translateY(.125rem);
     background-color: black;
 }
 
-/* .video-placeholder{
-    width: 32.2%;
-    height: 18%;
+.video-placeholder{
+    flex: 32%;
+    /* width: 32.2%;
+    height: 18%; */
     background-color: black;
+}
+
+.video-upload-form-container{
     position: absolute;
-} */
+}
 
 .profile-info {
     flex: 28%;
@@ -340,6 +345,14 @@ transform: scale(1.05) translateY(.125rem);
     height: 25vh;
 }
 
+.sent-meetings-box{
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;    /* Enables vertical scrolling */
+    overflow-x: hidden;
+    height: 20vh;
+}
+
 .sent-meetings-row{
     height: 5vh;
     border-top: 0.5vh solid black;
@@ -371,6 +384,16 @@ transform: scale(1.05) translateY(.125rem);
     border: 0.5vh solid black;
 }
 
+.sent-meetings-popup{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 40vh;
+    width: 90vh;
+    background-color: #fff;
+    border: 0.5vh solid black;
+}
 
 .warning{
     background-color: #fff;
