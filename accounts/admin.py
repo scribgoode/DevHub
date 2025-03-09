@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
 from .forms import CustomUserCreationForm, CustomUserChangeForm
-from .models import Engineer
+from .models import Engineer, Project
 
 #edit this class to change what the admin page looks like
 #field sets is for what the page looks like when you click on it
@@ -19,3 +19,4 @@ class CustomUserAdmin(UserAdmin):
     list_display = ["email", "status"]
 
 admin.site.register(Engineer, CustomUserAdmin)
+admin.site.register(Project)

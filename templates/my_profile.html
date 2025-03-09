@@ -12,17 +12,20 @@
         </video>
     {% else %}
         <div class="video-placeholder">
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                <input type="hidden" name="form_type" value="video_upload">
-                <input type="file" name="elevator_pitch" accept="video/*" required>
-                <button type="submit">Upload Video</button>
-            </form>
+            <div class="video-upload-form-container">
+                <form method="post" enctype="multipart/form-data" class="video-upload-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="video_upload">
+                    <input type="file" name="elevator_pitch" accept="video/*" required>
+                    <button type="submit">Upload Video</button>
+                </form>
+            </div>
         </div>
     {% endif %}
     <div class="profile-info">
-        <b>Name: {{user.first_name}}</b>
-        <b>Status: {{user.status}}>>|</b>
+        <p><b>Name:</b> {{user.first_name}}</p>
+        <p><b>Status:</b> {{user.status}}</p>
+        <p><b>City:</b> {{user.city}}</p>
         <button type="submit">Edit Personal Info</button>
     </div>
     <div class="spacer"></div>
@@ -42,8 +45,10 @@
                     {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at video chat
                 {% else %}
                     {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at video chat
-                <div class="meetings-popup" id="meetings-popup-{{meeting.id}}">
-                    <h1>{{meeting.sender}} and {{meeting.recipient}}'s Meeting Information
+                {% endif %}
+                </button>
+                <div class="meetings-popup hidden" id="meetings-popup-{{meeting.id}}">
+                    <p>{{meeting.sender}} and {{meeting.recipient}}'s Meeting Information</p>
                     <p>Time: {{meeting.start_time}} - {{meeting.end_time}}</p>
                     <p>Description: {{meeting.description}}</p>
                     {% if meeting.type == 'video' %}
@@ -52,9 +57,7 @@
                         <p>Location: location to be added when meeting algorithom done </p>
                     {% endif %}
                 </div>
-                {% endif %}
                 {% endfor %}
-            </button>
         </div>
     </div>
 </div>
@@ -63,6 +66,13 @@
     <div class="projects">
         <div class="projects-header">Projects
             <button id="add-project">&#43;</button>
+        </div>
+        <div class="projects-box">
+            {% for project in projects %}
+            <div class="project-rows">
+                
+            </div>
+            {% endfor %}
         </div>
     </div>
     <div class="spacer"></div>
@@ -73,17 +83,21 @@
             {% for meeting_request in meeting_requests %}
             {% if meeting_request.status == "pending" %}
                 {% if meeting_request.sender.id != user.id %}
-                <button class="meetings-row">
+                <button class="incoming-meetings-row" data-id="{{meeting_request.id}}">
                     {{ meeting_request.sender.first_name }} wants to meet with you
                 </button> 
-                <div class="meetings-popup" id="meetings-popup">
+                <div class="incoming-meetings-popup hidden" id="incoming-meetings-popup-{{meeting_request.id}}">
+                    {{ meeting_request.sender.first_name }} want to me with you!
+                    <p>Proposed Time: {{meeting_request.start_time}} - {{ meeting_request.end_time }}</p>
+                    <p>Message: {{meeting_request.message}}</p>
+                    <p>Location: location to be added when meeting algorithom done</p>
                     <form class="meeting-request-decision" method="post">
                         <input type="hidden" name="form_type" value="meeting_request_decision">
                         {% csrf_token %}
                         <input type="hidden" name="meeting_request_sender_id" value="{{ meeting_request.sender.id }}">
                         <input type="hidden" name="meeting_request_recipient_id" value="{{ meeting_request.recipient.id }}">
                         <button type="submit">Accept</button>
-                        <button type="submit" name="decline" value="reject">Decline</button>
+                        <button type="submit" name="decline" value="reject">Decline</button> <!--add in way to decline the meeting but send back meeting request with new details-->
                     </form>
                 </div>   
                 {% endif %}
@@ -93,6 +107,16 @@
         </div>
         <div class="sent-meeting-invites">
             <header class="meeting-headers">Sent Meeting Invites</header>
+            <div class="sent-meetings-box">
+                {% for sent_meeting in sent_meetings %}
+                <button class="sent-meetings-row" data-id="{{sent_meeting.id}}">
+                    Meeting sent to {{sent_meeting.recipient}}
+                </button>
+                <div class="sent-meetings-popup hidden" id="sent-meetings-popup-{{sent_meeting.id}}">
+                    Status: {{sent_meeting.status}}
+                </div>
+                {% endfor %}
+            </div>
         </div>
     </div>
 </div>
@@ -116,8 +140,23 @@ document.addEventListener("DOMContentLoaded", function () {
     openButtons.forEach(button => {
         button.addEventListener('click', function () {
         let id = this.getAttribute("data-id");
-        console.log("piggy")
         document.getElementById(`meetings-popup-${id}`).classList.toggle('hidden');
+        })
+    });
+
+    const openButtons2 = document.querySelectorAll(".incoming-meetings-row");
+    openButtons2.forEach(button => {
+        button.addEventListener('click', function () {
+        let id = this.getAttribute("data-id");
+        document.getElementById(`incoming-meetings-popup-${id}`).classList.toggle('hidden');
+        })
+    });
+
+    const openButtons3 = document.querySelectorAll(".sent-meetings-row");
+    openButtons3.forEach(button => {
+        button.addEventListener('click', function () {
+        let id = this.getAttribute("data-id");
+        document.getElementById(`sent-meetings-popup-${id}`).classList.toggle('hidden');
         })
     });
 });
