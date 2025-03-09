@@ -1,7 +1,7 @@
 from django.views.generic import TemplateView
 from django.template.loader import get_template
 from django.shortcuts import render, get_object_or_404, get_list_or_404
-from .models import Engineer
+from .models import Engineer, Project
 from cities_light.models import City
 from text_chat.models import Room, Message
 from video_chat.models import Meeting, MeetingRequest
@@ -82,9 +82,11 @@ def myProfile(request):
     meetings = Meeting.objects.filter( Q(recipient=request.user) | Q(sender=request.user) )
     meeting_requests = MeetingRequest.objects.filter( Q(recipient=request.user) | Q(sender=request.user) ) #maybe make meeting_requests and sent_meetings_requests
     sent_meetings = MeetingRequest.objects.filter(sender=request.user)
+    projects = Project.objects.filter(pal=request.user)
     context = {'meetings': meetings,
                'meeting_requests': meeting_requests,
-               'sent_meetings': sent_meetings}
+               'sent_meetings': sent_meetings,
+               'projects': projects}
 
     return render(request, 'my_profile.html', context)
 
