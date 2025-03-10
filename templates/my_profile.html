@@ -48,6 +48,7 @@
                 {% endif %}
                 </button>
                 <div class="meetings-popup hidden" id="meetings-popup-{{meeting.id}}">
+                    <button class="close-window">X</button>
                     <p>{{meeting.sender}} and {{meeting.recipient}}'s Meeting Information</p>
                     <p>Time: {{meeting.start_time}} - {{meeting.end_time}}</p>
                     <p>Description: {{meeting.description}}</p>
@@ -70,8 +71,19 @@
         <div class="projects-box">
             {% for project in projects %}
             <div class="project-rows">
-                
+                <header>{{project.title}}</header>
+                <p>Visibility: {{project.visibility}}</p>
+                <p>Description: {{project.description}}</p>
             </div>
+            <div class="add-project-popup hidden" id="add-project-popup">
+                <button class="close-window">X</button>
+                <form class="add-project" method="post">
+                    <input type="hidden" name="form_type" value="add_project">
+                    {% csrf_token %}
+                    {{ project_creation_form.as_p }}
+                    <button type="submit">Create</button>
+                </form>
+                </div>   
             {% endfor %}
         </div>
     </div>
@@ -87,7 +99,8 @@
                     {{ meeting_request.sender.first_name }} wants to meet with you
                 </button> 
                 <div class="incoming-meetings-popup hidden" id="incoming-meetings-popup-{{meeting_request.id}}">
-                    {{ meeting_request.sender.first_name }} want to me with you!
+                    <button class="close-window">X</button>
+                    <p>{{ meeting_request.sender.first_name }} want to me with you!</p>
                     <p>Proposed Time: {{meeting_request.start_time}} - {{ meeting_request.end_time }}</p>
                     <p>Message: {{meeting_request.message}}</p>
                     <p>Location: location to be added when meeting algorithom done</p>
@@ -113,7 +126,8 @@
                     Meeting sent to {{sent_meeting.recipient}}
                 </button>
                 <div class="sent-meetings-popup hidden" id="sent-meetings-popup-{{sent_meeting.id}}">
-                    Status: {{sent_meeting.status}}
+                    <button class="close-window">X</button>
+                    <p>Status: {{sent_meeting.status}}</p>
                 </div>
                 {% endfor %}
             </div>
@@ -159,6 +173,27 @@ document.addEventListener("DOMContentLoaded", function () {
         document.getElementById(`sent-meetings-popup-${id}`).classList.toggle('hidden');
         })
     });
+
+    const add_project_button = document.getElementById("add-project")
+    add_project_button.addEventListener('click', function () {
+        const popup = document.getElementById(`add-project-popup`);
+        popup.classList.toggle('hidden');
+    });
+
+    /*const close_window = document.getElementById("close-window")
+    close_window.addEventListener('click', function () {
+        const popup = document.getElementById(`add-project-popup`);
+        popup.classList.toggle('hidden');
+    });*/
+
+    const close_popup_buttons = document.querySelectorAll(".close-window")
+    close_popup_buttons.forEach(button => {
+        button.addEventListener('click', function() {
+            const popup = button.parentElement;
+            popup.classList.toggle('hidden');
+        });
+    });
+
 });
 </script>
 

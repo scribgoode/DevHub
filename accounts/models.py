@@ -30,7 +30,7 @@ class Engineer(AbstractUser):
 
 class Project(models.Model):
     pal = models.ForeignKey(Engineer, on_delete=models.CASCADE) #if we end up doing a clean up of the code then rename engineer to pal
-    name = models.CharField(max_length=255, blank=True, null=True)
+    title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(max_length=4000)
     class Visibility(models.TextChoices): #maybe should make active its own switch
         ACTIVE = 'active', 'active'

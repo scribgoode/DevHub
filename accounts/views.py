@@ -16,7 +16,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from video_chat.forms import MeetingRequestForm
 from django.contrib import messages
-from accounts.forms import ElevatorPitchForm
+from accounts.forms import ProjectCreationForm
 '''
 class HomePageView(TemplateView):
     template_name = "home.html"
@@ -78,15 +78,25 @@ def myProfile(request):
         if form_type == "video_remove":
             user = request.user
             user.elevator_pitch.delete()
+        if form_type == "add_project":
+            form = ProjectCreationForm(request.POST)
+            if form.is_valid:
+                project = form.save(commit=False)
+                project.pal = request.user
+                project.save()
+
 
     meetings = Meeting.objects.filter( Q(recipient=request.user) | Q(sender=request.user) )
     meeting_requests = MeetingRequest.objects.filter( Q(recipient=request.user) | Q(sender=request.user) ) #maybe make meeting_requests and sent_meetings_requests
     sent_meetings = MeetingRequest.objects.filter(sender=request.user)
     projects = Project.objects.filter(pal=request.user)
+    project_creation_form = ProjectCreationForm()
+
     context = {'meetings': meetings,
                'meeting_requests': meeting_requests,
                'sent_meetings': sent_meetings,
-               'projects': projects}
+               'projects': projects,
+               'project_creation_form': project_creation_form}
 
     return render(request, 'my_profile.html', context)
 

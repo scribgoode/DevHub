@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import Engineer
+from .models import Engineer, Project
 from allauth.account.forms import SignupForm
 from django import forms
 from cities_light.models import City
@@ -53,3 +53,8 @@ class ElevatorPitchForm(forms.ModelForm):
     class Meta:
         model = Engineer
         fields = ['elevator_pitch']
+
+class ProjectCreationForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['title', 'description', 'visibility'] 

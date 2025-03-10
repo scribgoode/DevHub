@@ -293,6 +293,7 @@ transform: scale(1.05) translateY(.125rem);
 
 .projects{
     display: flex;
+    flex-direction: column;
     background-color: #fff;
     height: 51vh;
     flex: 59%;
@@ -300,17 +301,94 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .projects-header{
+    position: relative;
     height: 10%;
     width: 100%;
     border-bottom: 0.5vh solid black;
     font-size: 4vh;
 }
 
+.projects-box{
+    display:flex;
+    flex-direction: column;
+    height: 45vh;
+    overflow-y: auto;    /* Enables vertical scrolling */
+    overflow-x: hidden;
+}
+
+.project-rows{
+    height:10vh;
+    padding: 1vh;
+    border: 0.5vh dotted black;
+}
+
 #add-project{
-    font-size: 3vh;
+    position: absolute;
+    top: 0.3vh;
+    right: 0.5vh;
+    background: #fff;
+    backface-visibility: hidden;
+    border-radius: .375rem;
+    border-style: solid;
+    border-width: .125rem;
+    box-sizing: border-box;
+    color: #212121;
+    cursor: pointer;
+    display: inline-block;
+    font-family: Circular,Helvetica,sans-serif;
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -.01em;
+    line-height: 0.5vh;
+    padding: .875rem 1.125rem;
+    text-align: left;
+    text-decoration: none;
+    transform: translateZ(0) scale(1);
+    transition: transform .2s;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
     /* border: none;
     background-color: white;*/
-    margin-left: 82%;
+}
+
+#add-project:not(:disabled):hover {
+    transform: scale(1.05);
+}
+
+#add-project:not(:disabled):hover:active {
+    transform: scale(1.05) translateY(.125rem);
+}
+
+#add-project:focus:before {
+    content: "";
+    left: calc(-1*.375rem);
+    pointer-events: none;
+    position: absolute;
+    top: calc(-1*.375rem);
+    transition: border-radius;
+    user-select: none;
+}
+
+#add-project:not(:disabled):active {
+    transform: translateY(.125rem);
+    }
+
+.add-project-popup{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 40vh;
+    width: 90vh;
+    background-color: #fff;
+    border: 0.5vh solid black;
+
+}
+
+.close-window{
+    position: absolute;
+    right: 0;
 }
 
 /* meeting request */
@@ -371,6 +449,7 @@ transform: scale(1.05) translateY(.125rem);
     width: 90vh;
     background-color: #fff;
     border: 0.5vh solid black;
+    z-index: 999;
 }
 
 .incoming-meetings-popup{
