@@ -207,6 +207,21 @@ transform: scale(1.05) translateY(.125rem);
     height: 29vh;
 }
 
+.profile-page-container{
+    display: flex;
+}
+
+.profile-page-left-side{
+    display: flex;
+    flex-direction: column;
+    width: 108vh;
+}
+
+.profile-data-profile-page{
+    display: flex;
+    height: 30vh;
+}
+
 .profile-data2{
     width: 32.2%;
     height: 18%;
@@ -394,7 +409,9 @@ transform: scale(1.05) translateY(.125rem);
 /* meeting request */
 .meeting-request-form {
     background-color: #fff;
-    margin-left: 65%;
+    flex: 40%;
+    height: 50vh;
+    border: 0.5vh solid black;
 }
 
 .incoming-and-sent-invites{

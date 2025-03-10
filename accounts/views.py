@@ -118,7 +118,10 @@ def Profile(request, id):
         meeting_request_form = MeetingRequestForm()
 
     profile = Engineer.objects.get(id=id)
-    context = {'profile': profile, 'form': meeting_request_form}
+    projects = Project.objects.filter(pal__id=id)
+    context = {'profile': profile,
+               'form': meeting_request_form,
+               'projects': projects}
     return render(request, 'profile.html', context)
 
 def myProfile(request):
