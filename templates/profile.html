@@ -1,53 +1,62 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{% static 'styling.css' %}">
-    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
-    <title>DevHub.io</title>
-</head>
-
-<body>
-    <div class="container">
-        <div class="website-header">
-            <div class="title">
-                <a href="#">DevHub.io</a>
+{% extends 'base.html' %}
+{% block content %}
+    {% comment %} <div class="bio-background"></div>
+    <div class="elevator-pitch-video">This is {{profile.first_name}}'s profile page</div> {% endcomment %}
+<div class="profile-page-container">
+    <div class="profile-page-left-side">
+        <div class="profile-data-profile-page">
+            {% if profile.elevator_pitch %}
+                <video id="elevator-pitch-video" controls>
+                    <source src="{{ profile.elevator_pitch.url }}" type="video/mp4">
+                </video>
+            {% else %}
+                <div class="video-placeholder"></div>
+            {% endif %}
+            <div class="profile-info">
+                <p><b>Name:</b> {{profile.first_name}}</p>
+                <p><b>Status:</b> {{profile.status}}</p>
+                <p><b>City:</b> {{profile.city}}</p>
             </div>
         </div>
-
-        <br><br><br><br>
-        <div class="bio-background"></div>
-        <div class="elevator-pitch-video">This is {{profile.first_name}}'s profile page</div>
-        <form class= "meeting-request-form" method="post">
-            {% csrf_token %}
-            {{ form.as_p }}
-            <button type="submit" id="send-meeting-request" onclick="sendMeetingRequest()">Send Meeting Request</button>
-        </form>
-        {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        <div class="projects">
+            <div class="projects-header">Projects</div>
+            <div class="projects-box">
+                {% for project in projects %}
+                <div class="project-rows">
+                    <header>{{project.title}}</header>
+                    <p>Visibility: {{project.visibility}}</p>
+                    <p>Description: {{project.description}}</p>
+                </div>
+                <div class="add-project-popup hidden" id="add-project-popup">
+                    <button class="close-window">X</button>
+                    <form class="add-project" method="post">
+                        <input type="hidden" name="form_type" value="add_project">
+                        {% csrf_token %}
+                        {{ project_creation_form.as_p }}
+                        <button type="submit">Create</button>
+                    </form>
+                    </div>   
                 {% endfor %}
-            </ul>
-        {% endif %}
-        
-
-
-        <div class="chat-header">Chat Messages
-            <div class="message-container">
-                <input type="text" class="message-input" placeholder="Enter your message">
-                    <button type="button" class="send-button" onClick=sendMessage()>Send</button>
             </div>
         </div>
+    </div>
 
-        <div class="chat-background">
-            <div class="chat-box">Chat history</div>
-        </div>
+    <div class="spacer"></div>
 
-</body>
+    <form class= "meeting-request-form" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" id="send-meeting-request" onclick="sendMeetingRequest()">Send Meeting Request</button>
+    </form>
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</div>
+
 
 
 {{profile.id|json_script:"profile_id"}}
@@ -208,5 +217,4 @@
     }
 
 </script>
-
-</html>
+{% endblock %}
