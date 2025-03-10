@@ -100,3 +100,6 @@ def get_nearby_places(lat, lng, place_type):
     except Exception as e:
         print(e)
         return False
+    
+
+    

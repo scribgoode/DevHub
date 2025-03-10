@@ -19,6 +19,7 @@ from django.urls import path, include
 from accounts.views import Profile, myProfile, home, index
 from accounts import views as accounts_views
 from meetup_point import views as meetup_views
+from video_chat import views as meeting_request_views
 
 urlpatterns = [
     # admin pages
@@ -39,6 +40,9 @@ urlpatterns = [
     path('api/get-rooms/<int:pk>', accounts_views.get_room),
     path('api/messages/', accounts_views.message_list),
     path('api/get-chathistory/<uuid:pk>', accounts_views.get_chat),
+    path('api/meeting-requests/', meeting_request_views.meeting_requests_list),
+    path('api/create-meeting-request/', meeting_request_views.create_meeting_request),
+    path('api/get-meeting-requests/', meeting_request_views.meeting_requests_list),
 
     # chat pages
     path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat

@@ -103,7 +103,7 @@
         fetch(`/api/get-rooms/${sender_id}?format=json`)
             .then(response => response.json())
             .then(data => {
-                console.log(data)
+                console.log("select room:", data)
                 // does chat room exist?
                 console.log('data:', data[0].users[0].id)
                 
@@ -176,11 +176,11 @@
             }
         }
 
-        function sendMeetingRequest() {
+        function createInPersonMeeting() {
             console.log('Current User Address:', current_user.address);
             console.log('Profile Address:', profile_user.address);
 
-            // to-do: logic if no addrss is attacted to the profiles
+            // to-do: logic if no address is attached to the profiles
             if (current_user.address && profile_user.address) {
                 fetch('/meetup_point/find_halfway', {
                     method: 'POST',
@@ -192,11 +192,40 @@
                         "addressTwo": profile_user.address
                     })
                 }).then(response => response.json())
-                  .then(data => {
+                .then(data => {
                     window.location.href = data.redirect_url;
-                  })
-                  .catch(error => console.error('Error:', error));
+                })
+                .catch(error => console.error('Error:', error));
             }
+        }
+
+        function createVideoMeeting() {
+            console.log('Video meeting requested');
+        }
+
+        function sendMeetingRequest() {
+
+            // grab form info
+            const formData = new FormData(document.querySelector('.meeting-request-form'));
+            const formObject = {};
+            formData.forEach((value, key) => {
+                console.log(key, value);
+                formObject[key] = value;
+            });
+
+            switch (formObject['type']) {
+                case 'in-person':
+                    console.log('In-person meeting requested');
+                    //createInPersonMeeting();
+                    break;
+                case 'video':
+                    console.log('Video meeting requested');
+                    //createVideoMeeting();
+                    break;
+                default:
+                    console.log('Unknown meeting type');
+            }
+                
         }
     } else {
         console.log('User not authenticated');
