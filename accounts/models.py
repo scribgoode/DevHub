@@ -18,7 +18,7 @@ class Engineer(AbstractUser):
 
     status = models.CharField(max_length=7, choices=Status.choices, default=Status.RECRUIT)
     # address = models.CharField(max_length=255, blank=True, null=True)
-    projects = models.ManyToManyField('Project', blank=True, null=True) 
+    projects = models.ManyToManyField('Project', blank=True) 
     dob = models.DateField(default=date.today)
     country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True) 
     city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True)
