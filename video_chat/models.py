@@ -35,6 +35,7 @@ class MeetingRequest(models.Model):
     message = models.TextField()
     sent_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=50, default='pending')
+    location = models.CharField(max_length=255, default='') # either url or address string
     class Type(models.TextChoices):
         INPERSON = 'in-person', 'in-person'
         VIDEO = 'video', 'video'

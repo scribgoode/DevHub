@@ -1,6 +1,7 @@
+from django.urls import reverse
 from django.views.generic import TemplateView
 from django.template.loader import get_template
-from django.shortcuts import render, get_object_or_404, get_list_or_404
+from django.shortcuts import redirect, render, get_object_or_404, get_list_or_404
 from .models import Engineer, Project
 from cities_light.models import City
 from text_chat.models import Room, Message
@@ -17,6 +18,8 @@ from django.db.models import Q
 from video_chat.forms import MeetingRequestForm
 from django.contrib import messages
 from accounts.forms import ProjectCreationForm
+import requests
+
 '''
 class HomePageView(TemplateView):
     template_name = "home.html"
@@ -53,9 +56,67 @@ def Profile(request, id):
             meeting_request.sender = request.user
             meeting_request.recipient = Engineer.objects.get(id=id)
             meeting_request.save()
+            if meeting_request.type == 'in-person':
+                # check if both users have addresses
+                if request.user.address is not None and Engineer.objects.get(id=id).address is not None:
+                    # Convert address objects to JSON-serializable format
+                    address_one = {
+                        'street': request.user.address.street,
+                        'city': {
+                            'id': request.user.address.city.id,
+                            'name': request.user.address.city.name,
+                            'country': {
+                                'id': request.user.address.city.country.id,
+                                'name': request.user.address.city.country.name
+                            }
+                        },
+                        'state': request.user.address.state,
+                        'zip_code': request.user.address.zip_code,
+                        'country': {
+                            'id': request.user.address.country.id,
+                            'name': request.user.address.country.name
+                        }
+                    }
+                    address_two = {
+                        'street': Engineer.objects.get(id=id).address.street,
+                        'city': {
+                            'id': Engineer.objects.get(id=id).address.city.id,
+                            'name': Engineer.objects.get(id=id).address.city.name,
+                            'country': {
+                                'id': Engineer.objects.get(id=id).address.city.country.id,
+                                'name': Engineer.objects.get(id=id).address.city.country.name
+                            }
+                        },
+                        'state': Engineer.objects.get(id=id).address.state,
+                        'zip_code': Engineer.objects.get(id=id).address.zip_code,
+                        'country': {
+                            'id': Engineer.objects.get(id=id).address.country.id,
+                            'name': Engineer.objects.get(id=id).address.country.name
+                        }
+                    }
+                    # Generate the URL for the find_halfway view
+                    find_halfway_url = request.build_absolute_uri(reverse('find_halfway_view'))
+                    # Send a POST request to the find_halfway view
+                    response = requests.post(
+                        find_halfway_url,
+                        json={
+                            'addressOne': address_one,
+                            'addressTwo': address_two
+                        }
+                    )
+                    if response.status_code == 200:
+                        data = response.json()
+                        return redirect(data['redirect_url'])
+                    else:
+                        messages.error(request, 'Failed to find halfway point.')
+                else:
+                    messages.warning(request, 'Both users must have an address to request an in-person meeting.')
+            else:
+                messages.success(request, 'Meeting request created successfully.')
+                return redirect('profile', id=id)  # Redirect to the profile page after form submission
     else:
         meeting_request_form = MeetingRequestForm()
-        
+
     profile = Engineer.objects.get(id=id)
     projects = Project.objects.filter(pal__id=id)
     context = {'profile': profile,
