@@ -25,6 +25,12 @@ class HomePageView(TemplateView):
     template_name = "home.html"
 '''
 
+def signUp(request):
+    return render(request, 'accounts/signup.html')
+
+def login(request): 
+    return render(request, 'accounts/login.html')  
+
 def home(request):
     if 'search' in request.GET:
         search = request.GET['search']

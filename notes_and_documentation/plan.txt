@@ -113,3 +113,5 @@ UI Buffs
 -make projects on my profile where you can add multiple projects, the project you want to display, the projects you want to show on your profile, and the ability to add people to projects
 -ability to favorite profiles incase you want to send a meeting request to them later
 -work ratio instead of creator and recruit(e.g 100%/0, 50%/50%, 75%/25%)(willing to ....)(or not because now its starting to feel like a negotiation and negotiations arent friendly)
+-after the account is created, the person should be directed to a seperate page where they can decide to stay a recruit or advertise a project or multiple projects and to record their elevator pitch
+-maybe add meeting statistics for bottom right of profile page

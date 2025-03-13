@@ -2,7 +2,8 @@ from django.contrib.auth.forms import UserCreationForm, UserChangeForm
 from .models import Engineer, Project
 from allauth.account.forms import SignupForm
 from django import forms
-from cities_light.models import City
+from cities_light.models import City, Country
+from meetup_point.models import Address
 
 class CustomUserCreationForm(UserCreationForm):
 
@@ -18,26 +19,20 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class CustomSignupForm(SignupForm):
-    '''
-    first_name = forms.CharField(max_length=30, label='First Name*')
+    first_name = forms.CharField(max_length=30, label='First Name')
     last_name = forms.CharField(max_length=30, label='Last Name')
-    status = forms.CharField(max_length=7)
-    current_projects = forms.CharField(max_length=200)
+    dob = forms.DateField(label='DOB')
     address = forms.CharField(max_length=255)
-    '''
-    dob = forms.DateField()
     city = forms.ModelChoiceField(queryset=City.objects.all(), empty_label="Select City")
+    country = forms.ModelChoiceField(queryset=Country.objects.all(), empty_label="Select City")
 
     def save(self, request):
         user = super(CustomSignupForm, self).save(request)
         user.email = self.cleaned_data['email']
-        '''
         user.first_name = self.cleaned_data['first_name']
         user.last_name = self.cleaned_data['last_name']
-        user.status = self.cleaned_data['status']
-        user.current_projects = self.cleaned_data['current_projects']
-        user.address = self.cleaned_data['address']
-        '''
+        user.address = Address.objects.create(street=self.cleaned_data['address'])
+        user.country = self.cleaned_data['country']
         user.dob = self.cleaned_data['dob']
         user.city = self.cleaned_data['city']
         user.save()
