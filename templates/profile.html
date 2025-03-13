@@ -46,7 +46,7 @@
     <form class= "meeting-request-form" method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" id="send-meeting-request" onclick="sendMeetingRequest()">Send Meeting Request</button>
+        <button type="submit" id="send-meeting-request" onclick="sendMeetingRequest(this)">Send Meeting Request</button>
     </form>
     {% if messages %}
         <ul class="messages">
@@ -212,7 +212,8 @@
             console.log('Video meeting requested');
         }
 
-        function sendMeetingRequest() {
+        function sendMeetingRequest(button) {
+            //button.disabled = true;
 
             // grab form info
             const formData = new FormData(document.querySelector('.meeting-request-form'));

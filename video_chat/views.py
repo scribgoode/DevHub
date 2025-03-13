@@ -18,22 +18,27 @@ def meeting_requests_list(request):
     serializer = MeetingRequestSerializer(meetings, many=True)
     return Response(serializer.data)
 
-@api_view(['POST'])
-@permission_classes([IsAuthenticated])  # Only authenticated users can create a meeting request
-def create_meeting_request(request):
-        print("here")
-    #try:
-        # Create a new MeetingRequest object
-        # new_meeting_request = MeetingRequest(
-        #     sender=request.data['sender'],
-        #     recipient=request.data['recipient'],
-        #     date=request.data['date'],
-        #     start_time=request.data['start_time'],
-        #     end_time=request.data['end_time'],
-        #     message=request.data['message'],
-        #     type=request.data['type']
-        # )
-        # new_meeting_request.save()
-        return Response(status=status.HTTP_201_CREATED)
-    # except:
-    #     return Response(status=status.HTTP_400_BAD_REQUEST)
+@api_view(['GET'])
+def get_meeting_requests_by_sender_and_recipient(request):
+    sender_id = request.GET.get('sender')
+    recipient_id = request.GET.get('recipient')
+
+    if sender_id and recipient_id:
+        meeting_requests = MeetingRequest.objects.filter(sender_id=sender_id, recipient_id=recipient_id, type=MeetingRequest.Type.INPERSON)
+        serializer = MeetingRequestSerializer(meeting_requests, many=True)
+        return Response(serializer.data)
+    else:
+        return Response({"error": "Both sender and recipient IDs are required."}, status=400)
+    
+@api_view(['PATCH'])
+def update_meeting_request(request, pk):
+    try:
+        meeting_request = MeetingRequest.objects.get(pk=pk)
+    except MeetingRequest.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    serializer = MeetingRequestSerializer(meeting_request, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
