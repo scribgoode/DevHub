@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import Profile, myProfile, home, index
+from accounts.views import Profile, myProfile, home, index, signUp, login
 from accounts import views as accounts_views
 from meetup_point import views as meetup_views
 from video_chat import views as meeting_request_views
