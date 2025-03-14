@@ -19,12 +19,12 @@ class CustomUserChangeForm(UserChangeForm):
 
 
 class CustomSignupForm(SignupForm):
-    first_name = forms.CharField(max_length=30, label='First Name')
-    last_name = forms.CharField(max_length=30, label='Last Name')
-    dob = forms.DateField(label='DOB')
-    address = forms.CharField(max_length=255)
-    city = forms.ModelChoiceField(queryset=City.objects.all(), empty_label="Select City")
-    country = forms.ModelChoiceField(queryset=Country.objects.all(), empty_label="Select City")
+    first_name = forms.CharField(max_length=30, label='first_name')
+    last_name = forms.CharField(max_length=30, label='last_name')
+    dob = forms.DateField(label='dob')
+    address = forms.CharField(max_length=255, label='address')
+    city = forms.ModelChoiceField(queryset=City.objects.all(), empty_label="Select City", label='city')
+    country = forms.ModelChoiceField(queryset=Country.objects.all(), empty_label="Select Country", label='country')
 
     def save(self, request):
         user = super(CustomSignupForm, self).save(request)

@@ -34,7 +34,7 @@ def login(request):
 def home(request):
     if 'search' in request.GET:
         search = request.GET['search']
-        profiles = Engineer.objects.filter(Q(first_name__icontains=search) | Q(current_project__icontains=search))
+        profiles = Engineer.objects.filter(Q(first_name__icontains=search) | Q(projects__description__icontains=search))
     elif 'city' in request.GET:
         city = request.GET['city']
         profiles = Engineer.objects.filter(city__name=city)

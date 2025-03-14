@@ -9,24 +9,41 @@
     <title>ProjectPals</title>
 </head>
 <body>
+{% load i18n %}
+{% load allauth account %}
     <div class="signup-container">
         <div class="signup-left-side">
-        <h1>Sign up to ProjectPals</h1>
-            {% comment %} {% setvar link %}
+            {% setvar link %}
                 <a href="{{ login_url }}">
                 {% endsetvar %}
                 {% setvar end_link %}
                 </a>
-            {% endsetvar %} {% endcomment %}
-            {% comment %} {% element p %}
-                {% blocktranslate %}Already have an account? Then please {{ link }}sign in{{ end_link }}.{% endblocktranslate %}
-            {% endelement %} {% endcomment %}
+            {% endsetvar %}
+                <p>Already have an account? Then please {{ link }}sign in{{ end_link }}.</p>
             {% if not SOCIALACCOUNT_ONLY %}
+                <h1 class="signup-header">Sign up to ProjectPals</h1>
                 <form method="post" action="{% url 'account_signup' %}" tags="entrance,signup">
                     {% csrf_token %}
-                    {{ form.as_p }}
+                    <div class="signup-field-header">First Name</div>
+                    <div class="signup-input-box">{{form.first_name}}</div>
+                    <div class="signup-field-header">Last Name</div>
+                    <div class="signup-input-box">{{form.last_name}}</div>
+                    <div class="signup-field-header">DOB(16 and up)</div>
+                    <div class="signup-input-box">{{form.dob}}</div>
+                    <div class="signup-field-header">Address</div>
+                    <div class="signup-input-box">{{form.address}}</div>
+                    <div class="signup-field-header">City</div>
+                    <div class="signup-input-box">{{form.city}}</div>
+                    <div class="signup-field-header">Country</div>
+                    <div class="signup-input-box">{{form.country}}</div>
+                    <div class="signup-field-header">Email</div>
+                    <div class="signup-input-box">{{form.email}}</div>
+                    <div class="signup-field-header">Password</div>
+                    <div class="signup-input-box">{{form.password1}}</div>
+                    <div class="signup-field-header">Password again</div>
+                    <div class="signup-input-box">{{form.password2}}</div>
                     {{ redirect_field }}
-                    <button tags="prominent,signup" type="submit">Sign Up</button>
+                    <div class="signup-button-class"><button class="signup-button" tags="prominent,signup" type="submit">Sign Up</button></div>
                 </form>
             {% endif %}
             {% if SOCIALACCOUNT_ENABLED %}
@@ -36,12 +53,3 @@
         <div class="signup-right-side">FORTNITE</div>
     </div>
 </body>
-/*firstname
-lastname
-dob(16)
-address(optional)
-city
-country
-email
-password
-*/
