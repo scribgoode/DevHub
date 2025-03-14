@@ -32,25 +32,32 @@
     <div class="meetings-list">
         <header class="meeting-headers">Upcoming Meetings</header>
         <div class="upcoming-meetings-box">
-                {% comment %} {% for meeting in meetings %}
+                <!-- {% comment %} {% for meeting in meetings %}
                 {% if meeting.sender.id == user.id %}
-                    <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at video chat</a><br>
+                    {% if meeting.type == 'in-person' %}
+
+                    {%endif%}
+                    <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at {{ locationType }}</a><br>
                 {% else %}
-                    <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at video chat</a><br>
+                    <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at {{ locationType }} </a><br>
                 {% endif %}
-                {% endfor %} {% endcomment %}
+                {% endfor %} {% endcomment %} -->
                 {% for meeting in meetings %}
-                <button class="meetings-row" data-id="{{meeting.id}}">
+                <button class="meetings-row" data-id="{{meeting.id}}"> 
                 {% if meeting.sender.id == user.id %}
-                    {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at video chat
-                {% else %}
-                    {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at video chat
+                    {% if meeting.type == 'in-person' %}
+                        {{meeting.date}} at {{meeting.end_time|time:"H:i"}} to {{meeting.end_time|time:"H:i"}} Meeting with {{ meeting.recipient.first_name }} at {{ meeting.meeting_request.location_name }}
+                    {% elif meeting.type == 'video' %}
+                        {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at {{ meeting.type }}
+                    {%endif%}
+                    {% else %}
+                    {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at {{ meeting.type }}
                 {% endif %}
                 </button>
                 <div class="meetings-popup hidden" id="meetings-popup-{{meeting.id}}">
                     <button class="close-window">X</button>
                     <p>{{meeting.sender}} and {{meeting.recipient}}'s Meeting Information</p>
-                    <p>Time: {{meeting.start_time}} - {{meeting.end_time}}</p>
+                    <p>Time: {{ meeting.start_time|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</p>
                     <p>Description: {{meeting.description}}</p>
                     {% if meeting.type == 'video' %}
                         <p>Location: <a href="video_chat/{{ meeting.room_token }}">{{meeting.type}}</a></p>
@@ -122,13 +129,24 @@
             <header class="meeting-headers">Sent Meeting Invites</header>
             <div class="sent-meetings-box">
                 {% for sent_meeting in sent_meetings %}
-                <button class="sent-meetings-row" data-id="{{sent_meeting.id}}">
-                    Meeting sent to {{sent_meeting.recipient}}
-                </button>
-                <div class="sent-meetings-popup hidden" id="sent-meetings-popup-{{sent_meeting.id}}">
-                    <button class="close-window">X</button>
-                    <p>Status: {{sent_meeting.status}}</p>
-                </div>
+                <!-- only show if status is pending -->
+                    {% if sent_meeting.status == 'pending' %}
+                        <button class="sent-meetings-row" data-id="{{sent_meeting.id}}">
+                                Meeting request sent to {{sent_meeting.recipient}}
+                        </button>
+                        <div class="sent-meetings-popup hidden" id="sent-meetings-popup-{{sent_meeting.id}}">
+                            <button class="close-window">X</button>
+                            <p> Location Name: {{sent_meeting.location_name}} <br>
+                                Time: {{sent_meeting.start_time}} - {{sent_meeting.end_time}} <br>
+                                Status: {{sent_meeting.status}} <br>
+                                {% if sent_meeting.type == 'in-person' %}
+                                    <form id="update-location-form" type="meeting_request_update">
+                                        <button type="button" name="meeting_request_update" onclick="updateLocation('{{ sent_meeting.locationUpdateURL }}')">Update Location</button>
+                                    </form>
+                                {% endif %}
+                            </p>
+                        </div>
+                    {% endif %}
                 {% endfor %}
             </div>
         </div>
@@ -149,6 +167,11 @@
 </div> {% endcomment %}
 
 <script>
+    function updateLocation(url) {
+        console.log('update location to:', url);
+        window.location.href = url;
+    }
+
 document.addEventListener("DOMContentLoaded", function () {
     const openButtons = document.querySelectorAll(".meetings-row");
     openButtons.forEach(button => {
@@ -238,8 +261,6 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(data => {
             // get all chatrooms that user is in and render them as buttons
             data.forEach(room => {
-                console.log('current room:', room.room_id);
-                console.log(room)
 
                 // get the name of the other user in the chatroom
                 let newChatroomname = room.users[1 - room.users.findIndex(user => user.id === user_id)].first_name;
@@ -271,12 +292,11 @@ document.addEventListener("DOMContentLoaded", function () {
                         .then(response => response.json())
                         .then(data => {
                             // render chat history in chatbox depending on selected chatroom
-                            console.log('chat history:', data);
+                            //console.log('chat history:', data);
                             // empty chatbox
                             chatbox.innerHTML = '';
 
                             let receiver_id = room.users[1].id;
-                            console.log(typeof receiver_id);
                             data.forEach(chat => {
                                 const newChat = document.createElement('div');
                                 newChat.innerHTML = `<div class="message">${chat.sender.first_name}: ${chat.messageContent}</div>`;
@@ -293,7 +313,6 @@ document.addEventListener("DOMContentLoaded", function () {
                                 // on message received
                                 socket.onmessage = function(event) {
                                     const message = JSON.parse(event.data)
-                                    console.log(message);
                                     // add message to chat history
                                     const messageDiv = document.createElement('div');
                                     messageDiv.innerHTML = `<div class="message">${message.sender}: ${message.message}</div>`;
@@ -310,7 +329,6 @@ document.addEventListener("DOMContentLoaded", function () {
                             });
                         });
                 });
-                console.log('new chatroom:', newChatroom);
                 dmList.appendChild(newChatroom);
             })
         });
@@ -332,12 +350,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 "sender_full_name": current_user.first_name + ' ' + current_user.last_name,
                 "sender_id" : current_user.id,
             }
-        console.log(everything);
 
         if (message.trim() !== '') {
             socket.send(JSON.stringify({"text": everything}));
             messageInput.value = '';
         }
     }
+    
 </script> {% endcomment %}
 {% endblock %}

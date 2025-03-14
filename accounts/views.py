@@ -61,7 +61,6 @@ def Profile(request, id):
             meeting_request = meeting_request_form.save(commit=False)
             meeting_request.sender = request.user
             meeting_request.recipient = Engineer.objects.get(id=id)
-            meeting_request.save()
             if meeting_request.type == 'in-person':
                 # check if both users have addresses
                 if request.user.address is not None and Engineer.objects.get(id=id).address is not None:
@@ -100,9 +99,11 @@ def Profile(request, id):
                             'name': Engineer.objects.get(id=id).address.country.name
                         }
                     }
+
                     # Generate the URL for the find_halfway view
                     find_halfway_url = request.build_absolute_uri(reverse('find_halfway_view'))
                     # Send a POST request to the find_halfway view
+                    print('before posting')
                     response = requests.post(
                         find_halfway_url,
                         json={
@@ -110,15 +111,20 @@ def Profile(request, id):
                             'addressTwo': address_two
                         }
                     )
+                    print('after posting')
                     if response.status_code == 200:
                         data = response.json()
-                        return redirect(data['redirect_url'])
+                        redirect_url = f"{data['redirect_url']}?sender={request.user.id}&recipient={Engineer.objects.get(id=id).id}"
+                        print('redirect_url:', redirect_url)
+                        meeting_request.locationUpdateURL = redirect_url
+                        meeting_request.save()
+                        return redirect(redirect_url)
                     else:
                         messages.error(request, 'Failed to find halfway point.')
                 else:
                     messages.warning(request, 'Both users must have an address to request an in-person meeting.')
             else:
-                messages.success(request, 'Meeting request created successfully.')
+                messages.warning(request, 'Meeting request created successfully, but failed to find half way point. THIS SHOULD NOT HAVE HAPPENED!')
                 return redirect('profile', id=id)  # Redirect to the profile page after form submission
     else:
         meeting_request_form = MeetingRequestForm()
@@ -136,7 +142,7 @@ def myProfile(request):
         print(form_type)
         if form_type ==  "meeting_request_decision":
             meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
-            meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type)
+            meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request)
             meeting.save()
             meeting_request.status = 'resolved'
             meeting_request.save()
@@ -156,6 +162,9 @@ def myProfile(request):
 
 
     meetings = Meeting.objects.filter( Q(recipient=request.user) | Q(sender=request.user) )
+    for meeting in meetings:
+        for field in meeting._meta.fields:
+            print(field.name, getattr(meeting, field.name))
     meeting_requests = MeetingRequest.objects.filter( Q(recipient=request.user) | Q(sender=request.user) ) #maybe make meeting_requests and sent_meetings_requests
     sent_meetings = MeetingRequest.objects.filter(sender=request.user)
     projects = Project.objects.filter(pal=request.user)

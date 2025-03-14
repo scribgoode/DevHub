@@ -84,6 +84,7 @@ def get_nearby_places(lat, lng, place_type):
             location=(lat, lng),
             radius=1000,  # 1000 meters (1 km)
             type=place_type  # "cafe|restaurant"
+            
         )
 
         # places = []
@@ -96,7 +97,7 @@ def get_nearby_places(lat, lng, place_type):
         #         "lng": place["geometry"]["location"]["lng"]
         #     })
 
-        return places_result["results"]
+        return places_result["results"][:10] # return top 10 places
     except Exception as e:
         print(e)
         return False

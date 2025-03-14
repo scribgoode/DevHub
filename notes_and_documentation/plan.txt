@@ -7,6 +7,7 @@ NEXT STEPS:
 -have logic to send a specifc type of meeting request
 -proposed meeting spot algorithm
 -search and filtering
+-prevent api call spam -> django_ratelimit
 -calendar system/meeting request list
 -payment system
 -make ui seemless and pretty
