@@ -1,3 +1,90 @@
+To Do List Before Production:
+    Security
+    -make sure each form has csrf token
+    -look up django security practices and do easy standards
+
+    UI
+    -configure css for smart phones
+    -upon connection to the site, play a slideshow that shows you how to effectively use the site(make this easily accesible)
+    -after the slide show require a sign in or sign up to access the site
+    -after the account is created, the person should be directed to a seperate page where they can decide to stay a recruit or advertise a project or multiple projects and to record their elevator pitch
+    -give people a good example of an elevator pitch and some key points to talk about and emphasize the importance of it
+    -configure css for sign out page
+    -notifcation across top of all screens that says you have a meeting that start 1 hour before meeting and during meeting(link if text or video meeting)
+    -consider order of information in the rows on the home page
+    -pick friendly font
+
+    Video Chat
+    -add microphone button
+    -only make video chat accessible during the time of the meeting and during video chat meetings
+    -include important information on this page
+    
+    Meetings
+    -only let people cancel meetings 24 hours before without getting a strike
+    -simple meeting reports from both people after meeting(maybe allow each person to see their own meeting reports they filled out)
+
+    User Profiles Page
+    -add online/last online
+    -maybe add meeting statistics for bottom right of profile page(something needs to go in that bottom right corner)
+
+    Home Page
+    -add real time search
+    -display last online(just do date not time)
+    -pagination
+    -footer
+    -default filters
+    -logo
+    -elevator pitch filter
+
+    Text Chat
+    -make sure people will only be added to contacts once they send a meeting request(chat is opened at this point but if the other person declines the meeting, only they can message the person and have the choice to remove that person from their contacts)
+    -make it possible to access someones profile from contacts page in messages
+    -add feature to search contacts
+    -notifcation on the contact name that says how many new message you have from them(1 new message)
+    -notification on the message icon that states how many total new messages you have
+    -time stamps and date stamps
+
+    My Profile Page
+    -allow edits to only some profile information
+    -need to be sure do add something like display projects with dates and links so people can show off their past projects
+    -can only switch to creator status if you have at least one project displaying
+    -if your status is recuit, state and display the type of projects you are open to joining(maybe do this for creators to, maybe for creators state whether they are open to contributing to another project)
+    -add favorites list of profiles
+    -add strike system
+
+    Signup Page
+    -allow to select dob using calendar and change format(some type of library)
+    -send code to email to verify email
+
+    Signin Page
+    -allow yourself to sign in with other sites such as google
+
+    Meeting Point
+    -make sure meeting point api cannot be exploited
+
+    Projects
+    -allow people a section to put links
+    -allow an optional section where you can state how you want a person to contribute to the project
+    -better logic for project display feature(improve public, private, and active)
+
+
+
+Future Add Ons
+    -set up way to get emails/text messages if you get a new meeting invite
+
+
+Business Developement
+    -define target market(most likely software engineers but maybe we can do them, influencers, entreprenuers, interviewers, etc)
+
+
+
+
+
+
+
+
+
+---------------------------------------------------------------everything below this is before the 3/14/25 rewrite of this file--------------------------------------------------------------------------------------
 Mission
 -bring together all engineers not just software developers
 
@@ -49,7 +136,7 @@ MVP
 -only show the elevator pitch and current projects(basically undentifiable information(censor name in elevator pitch using ai))(to encourage people to meet in person might not pay for meeting invite if they request that type of meeting)
 -extensive testing on just functionality for now
 -advertising plan
--people pay for access after they send three meeting invites they pay for access again
+-people pay for access after they send three meeting invites they pay for access again(pay wall everything except home page and profile page)(be ready to remove links to personal information pages such as linked in, instagram, and even phone number)
 -meeting reports and selling ratings to recruiters
 
 

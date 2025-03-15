@@ -44,6 +44,12 @@ def home(request):
             profiles = Engineer.objects.all()
         else:
             profiles = Engineer.objects.filter(status=status)
+    elif 'preferrence' in request.GET:
+        preference = request.GET['preference']
+        if preference == 'any':
+            profiles = Engineer.objects.all()
+        else:
+            profiles = Engineer.objects.filter(meeting_preference=preference)
     else:
         profiles = Engineer.objects.all()
     

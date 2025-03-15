@@ -1,0 +1,11 @@
+start redis server on docker container: docker run --rm -p 6379:6379 redis:7
+
+git/github
+-(if needing to create feature branch, pull from remote main and resolve conflicts)
+-switch to feature branch
+-work on feature branch and then commit
+-switch to main and pull main --rebase(abort and do pull if it fails)
+-switch to feature branch and merge main to feature branch and correct conflicts
+-switch to main and merge feature branch to main
+-push main to remote repository
+-(maybe delete feature branch)
