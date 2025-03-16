@@ -20,23 +20,27 @@
                         <button type="submit">Filter</button>
                     </form>
                 </div>
-                <button class="status-filter">Status &#8964;</button>
+                <div class="status-filter">
+                    <button class="status-filter-button">Status &#8964;</button>
                     <div class="status-filter-content">
-                        <form method="get">
+                        <form class="status-filter-form" method="get">
                             <button type="submit" name="option" value="any">Any</button>
                             <button type="submit" name="option" value="creator">Creator</button>
                             <button type="submit" name="option" value="recruit">Recruit</button>
                         </form>
                     </div>
-                <button id="meeting-preferences-filter">Meeting Preferences &#8964;</button>
+                </div>
+                <div class="meeting-filter">
+                    <button id="meeting-preferences-button">Meeting Preferences &#8964;</button>
                     <div class="meeting-filter-content">
-                        <form method="get">
+                        <form class="meeting-filter-form" method="get">
                             <button type="submit" name="preference" value="any">Any</button>
                             <button type="submit" name="preference" value="in-person">In-Person</button>
                             <button type="submit" name="preference" value="video">Video Chat</button>
                             <button type="submit" name="preference" value="text">Text Chat</button>
                         </form>
                     </div>
+                </div>
             </div>
         </div>
         <div class="engineer-table">
@@ -62,7 +66,7 @@
                         <div class="location">{{ profile.city }}</div>
                         <div class="current-projects" id="scrollBox">{{ profile.current_project }}</div>
                         <!--make that scrolly-->
-                        <div class="meeting-preferences">in-person</div>
+                        <div class="meeting-preferences">{{ profile.meeting_preference }}</div>
                     </div>
                 {% endif %}
                     </a>
@@ -74,6 +78,9 @@
                 document.addEventListener("DOMContentLoaded", function() {
                     document.querySelector(".status-filter").addEventListener("click", function() {
                         document.querySelector(".status-filter-content").classList.toggle("show");
+                    });
+                    document.querySelector("#meeting-preferences-button").addEventListener("click", function() {
+                        document.querySelector(".meeting-filter-content").classList.toggle("show");
                     });
                 /*window.addEventListener("click", function(e) {
                     if (!e.target.matches('.status-filter')) {

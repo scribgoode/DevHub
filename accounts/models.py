@@ -24,6 +24,12 @@ class Engineer(AbstractUser):
     city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True)
     elevator_pitch = models.FileField(upload_to=video_upload_path, null=True, blank=True)
     address = models.OneToOneField(Address, on_delete=models.CASCADE, null=True, blank=True) #cant be a one to one field here because two people that live together can have the same address
+    class MeetingPreference(models.TextChoices):
+        INPERSON = 'in-person', 'in-person'
+        VIDEO = 'video', 'video'
+        TEXT = 'text', 'text'
+
+    meeting_preference = models.CharField(max_length=9, choices=MeetingPreference.choices, default=MeetingPreference.INPERSON)
 
     def __str__(self):
         return self.first_name

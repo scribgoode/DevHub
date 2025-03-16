@@ -1,7 +1,7 @@
 To Do List Before Production:
     Security
     -make sure each form has csrf token
-    -look up django security practices and do easy standards
+    -look up django security practices and implement standards
 
     UI
     -configure css for smart phones
@@ -35,6 +35,7 @@ To Do List Before Production:
     -default filters
     -logo
     -elevator pitch filter
+    -✔️meeting preference filter
 
     Text Chat
     -make sure people will only be added to contacts once they send a meeting request(chat is opened at this point but if the other person declines the meeting, only they can message the person and have the choice to remove that person from their contacts)

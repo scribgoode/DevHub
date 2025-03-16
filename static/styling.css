@@ -800,6 +800,11 @@ figcaption {
 }
 
 .status-filter{
+    position: relative;
+    display: inline-block;
+}
+
+.status-filter-button{
     border-radius: 10px;
     font-size: 20px;
     padding: 5px 10px;
@@ -818,6 +823,18 @@ figcaption {
     border-radius: 10px;
 }
 
+.status-filter-form{
+    display:flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    width: 55%;
+}
+
+.status-filter-form button{
+    background-color: #fff;
+    text-align: left;
+}
 
 .location-filter{
     border-radius: 10px;
@@ -838,7 +855,12 @@ figcaption {
     border-radius: 10px;
 }
 
-#meeting-preferences-filter{
+.meeting-filter{
+    position: relative;
+    display: inline-block;
+}
+
+#meeting-preferences-button{
     border-radius: 10px;
     font-size: 20px;
     padding: 5px 10px;
@@ -849,6 +871,23 @@ figcaption {
 
 .status-filter:active, .location-filter:active, #meeting-preferences-filter:active {
     transform: scale(0.95);
+}
+
+.meeting-filter-form{
+    display:flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    width: 90%;
+}
+
+.meeting-filter-content{
+    display:none;
+}
+
+.meeting-filter-form button{
+    background-color: #fff;
+    text-align: left;
 }
 
 .show {
