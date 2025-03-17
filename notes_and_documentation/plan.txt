@@ -29,13 +29,14 @@ To Do List Before Production:
 
     Home Page
     -add real time search
-    -display last online(just do date not time)
+    -display last online(online within the last week, online within the past month)(filter)
     -pagination
     -footer
-    -default filters
+    -default sorting
     -logo
-    -elevator pitch filter
+    -✔️elevator pitch filter
     -✔️meeting preference filter
+    -stackable filters and search with filters applied notification
 
     Text Chat
     -make sure people will only be added to contacts once they send a meeting request(chat is opened at this point but if the other person declines the meeting, only they can message the person and have the choice to remove that person from their contacts)

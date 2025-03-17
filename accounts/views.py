@@ -50,6 +50,15 @@ def home(request):
             profiles = Engineer.objects.all()
         else:
             profiles = Engineer.objects.filter(meeting_preference=preference)
+    elif 'pitch' in request.GET:
+        pitch = request.GET['pitch']
+        print(pitch)
+        if pitch == 'any':
+            profiles = Engineer.objects.all()
+        elif pitch == 'true':
+            profiles = Engineer.objects.filter(elevator_pitch__isnull=False).exclude(elevator_pitch='')
+        else:
+            profiles = Engineer.objects.filter(Q(elevator_pitch=True) | Q(elevator_pitch=''))
     else:
         profiles = Engineer.objects.all()
     

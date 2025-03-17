@@ -41,6 +41,16 @@
                         </form>
                     </div>
                 </div>
+                <div class="meeting-filter">
+                    <button id="pitch-preferences-button">Has Elevator Pitch &#8964;</button>
+                    <div class="pitch-filter-content">
+                        <form class="meeting-filter-form" method="get">
+                            <button type="submit" name="pitch" value="any">Any</button>
+                            <button type="submit" name="pitch" value="true">True</button>
+                            <button type="submit" name="pitch" value="false">False</button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="engineer-table">
@@ -61,7 +71,7 @@
                 {% if profile.id != user.id %}
                     <div class="table-row">
                         <div class="row-background"></div>
-                        <div class="status">{{ profile.status }}</div>
+                        <div class="status">{{ profile.status }} {% if profile.last_login_within_7_days %} Has logged in within the past 7 days {% elif profile.last_login_within_30_days %} Has logged in within the past 30 days {% else %} Has not logged in for at least a month{% endif %}</div>
                         <div class="name">{{ profile.first_name }}</div>
                         <div class="location">{{ profile.city }}</div>
                         <div class="current-projects" id="scrollBox">{{ profile.current_project }}</div>
@@ -81,6 +91,9 @@
                     });
                     document.querySelector("#meeting-preferences-button").addEventListener("click", function() {
                         document.querySelector(".meeting-filter-content").classList.toggle("show");
+                    });
+                    document.querySelector("#pitch-preferences-button").addEventListener("click", function() {
+                        document.querySelector(".pitch-filter-content").classList.toggle("show");
                     });
                 /*window.addEventListener("click", function(e) {
                     if (!e.target.matches('.status-filter')) {
