@@ -32,35 +32,39 @@ def login(request):
     return render(request, 'accounts/login.html')  
 
 def home(request):
+    profiles = Engineer.objects.all()
+
     if 'search' in request.GET:
         search = request.GET['search']
-        profiles = Engineer.objects.filter(Q(first_name__icontains=search) | Q(projects__description__icontains=search))
-    elif 'city' in request.GET:
+        profiles = profiles.filter(Q(first_name__icontains=search) | Q(projects__description__icontains=search))
+
+    if 'city' in request.GET:
         city = request.GET['city']
-        profiles = Engineer.objects.filter(city__name=city)
-    elif 'option' in request.GET:
+        profiles = profiles.filter(city__name=city)
+
+    if 'option' in request.GET:
         status = request.GET['option']
         if status == 'any':
             profiles = Engineer.objects.all()
         else:
-            profiles = Engineer.objects.filter(status=status)
-    elif 'preference' in request.GET:
+            profiles = profiles.filter(status=status)
+
+    if 'preference' in request.GET:
         preference = request.GET['preference']
         if preference == 'any':
             profiles = Engineer.objects.all()
         else:
-            profiles = Engineer.objects.filter(meeting_preference=preference)
-    elif 'pitch' in request.GET:
+            profiles = profiles.filter(meeting_preference=preference)
+            
+    if 'pitch' in request.GET:
         pitch = request.GET['pitch']
         print(pitch)
         if pitch == 'any':
             profiles = Engineer.objects.all()
         elif pitch == 'true':
-            profiles = Engineer.objects.filter(elevator_pitch__isnull=False).exclude(elevator_pitch='')
+            profiles = profiles.filter(elevator_pitch__isnull=False).exclude(elevator_pitch='')
         else:
-            profiles = Engineer.objects.filter(Q(elevator_pitch=True) | Q(elevator_pitch=''))
-    else:
-        profiles = Engineer.objects.all()
+            profiles = profiles.filter(Q(elevator_pitch=True) | Q(elevator_pitch=''))
     
     cities = City.objects.all()
     context = {'profiles': profiles,
