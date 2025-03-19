@@ -65,6 +65,7 @@ def home(request):
             profiles = profiles.filter(elevator_pitch__isnull=False).exclude(elevator_pitch='')
         else:
             profiles = profiles.filter(Q(elevator_pitch=True) | Q(elevator_pitch=''))
+        #might need to re do all this for stackable filters
     
     cities = City.objects.all()
     context = {'profiles': profiles,
