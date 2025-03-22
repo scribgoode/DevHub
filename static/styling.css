@@ -829,6 +829,7 @@ figcaption {
     position: absolute;
     top: 100%;
     width: 55%;
+    background-color: #fff;
 }
 
 .status-filter-form button{
@@ -879,6 +880,8 @@ figcaption {
     position: absolute;
     top: 100%;
     width: 90%;
+    background-color: #fff;
+    text-align: left;
 }
 
 .meeting-filter-content{
