@@ -22,9 +22,9 @@
                     <button type="button" class="status-filter-button">Status &#8964;</button>
                     <div class="status-filter-content">
                         <div class="status-filter-form">
-                            <input type="radio" name="status" value="any" checked>Any
-                            <input type="radio" name="status" value="creator">Creator
-                            <input type="radio" name="status" value="recruit">Recruit
+                            <input type="radio" name="status" value="any" {% if status == 'any' or not status %}checked{% endif %}>Any
+                            <input type="radio" name="status" value="creator" {% if status == 'creator' %}checked{% endif %}>Creator
+                            <input type="radio" name="status" value="recruit"{% if status == 'recruit' %}checked{% endif %}>Recruit
                             <button type="submit">status submit</button>
                         </div>
                     </div>
@@ -33,10 +33,10 @@
                     <button type="button" id="meeting-preferences-button">Meeting Preferences &#8964;</button>
                     <div class="meeting-filter-content">
                         <div class="meeting-filter-form">
-                            <input type="radio" name="preference" value="any" checked>Any
-                            <input type="radio" name="preference" value="in-person">In-Person
-                            <input type="radio" name="preference" value="video">Video Chat
-                            <input type="radio" name="preference" value="text">Text Chat
+                            <input type="radio" name="preference" value="any" {% if preference == 'any' or not preference %}checked{% endif %}>Any
+                            <input type="radio" name="preference" value="in-person" {% if preference == 'in-person' %}checked{% endif %}>In-Person
+                            <input type="radio" name="preference" value="video" {% if preference == 'video' %}checked{% endif %}>Video Chat
+                            <input type="radio" name="preference" value="text" {% if preference == 'text' %}checked{% endif %}>Text Chat
                             <button type="submit">meet pref submit</button>
                         </div>
                     </div>
@@ -45,9 +45,9 @@
                     <button type="button" id="pitch-preferences-button">Has Elevator Pitch &#8964;</button>
                     <div class="pitch-filter-content">
                         <div class="meeting-filter-form">
-                            <input type="radio" name="pitch" value="any" checked>Any
-                            <input type="radio" name="pitch" value="true">True
-                            <input type="radio" name="pitch" value="false">False
+                            <input type="radio" name="pitch" value="any" {% if pitch == 'any' or not pitch %}checked{% endif %}>Any
+                            <input type="radio" name="pitch" value="true" {% if pitch == 'true' %}checked{% endif %}>True
+                            <input type="radio" name="pitch" value="false" {% if pitch == 'false' %}checked{% endif %}>False
                         </div>
                     </div>
                 </div>
