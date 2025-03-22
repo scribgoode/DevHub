@@ -2,6 +2,7 @@ from django.db import models
 from datetime import date
 from django.contrib.auth.models import AbstractUser
 from meetup_point.models import Address
+from datetime import timedelta, datetime
 
 def video_upload_path(instance, filename):
     return f'videos/{filename}'
@@ -33,6 +34,20 @@ class Engineer(AbstractUser):
 
     def __str__(self):
         return self.first_name
+    
+    def last_login_within_7_days(self):
+        seven_days_ago = datetime.now().date() - timedelta(days=7)
+        if self.last_login.date() > seven_days_ago:
+            return True
+        else:
+            return False
+    
+    def last_login_within_30_days(self):
+        thirty_days_ago = datetime.now().date() - timedelta(days=30)
+        if self.last_login.date() > thirty_days_ago:
+            return True
+        else:
+            return False
 
 class Project(models.Model):
     pal = models.ForeignKey(Engineer, on_delete=models.CASCADE) #if we end up doing a clean up of the code then rename engineer to pal

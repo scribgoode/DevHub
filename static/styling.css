@@ -829,6 +829,7 @@ figcaption {
     position: absolute;
     top: 100%;
     width: 55%;
+    background-color: #fff;
 }
 
 .status-filter-form button{
@@ -879,6 +880,8 @@ figcaption {
     position: absolute;
     top: 100%;
     width: 90%;
+    background-color: #fff;
+    text-align: left;
 }
 
 .meeting-filter-content{
@@ -888,6 +891,26 @@ figcaption {
 .meeting-filter-form button{
     background-color: #fff;
     text-align: left;
+}
+
+#pitch-preferences-button{
+    border-radius: 10px;
+    font-size: 20px;
+    padding: 5px 10px;
+    transition: transform 0.05s ease-in-out;
+    margin-right: 10px;
+    background-color: #fff;
+}
+
+
+.pitch-filter-content{
+    display: none;
+    position: absolute;
+    background-color: #fff;
+    min-width: 150px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    border-radius: 10px;
 }
 
 .show {

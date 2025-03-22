@@ -29,13 +29,14 @@ To Do List Before Production:
 
     Home Page
     -add real time search
-    -display last online(just do date not time)
+    -display last online(online within the last week, online within the past month)(filter)
     -pagination
     -footer
-    -default filters
+    -default sorting
     -logo
-    -elevator pitch filter
+    -✔️elevator pitch filter
     -✔️meeting preference filter
+    -stackable filters and search with filters applied notification
 
     Text Chat
     -make sure people will only be added to contacts once they send a meeting request(chat is opened at this point but if the other person declines the meeting, only they can message the person and have the choice to remove that person from their contacts)
@@ -70,13 +71,43 @@ To Do List Before Production:
 
 
 
-Future Add Ons
+Future Ideas and Add Ons
     -set up way to get emails/text messages if you get a new meeting invite
+    -users can send the projects in the meeting request they are interested in joining/talking about
+    -if a user hasnt logged in for a certain period maybe make all projects inactive
+    -goals feature to display on profile(make money, improve collaboration, etc.)
+    -option to do leetcode together on the site and competitive leetcode
+    -code repository
+    -work split percentages(50:50, 100:0)(sounds good in theory but will cause more tension)(also people dont actually know how willing they are to split work)
+    -streaming capabilites with ability to save streams
+    -pitch competitions
+    -system to remove identifying information from display pages such as social media links(dont remove stuff like last name just links that could be seem as advertising)(give them just enough
+    information so a person can do a criminal history search)
+    Payment
+        -user buys 3 meeting requests for 10$ to unlock everything other than the homepage with a certain amount blurred and personal profile, once they send a meeting request, one of the tokens
+        is put in escrow. If the receiver accepts the meeting request token it is removed. If the meeting is declined we unlock one of the remaining meeting request tokens. Once you have 
+        all of your tokens removed you are denied access to the site again. You probably should still have access even if all tokens are in escrow
+    -project categories or pages that are fitted for a particular subject
+    -features for recruiters if we notice recruiters
+    -groups that cost money to mangage
+    -way for users to pay for advertising on their project
+    -paid projects tab(pay to post on this or access it)
+    -prize for best project after multiple months(way to submit your project journey)
+    -replit like capabilites
+    -track times in meetings to save as a metric for project progress
+    -coffee chat project(a way for people to just talk about their careers thus far and get to know one another)
+    -***private feature(allow you to have projects that you want to have hidden on your page with specific tags)(we have a button attached to the projects that when clicked takes user 
+    to another profile and displays their hidden project with the same tag)
+    -project management software
+    -screen share in video call
+    
 
 
 Business Developement
     -define target market(most likely software engineers but maybe we can do them, influencers, entreprenuers, interviewers, etc)
-
+    -recruiting business
+    -work with wework
+    -makret to youtubers for a way for people to gain extras in their youtube vids
 
 
 

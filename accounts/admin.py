@@ -16,7 +16,8 @@ class CustomUserAdmin(UserAdmin):
     fieldsets = (
         (None, {'fields': ('email', 'password', 'dob', 'first_name', 'last_name', 'status', 'projects', 'country', 'city', 'elevator_pitch', 'address', 'meeting_preference')}),
     )
-    list_display = ["email", "status"]
+
+    list_display = ["email", "status", "last_login"]
 
 admin.site.register(Engineer, CustomUserAdmin)
 admin.site.register(Project)

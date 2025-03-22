@@ -33,30 +33,43 @@ def login(request):
     return render(request, 'accounts/login.html')  
 
 def home(request):
+    profiles = Engineer.objects.all()
+    pitch = request.GET.get('pitch')
+    preference = request.GET.get('preference')
+    status = request.GET.get('status') 
+
     if 'search' in request.GET:
         search = request.GET['search']
-        profiles = Engineer.objects.filter(Q(first_name__icontains=search) | Q(projects__description__icontains=search))
-    elif 'city' in request.GET:
+        profiles = profiles.filter(Q(first_name__icontains=search) | Q(projects__description__icontains=search))
+
+    if 'city' in request.GET:
         city = request.GET['city']
-        profiles = Engineer.objects.filter(city__name=city)
-    elif 'option' in request.GET:
-        status = request.GET['option']
-        if status == 'any':
-            profiles = Engineer.objects.all()
-        else:
-            profiles = Engineer.objects.filter(status=status)
-    elif 'preference' in request.GET:
-        preference = request.GET['preference']
-        if preference == 'any':
-            profiles = Engineer.objects.all()
-        else:
-            profiles = Engineer.objects.filter(meeting_preference=preference)
-    else:
-        profiles = Engineer.objects.all()
+        if city != 'any':
+            profiles = profiles.filter(city__name=city)
+
+    if 'status' in request.GET:
+        #status = request.GET['status'] 
+        if status != 'any':
+            profiles = profiles.filter(status=status)
+
+    if 'preference' in request.GET:
+        #preference = request.GET['preference']
+        if preference != 'any':
+            profiles = profiles.filter(meeting_preference=preference)
+            
+    if 'pitch' in request.GET:
+        #pitch = request.GET['pitch']
+        if pitch == 'true':
+            profiles = profiles.filter(elevator_pitch__isnull=False).exclude(elevator_pitch='')
+        if pitch == 'false':
+            profiles = profiles.filter(Q(elevator_pitch=True) | Q(elevator_pitch=''))
     
     cities = City.objects.all()
     context = {'profiles': profiles,
-               'cities': cities,}
+               'cities': cities,
+               'status': status,
+               'preference': preference,
+               'pitch': pitch,} 
     return render(request, 'home.html', context)
 
 def Profile(request, id):
