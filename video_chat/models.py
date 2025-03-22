@@ -24,8 +24,13 @@ class Meeting(models.Model):
         ONGOING = 'ongoing', 'ongoing'
         COMPLETED = 'completed', 'completed'
         CANCELLED = 'cancelled', 'cancelled'
+        DECLINED = 'declined', 'declined'
     status = models.CharField(max_length=50, choices=Status.choices, default=Status.UPCOMING)
-    type = models.CharField(max_length=50)
+    class Type(models.TextChoices):
+        INPERSON = 'in-person', 'in-person'
+        VIDEO = 'video', 'video'
+        TEXT = 'text', 'text'
+    type = models.CharField(max_length=50, choices=Type.choices, default=Type.INPERSON)
     #room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='room')
     #create the room as soon the meeting is created
     #create room token regardless of the meeting type
@@ -41,15 +46,24 @@ class MeetingRequest(models.Model):
     end_time = models.TimeField()
     message = models.TextField()
     sent_date = models.DateTimeField(auto_now_add=True)
-    class Status(models.TextChoices):
+
+    # track if sender has seen the response and want to remove it from the list
+    class Acknowledgement(models.TextChoices):
         PENDING = 'pending', 'pending'
-        ACCEPTED = 'accepted', 'accepted'
-        REJECTED = 'rejected', 'rejected'
-        CANCELLED = 'cancelled', 'cancelled'
+        RESOLVED = 'resolved', 'resolved'
+    acknowledgement = models.CharField(max_length=50, choices=Acknowledgement.choices, default=Acknowledgement.PENDING)
+
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'pending' # pending status
+        ACCEPTED = 'accepted', 'accepted' # accepted status
+        DECLINED = 'declined', 'declined' # declined status
+        RESCHEDULED = 'rescheduled', 'rescheduled' # rescheduling by recipient
+        CANCELLED = 'cancelled', 'cancelled' # cancelled status by sender
     status = models.CharField(max_length=50, default=Status.PENDING, choices=Status.choices)
-    location_name = models.CharField(max_length=255, default='') # either url or address string
+    location_name = models.CharField(max_length=255, default='') # store name (only applicable for in-person meetings)
     lat = models.FloatField(null=True, blank=True)
     lng = models.FloatField(null=True, blank=True)
+    address = models.CharField(max_length=255, default='', null=True, blank=True) # either url or address string
     locationUpdateURL = models.CharField(max_length=255, default='', null=True, blank=True)
     class Type(models.TextChoices):
         INPERSON = 'in-person', 'in-person'

@@ -32,37 +32,38 @@
     <div class="meetings-list">
         <header class="meeting-headers">Upcoming Meetings</header>
         <div class="upcoming-meetings-box">
-                <!-- {% comment %} {% for meeting in meetings %}
-                {% if meeting.sender.id == user.id %}
-                    {% if meeting.type == 'in-person' %}
-
-                    {%endif%}
-                    <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at {{ locationType }}</a><br>
-                {% else %}
-                    <a href="video_chat/{{ meeting.room_token }}">{{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at {{ locationType }} </a><br>
-                {% endif %}
-                {% endfor %} {% endcomment %} -->
                 {% for meeting in meetings %}
-                <button class="meetings-row" data-id="{{meeting.id}}"> 
-                {% if meeting.sender.id == user.id %}
+                {% if meeting.status == 'upcoming' %}
+                <button class="meetings-row" data-id="{{ meeting.id }}"> 
                     {% if meeting.type == 'in-person' %}
-                        {{meeting.date}} at {{meeting.end_time|time:"H:i"}} to {{meeting.end_time|time:"H:i"}} Meeting with {{ meeting.recipient.first_name }} at {{ meeting.meeting_request.location_name }}
+                        {% if meeting.recipient.id != user.id %}
+                        {{ meeting.date }} at {{ meeting.end_time|time:"H:i" }} to {{ meeting.end_time|time:"H:i" }} 
+                        Meeting with {{ meeting.recipient.first_name }} at {{ meeting.meeting_request.location_name }}
+                        {% else %}
+                        {{ meeting.date }} at {{ meeting.start_time|time:"H:i" }} to {{ meeting.end_time|time:"H:i" }}
+                        Meeting with {{ meeting.sender.first_name }} at {{ meeting.meeting_request.location_name }}
+                        {% endif %}
                     {% elif meeting.type == 'video' %}
-                        {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.recipient.first_name }} at {{ meeting.type }}
-                    {%endif%}
-                    {% else %}
-                    {{meeting.date}} at {{meeting.start_time}} to {{meeting.end_time}} Meeting with {{ meeting.sender.first_name }} at {{ meeting.type }}
-                {% endif %}
+                    {% if meeting.recipient.id != user.id %}
+                        {{ meeting.date }} at {{ meeting.end_time|time:"H:i" }} to {{ meeting.end_time|time:"H:i" }} 
+                        Video Meeting with {{ meeting.recipient.first_name }}
+                        {% else %}
+                        {{ meeting.date }} at {{ meeting.start_time|time:"H:i" }} to {{ meeting.end_time|time:"H:i" }}
+                        Video Meeting with {{ meeting.sender.first_name }}
+                        {% endif %}
+                    {% endif %}
                 </button>
+                {% endif %}
                 <div class="meetings-popup hidden" id="meetings-popup-{{meeting.id}}">
                     <button class="close-window">X</button>
                     <p>{{meeting.sender}} and {{meeting.recipient}}'s Meeting Information</p>
                     <p>Time: {{ meeting.start_time|time:"H:i" }} - {{ meeting.end_time|time:"H:i" }}</p>
                     <p>Description: {{meeting.description}}</p>
-                    {% if meeting.type == 'video' %}
+                    {% if meeting.type == 'in-person' %}
+                        <p>Location: {{meeting.meeting_request.location_name}} </p>
+                        <p>Address: {{meeting.meeting_request.address}}</p>
+                    {% elif meeting.type == 'video' %}
                         <p>Location: <a href="video_chat/{{ meeting.room_token }}">{{meeting.type}}</a></p>
-                    {% elif meeting.type == 'in-person' %}
-                        <p>Location: location to be added when meeting algorithom done </p>
                     {% endif %}
                 </div>
                 {% endfor %}
@@ -108,16 +109,23 @@
                 <div class="incoming-meetings-popup hidden" id="incoming-meetings-popup-{{meeting_request.id}}">
                     <button class="close-window">X</button>
                     <p>{{ meeting_request.sender.first_name }} want to me with you!</p>
-                    <p>Proposed Time: {{meeting_request.start_time}} - {{ meeting_request.end_time }}</p>
+                    <p>Proposed Time: {{meeting_request.start_time|time:"H:i" }} - {{ meeting_request.end_time|time:"H:i"  }}</p>
                     <p>Message: {{meeting_request.message}}</p>
-                    <p>Location: location to be added when meeting algorithom done</p>
+                    {% if meeting_request.type == 'video' %}
+                        <p>Location: <a href="video_chat/{{ meeting_request.room_token }}">{{meeting_request.type}}</a></p>
+                    {% elif meeting_request.type == 'in-person' %}
+                        <p>Location: {{meeting_request.location_name}} </p>
+                        <p>Address: {{meeting_request.address}}</p>
+                    {% endif %}
                     <form class="meeting-request-decision" method="post">
                         <input type="hidden" name="form_type" value="meeting_request_decision">
                         {% csrf_token %}
                         <input type="hidden" name="meeting_request_sender_id" value="{{ meeting_request.sender.id }}">
                         <input type="hidden" name="meeting_request_recipient_id" value="{{ meeting_request.recipient.id }}">
-                        <button type="submit">Accept</button>
-                        <button type="submit" name="decline" value="reject">Decline</button> <!--add in way to decline the meeting but send back meeting request with new details-->
+                        <input type="hidden" name="decision" id="decision">
+                        <button type="submit" onclick="document.getElementById('decision').value='accept';">Accept</button>
+                        <button type="submit" onclick="document.getElementById('decision').value='decline';">Decline</button>
+                        <button type="submit" onclick="document.getElementById('decision').value='reschedule';">Decline & reschedule</button><!--add in way to decline the meeting but send back meeting request with new details-->
                     </form>
                 </div>   
                 {% endif %}
@@ -136,8 +144,13 @@
                         </button>
                         <div class="sent-meetings-popup hidden" id="sent-meetings-popup-{{sent_meeting.id}}">
                             <button class="close-window">X</button>
-                            <p> Location Name: {{sent_meeting.location_name}} <br>
-                                Time: {{sent_meeting.start_time}} - {{sent_meeting.end_time}} <br>
+                            {% if sent_meeting.type == 'in-person' %}
+                                <p> Location Name: {{sent_meeting.location_name}} <br>
+                                <p>Address: {{sent_meeting.address}}</p>
+                            {% else %}
+                                <p> Location: <a href="video_chat/{{ sent_meeting.room_token }}">{{sent_meeting.type}}</a> <br>
+                            {% endif %}
+                                Time: {{sent_meeting.start_time|time:"H:i"}} - {{sent_meeting.end_time|time:"H:i"}} <br>
                                 Status: {{sent_meeting.status}} <br>
                                 {% if sent_meeting.type == 'in-person' %}
                                     <form id="update-location-form" type="meeting_request_update">
@@ -145,6 +158,40 @@
                                     </form>
                                 {% endif %}
                             </p>
+                        </div>
+                    {% elif sent_meeting.status == 'rescheduled' and sent_meeting.acknowledgement == 'pending' %}
+                        <button class="sent-meetings-row" data-id="{{sent_meeting.id}}">
+                                Meeting request with {{sent_meeting.recipient}}
+                        </button>
+                        <div class="sent-meetings-popup hidden" id="sent-meetings-popup-{{sent_meeting.id}}">
+                            <button class="close-window">X</button>
+                            <p>Meeting request with {{sent_meeting.recipient}} is being rescheduled</p>
+                            <form class="sent-meeting-acknowledgement" method="post">
+                                <input type="hidden" name="form_type" value="sent-meeting-acknowledgement">
+                                {% csrf_token %}
+                                <input type="hidden" name="sent_meeting_sender_id" value="{{ sent_meeting.sender.id }}">
+                                <input type="hidden" name="sent_meeting_recipient_id" value="{{ sent_meeting.recipient.id }}">
+                                <input type="hidden" name="send_meeting_status" value="{{ sent_meeting.status }}">
+                                <input type="hidden" name="acknowledgement" id="acknowledgement">
+                                <button type="submit" onclick="document.getElementById('acknowledgement').value='acknowledge';">Acknowledge and remove from list</button>
+                            </form>
+                        </div>
+                    {% elif sent_meeting.status == 'declined' and sent_meeting.acknowledgement == 'pending' %}
+                        <button class="sent-meetings-row" data-id="{{sent_meeting.id}}">
+                                Meeting request with {{sent_meeting.recipient}}
+                        </button>
+                        <div class="sent-meetings-popup hidden" id="sent-meetings-popup-{{sent_meeting.id}}">
+                            <button class="close-window">X</button>
+                            <p>Meeting request with {{sent_meeting.recipient}} has been declined</p>
+                            <form class="sent-meeting-acknowledgement" method="post">
+                                <input type="hidden" name="form_type" value="sent-meeting-acknowledgement">
+                                {% csrf_token %}
+                                <input type="hidden" name="sent_meeting_sender_id" value="{{ sent_meeting.sender.id }}">
+                                <input type="hidden" name="sent_meeting_recipient_id" value="{{ sent_meeting.recipient.id }}">
+                                <input type="hidden" name="send_meeting_status" value="{{ sent_meeting.status }}">
+                                <input type="hidden" name="acknowledgement" id="acknowledgement">
+                                <button type="submit" onclick="document.getElementById('acknowledgement').value='acknowledge';">Acknowledge and remove from list</button>
+                            </form>
                         </div>
                     {% endif %}
                 {% endfor %}

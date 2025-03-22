@@ -41,7 +41,7 @@ urlpatterns = [
     path('api/messages/', accounts_views.message_list),
     path('api/get-chathistory/<uuid:pk>', accounts_views.get_chat),
     path('api/meeting-requests/', meeting_request_views.meeting_requests_list),
-    path('api/get-meeting-requests/', meeting_request_views.meeting_requests_list),
+    path('api/get-meeting-requests/', meeting_request_views.get_meeting_requests_by_sender_and_recipient),
     path('api/update-meeting-request/<int:pk>/', meeting_request_views.update_meeting_request, name='update_meeting_request'),
 
     # chat pages
