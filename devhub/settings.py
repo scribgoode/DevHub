@@ -16,6 +16,8 @@ from pathlib import Path
 import os
 from dotenv import load_dotenv
 
+from tzlocal import get_localzone
+
 load_dotenv(verbose=True, override=True)
 GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
 
@@ -131,9 +133,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = str(get_localzone()) # Automatically get the local timezone
 
 USE_I18N = True
+from django.utils.timezone import activate
+activate(TIME_ZONE)
 
 USE_TZ = True
 
@@ -214,4 +218,6 @@ REST_FRAMEWORK = {
 }
 
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['us'] #un comment this line to only include US cities the name time we download the data and also look at the docs to see how to download only us cities
+
+
 #CITIES_LIGHT_INCLUDE_CITY_TYPES = ['PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLF', 'PPLG', 'PPLL', 'PPLR', 'PPLS', 'STLMT', 'PPLX',]
