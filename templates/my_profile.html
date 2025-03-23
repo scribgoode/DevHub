@@ -1,5 +1,7 @@
 {% extends 'base.html' %}
 {% block content %}
+{% load tz %}
+{% now "U" as current_time %}
 <div class="profile-data">
     {% if user.elevator_pitch %}
         <form method="post">
@@ -33,7 +35,7 @@
         <header class="meeting-headers">Upcoming Meetings</header>
         <div class="upcoming-meetings-box">
                 {% for meeting in meetings %}
-                {% if meeting.status == 'upcoming' %}
+                {% if meeting.status == 'upcoming' or meeting.status == 'ongoing' %}
                 <button class="meetings-row" data-id="{{ meeting.id }}"> 
                     {% if meeting.type == 'in-person' %}
                         {% if meeting.recipient.id != user.id %}
@@ -62,6 +64,21 @@
                     {% if meeting.type == 'in-person' %}
                         <p>Location: {{meeting.meeting_request.location_name}} </p>
                         <p>Address: {{meeting.meeting_request.address}}</p>
+
+                        {% if meeting.status == 'ongoing' %}
+                        <form method="post" class="meeting-success-form">
+                            <input type="hidden" name="form_type" value="meeting_success_update">
+                            {% csrf_token %}
+                            <input type="hidden" name="meeting_id" value="{{ meeting.id }}">
+                            <label for="meeting-success-{{ meeting.id }}">Was the meeting successful?</label>
+                            <select name="meeting_success" id="meeting-success-{{ meeting.id }}" required>
+                                <option value="" disabled selected>Select an option</option>
+                                <option value="yes">Yes</option>
+                                <option value="no">No</option>
+                            </select>
+                            <button type="submit">Submit</button>
+                        </form>
+                        {% endif %}
                     {% elif meeting.type == 'video' %}
                         <p>Location: <a href="video_chat/{{ meeting.room_token }}">{{meeting.type}}</a></p>
                     {% endif %}

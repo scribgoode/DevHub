@@ -1,3 +1,6 @@
+from datetime import datetime
+import time
+from django.utils.timezone import make_naive, is_aware
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django.template.loader import get_template
@@ -20,6 +23,9 @@ from django.contrib import messages
 from accounts.forms import ProjectCreationForm
 import requests
 from django.db.models import Case, When
+
+from django.utils.timezone import now, activate, localtime
+from tzlocal import get_localzone
 
 '''
 class HomePageView(TemplateView):
@@ -161,6 +167,17 @@ def Profile(request, id):
     return render(request, 'profile.html', context)
 
 def myProfile(request):
+    # Activate the system's timezone
+    system_timezone = get_localzone()
+    activate(system_timezone)
+
+    # Get the current time in the system's timezone
+    current_time = localtime(now())
+    current_time_unix = int(time.mktime(current_time.timetuple()))
+    print(type(current_time_unix))
+    print(current_time_unix)
+    print(f"Current Time in {system_timezone}: {current_time}")
+
     print(request.POST)
     if request.method == 'POST':
         form_type = request.POST.get("form_type")
@@ -170,10 +187,28 @@ def myProfile(request):
             if request.POST.get('decision') == 'accept':
                 #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
                 meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request)
-                meeting.save()
                 meeting_request.acknowledgement = MeetingRequest.Acknowledgement.RESOLVED
                 meeting_request.status = MeetingRequest.Status.ACCEPTED
+
+                # Ensure meeting.date and meeting.start_time/end_time are valid
+                if meeting.date and meeting.start_time and meeting.end_time:
+                    # Combine date and time into a datetime object
+                    start_datetime = datetime.combine(meeting.date, meeting.start_time)
+                    end_datetime = datetime.combine(meeting.date, meeting.end_time)
+
+                # Convert to naive datetime if timezone-aware
+                if is_aware(start_datetime):
+                    start_datetime = make_naive(start_datetime)
+                if is_aware(end_datetime):
+                    end_datetime = make_naive(end_datetime)
+
+
+                # Convert to Unix timestamps
+                meeting.start_time_unix = int(time.mktime(start_datetime.timetuple()))
+                meeting.end_time_unix = int(time.mktime(end_datetime.timetuple()))
+
                 meeting_request.save()
+                meeting.save()
             elif request.POST.get('decision') == 'decline':
                 #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
                 meeting_request.status = MeetingRequest.Status.DECLINED
@@ -212,10 +247,20 @@ def myProfile(request):
 
     meetings = Meeting.objects.filter( Q(recipient=request.user) | Q(sender=request.user) )
     
-    # debug - to remove
+    # convert start_time and end_time to unix timestamp
+    print("meeting type:", type(meetings))
     for meeting in meetings:
-        for field in meeting._meta.fields:
-            print(field.name, getattr(meeting, field.name))
+        print("meeting:", type(meeting))
+        if meeting.end_time_unix and current_time_unix > meeting.end_time_unix:
+            print('meeting has ended')
+            meeting.status = Meeting.Status.ONGOING
+            # Ensure meeting.date and meeting.start_time/end_time are valid
+            print("unix time:", meeting.end_time_unix)
+            print("type:", type(meeting.end_time_unix))
+            print(current_time_unix > meeting.end_time_unix)
+
+    
+
     
     meeting_requests = MeetingRequest.objects.filter( Q(recipient=request.user) | Q(sender=request.user) ) #maybe make meeting_requests and sent_meetings_requests
     meeting_requests = meeting_requests.order_by('date', 'start_time')
@@ -237,6 +282,7 @@ def myProfile(request):
                'meeting_requests': meeting_requests,
                'sent_meetings': sent_meetings,
                'projects': projects,
+               'now': current_time_unix,
                'project_creation_form': project_creation_form}
 
     return render(request, 'my_profile.html', context)

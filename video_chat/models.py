@@ -16,6 +16,8 @@ class Meeting(models.Model):
     date = models.DateField()
     start_time = models.TimeField()
     end_time = models.TimeField()
+    start_time_unix = models.BigIntegerField(null=True, blank=True)
+    end_time_unix = models.BigIntegerField(null=True, blank=True)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
