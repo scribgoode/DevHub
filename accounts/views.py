@@ -248,12 +248,21 @@ def myProfile(request):
                 # return redirect('/my_profile')
 
         # meeting success form
-        if form_type == 'meeting_success_form':
-            print('meeting success form')
+        if form_type == 'meeting_success_update':
+           # print(request.POST.get('meeting_success'))
             if request.POST.get('meeting_success') == 'yes':
+                meeting = Meeting.objects.get(id=request.POST.get('meeting_id'))
+                print("current meeting status:", meeting.status)
+                meeting.status = Meeting.Status.COMPLETED
+                meeting.save()
+                print("updated meeting status:", meeting.status)
                 print('meeting success')
             elif request.POST.get('meeting_success') == 'no':
                 print('meeting not success')
+                # handle the case when meeting was not successful
+                # status COMPLETED
+                # review for why it went unsuccessful
+                # strike system
             else:
                 print('did not get meeting_success msg. something went wrong')
 
@@ -264,13 +273,9 @@ def myProfile(request):
     print("meeting type:", type(meetings))
     for meeting in meetings:
         print("meeting:", type(meeting))
-        if meeting.end_time_unix and current_time_unix > meeting.end_time_unix:
-            print('meeting has ended')
+        if meeting.end_time_unix and current_time_unix > meeting.end_time_unix and meeting.status == Meeting.Status.UPCOMING:
             meeting.status = Meeting.Status.ONGOING
-            # Ensure meeting.date and meeting.start_time/end_time are valid
-            print("unix time:", meeting.end_time_unix)
-            print("type:", type(meeting.end_time_unix))
-            print(current_time_unix > meeting.end_time_unix)
+            meeting.save()
 
     
 
