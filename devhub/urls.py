@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import Profile, myProfile, home, index, signUp, login
+from accounts.views import Profile, myProfile, home, index, signUp, login, videoChat
 from accounts import views as accounts_views
 from meetup_point import views as meetup_views
 from video_chat import views as meeting_request_views
@@ -51,5 +51,7 @@ urlpatterns = [
     path("meetup_point/find_halfway", meetup_views.find_halfway_view, name="find_halfway_view"),
     #path("meetup_point/find_meetup_spot/?lat=<str:lat>&lng=<str:lng>&places=<str:places_query>", meetup_views.find_meetup_spot, name="find_meetup_spot")
     path("meetup_point/find_meetup_spot/", meetup_views.find_meetup_spot, name="find_meetup_spot"),
-    path("meetup_point/find_meetup_spot/get-directions/", meetup_views.get_directions_view, name="get_directions")
+    path("meetup_point/find_meetup_spot/get-directions/", meetup_views.get_directions_view, name="get_directions"),
+
+    path('my-profile/video_chat/<str:room_token>', videoChat, name='video_chat'),#i need to serialize the room object into json i think leland has already done this do i need to figure how to use the rest framework #actually nope
 ]
