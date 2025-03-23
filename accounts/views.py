@@ -244,6 +244,16 @@ def myProfile(request):
                 meeting_request.save()
                 # return redirect('/my_profile')
 
+        # meeting success form
+        if form_type == 'meeting_success_form':
+            print('meeting success form')
+            if request.POST.get('meeting_success') == 'yes':
+                print('meeting success')
+            elif request.POST.get('meeting_success') == 'no':
+                print('meeting not success')
+            else:
+                print('did not get meeting_success msg. something went wrong')
+
 
     meetings = Meeting.objects.filter( Q(recipient=request.user) | Q(sender=request.user) )
     
