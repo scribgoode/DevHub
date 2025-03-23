@@ -21,7 +21,7 @@
                 <div class="spacer2"></div>
                 <button type="submit" id="loginLink" class="message-button">&#9993;</button>
             {% elif user.is_authenticated and request.path != '/my-profile/' %}
-                <form id="login-form" action="my-profile" method="get">
+                <form id="login-form" action="/my-profile" method="get">
                     <button type="submit" id="loginLink" >My Profile</button>
                 </form>
                 <div class="spacer2"></div>

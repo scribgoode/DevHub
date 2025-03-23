@@ -19,6 +19,7 @@ from video_chat.forms import MeetingRequestForm
 from django.contrib import messages
 from accounts.forms import ProjectCreationForm
 import requests
+from django.db.models import Case, When
 
 '''
 class HomePageView(TemplateView):
@@ -145,6 +146,10 @@ def Profile(request, id):
                         messages.error(request, 'Failed to find halfway point.')
                 else:
                     messages.warning(request, 'Both users must have an address to request an in-person meeting.')
+            elif meeting_request.type == 'video':
+                meeting_request.status = 'pending'
+                meeting_request.save()
+                return redirect('profile', id=request.user.id)  # Redirect to the profile page after form submission
             else:
                 messages.warning(request, 'Meeting request created successfully, but failed to find half way point. THIS SHOULD NOT HAVE HAPPENED!')
                 return redirect('profile', id=id)  # Redirect to the profile page after form submission
@@ -159,15 +164,31 @@ def Profile(request, id):
     return render(request, 'profile.html', context)
 
 def myProfile(request):
+    print(request.POST)
     if request.method == 'POST':
         form_type = request.POST.get("form_type")
         print(form_type)
         if form_type ==  "meeting_request_decision":
             meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
-            meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request)
-            meeting.save()
-            meeting_request.status = 'resolved'
-            meeting_request.save()
+            if request.POST.get('decision') == 'accept':
+                #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
+                meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request)
+                meeting.save()
+                meeting_request.acknowledgement = MeetingRequest.Acknowledgement.RESOLVED
+                meeting_request.status = MeetingRequest.Status.ACCEPTED
+                meeting_request.save()
+            elif request.POST.get('decision') == 'decline':
+                #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
+                meeting_request.status = MeetingRequest.Status.DECLINED
+                meeting_request.save()
+                meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.DECLINED)
+                meeting.save()
+            elif request.POST.get('decision') == 'reschedule':
+                meeting_request.status = MeetingRequest.Status.RESCHEDULED
+                meeting_request.save()
+                meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.DECLINED)
+                meeting.save()
+                return redirect('profile', id=request.POST.get('meeting_request_sender_id'))
         if form_type == "video_upload":
             user = request.user
             user.elevator_pitch = request.FILES['elevator_pitch']
@@ -181,14 +202,37 @@ def myProfile(request):
                 project = form.save(commit=False)
                 project.pal = request.user
                 project.save()
+       
+       # acknowledgement accepted
+        if form_type == 'sent-meeting-acknowledgement':
+            print('acknowledgement')
+            meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('sent_meeting_sender_id'), recipient__id=request.POST.get('sent_meeting_recipient_id'), status=request.POST.get('send_meeting_status'),acknowledgement='pending')
+            if request.POST.get('acknowledgement') == 'acknowledge':
+                meeting_request.acknowledgement = MeetingRequest.Acknowledgement.RESOLVED
+                meeting_request.save()
+                # return redirect('/my_profile')
 
 
     meetings = Meeting.objects.filter( Q(recipient=request.user) | Q(sender=request.user) )
+    
+    # debug - to remove
     for meeting in meetings:
         for field in meeting._meta.fields:
             print(field.name, getattr(meeting, field.name))
+    
     meeting_requests = MeetingRequest.objects.filter( Q(recipient=request.user) | Q(sender=request.user) ) #maybe make meeting_requests and sent_meetings_requests
+    meeting_requests = meeting_requests.order_by('date', 'start_time')
+    
     sent_meetings = MeetingRequest.objects.filter(sender=request.user)
+    sent_meetings = sent_meetings.annotate(
+        status_order=Case(
+            When(status='pending', then=1),
+            When(status='accepted', then=2),
+            When(status='rescheduled', then=3),
+            When(status='declined', then=4),
+            default=5
+        )
+    ).order_by('status_order')
     projects = Project.objects.filter(pal=request.user)
     project_creation_form = ProjectCreationForm()
 

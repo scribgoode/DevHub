@@ -19,7 +19,9 @@ def meeting_requests_list(request):
     return Response(serializer.data)
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])  # Restrict access to authenticated users
 def get_meeting_requests_by_sender_and_recipient(request):
+    print(f"User: {request.user}, Auth: {request.auth}")  # Debug authentication
     sender_id = request.GET.get('sender')
     recipient_id = request.GET.get('recipient')
 
@@ -31,6 +33,7 @@ def get_meeting_requests_by_sender_and_recipient(request):
         return Response({"error": "Both sender and recipient IDs are required."}, status=400)
     
 @api_view(['PATCH'])
+@permission_classes([IsAuthenticated])  # Restrict access to authenticated users
 def update_meeting_request(request, pk):
     try:
         meeting_request = MeetingRequest.objects.get(pk=pk)

@@ -115,7 +115,7 @@
 
                         confirmBtn.addEventListener('click', function() {
                             alert('You have confirmed ' + result.name + ' as your meetup spot.');
-                            confirmLocation(result.name, place.geometry.location);
+                            confirmLocation(result.name, result.formatted_address, place.geometry.location);
                         });
 
                         selected_spot.appendChild(newInfoBox)
@@ -171,7 +171,7 @@
         });
     }
 
-    function confirmLocation(name, location) {
+    function confirmLocation(name, address, location) {
         // print name and location
         console.log("Location Name:", name, " Location:", location);
 
@@ -184,8 +184,9 @@
             .then(data => {
                 console.log('Meeting Request:', data);
                 // Handle the meeting request data
-                const mr = data[0]; // Assuming the first meeting request is the one you want to update
+                const mr = data[data.length - 1]; // Assuming the last meeting request is the one you want to update
                 mr.location_name = name;
+                mr.address = address;
                 mr.lat = location.lat;
                 mr.lng = location.lng;
 
@@ -198,6 +199,7 @@
                     },
                     body: JSON.stringify({
                         location_name: mr.location_name,
+                        address: mr.address,
                         lat: mr.lat,
                         lng: mr.lng
                     })
