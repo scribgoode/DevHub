@@ -129,7 +129,7 @@
                     <p>Proposed Time: {{meeting_request.start_time|time:"H:i" }} - {{ meeting_request.end_time|time:"H:i"  }}</p>
                     <p>Message: {{meeting_request.message}}</p>
                     {% if meeting_request.type == 'video' %}
-                        <p>Location: <a href="video_chat/{{ meeting_request.room_token }}">{{meeting_request.type}}</a></p>
+                        <p>Location: video</p>
                     {% elif meeting_request.type == 'in-person' %}
                         <p>Location: {{meeting_request.location_name}} </p>
                         <p>Address: {{meeting_request.address}}</p>
@@ -165,7 +165,7 @@
                                 <p> Location Name: {{sent_meeting.location_name}} <br>
                                 <p>Address: {{sent_meeting.address}}</p>
                             {% else %}
-                                <p> Location: <a href="video_chat/{{ sent_meeting.room_token }}">{{sent_meeting.type}}</a> <br>
+                                <p> Location: video</p> <br>
                             {% endif %}
                                 Time: {{sent_meeting.start_time|time:"H:i"}} - {{sent_meeting.end_time|time:"H:i"}} <br>
                                 Status: {{sent_meeting.status}} <br>

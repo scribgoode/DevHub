@@ -28,15 +28,16 @@ To Do List Before Production:
     -maybe add meeting statistics for bottom right of profile page(something needs to go in that bottom right corner)
 
     Home Page
-    -add real time search
-    -display last online(online within the last week, online within the past month)(filter)
+    -✔️add real time search
+    -✔️display last online(online within the last week, online within the past month)(filter)(we decided there was no point for this filter right now)
     -pagination
     -footer
     -default sorting
     -logo
+    -render projects on home page
     -✔️elevator pitch filter
     -✔️meeting preference filter
-    -stackable filters and search with filters applied notification
+    -✔️stackable filters and search with filters applied notification
 
     Text Chat
     -make sure people will only be added to contacts once they send a meeting request(chat is opened at this point but if the other person declines the meeting, only they can message the person and have the choice to remove that person from their contacts)
@@ -97,7 +98,8 @@ Future Ideas and Add Ons
     -track times in meetings to save as a metric for project progress
     -coffee chat project(a way for people to just talk about their careers thus far and get to know one another)
     -***private feature(allow you to have projects that you want to have hidden on your page with specific tags)(we have a button attached to the projects that when clicked takes user 
-    to another profile and displays their hidden project with the same tag)
+    to another profile and displays their hidden project with the same tag)(maybe use nlp/statistical model to help users put in the right 
+    descriptions for their projects)(maybe you just want to be more private too)
     -project management software
     -screen share in video call
     
