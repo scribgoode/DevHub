@@ -1,8 +1,8 @@
 /* https://stackoverflow.com/questions/52682812/django-css-not-updating */
 /* crtl+f5 or ctrl+shift+r to refresh css file  cache */
-* {
+/* * {
     outline: 1px red solid;
-}
+} */
 
 
 body {
@@ -121,7 +121,7 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .table-head .status{
-    flex: 10%;
+    flex: 14%;
     border-radius: 5px;
 }
 
@@ -141,7 +141,7 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .table-head .meeting-preferences{
-    flex: 10%;
+    flex: 6%;
     border-radius: 5px;
 }
 
@@ -163,9 +163,17 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .table-row .status{
-    flex: 10%;
-    text-align: center;
+    flex: 14%;
     background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+#online-status-notifier{
+    font-size: 1.5vh;
+    position: absolute;
+    bottom: 0%;
 }
 
 .table-row .name{
@@ -186,7 +194,7 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .table-row .meeting-preferences{
-    flex: 10%;
+    flex: 6%;
     background-color: #fff;
 }
 
@@ -786,9 +794,44 @@ figcaption {
 /* search */
 .search-bar{
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    
+    gap: 10px;   
+}
+
+#searchBox{
+    box-sizing: border-box;
+    width: 85%;
+    height: 4vh;
+    border: none;
+    font-size: 3vh;
+    border:cornflowerblue 0.2vh solid;
+    background-color: #fff;
+}
+
+.search-bar-div{
+    display: flex;
+}
+
+.search-bar-div input::placeholder{
+   font-size: 2vh;
+}
+
+#searchButton{
+    height: 4vh;
+    width: 3vw;
+    padding: 0%;
+}
+
+.location-bar-div{
+    display: flex;
+}
+
+#location-symbol{
+    font-size: 3.5vh;;
+}
+
+#location-dropdown{
+    height: 4vh;
+    width: 10vw;
 }
 
 /* filtering */
@@ -868,10 +911,6 @@ figcaption {
     transition: transform 0.05s ease-in-out;
     margin-right: 10px;
     background-color: #fff;
-}
-
-.status-filter:active, .location-filter:active, #meeting-preferences-filter:active {
-    transform: scale(0.95);
 }
 
 .meeting-filter-form{

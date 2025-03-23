@@ -35,14 +35,14 @@ def home(request):
     profiles = Engineer.objects.all()
     pitch = request.GET.get('pitch')
     preference = request.GET.get('preference')
-    status = request.GET.get('status') 
+    status = request.GET.get('status')
+    city = request.GET.get('city') 
+    search = request.GET.get('search') 
 
     if 'search' in request.GET:
-        search = request.GET['search']
         profiles = profiles.filter(Q(first_name__icontains=search) | Q(projects__description__icontains=search))
 
     if 'city' in request.GET:
-        city = request.GET['city']
         if city != 'any':
             profiles = profiles.filter(city__name=city)
 
@@ -68,7 +68,10 @@ def home(request):
                'cities': cities,
                'status': status,
                'preference': preference,
-               'pitch': pitch,} 
+               'pitch': pitch,
+               'city': city,
+               'search': search} 
+    
     return render(request, 'home.html', context)
 
 def Profile(request, id):
