@@ -406,3 +406,5 @@ function toggleCam(event) {
 		display_stream($self.media_stream);
     }
 }
+
+//create toggle mic event
