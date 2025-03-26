@@ -408,3 +408,5 @@ function toggleCam(event) {
 }
 
 //create toggle mic event
+//feed important information into this page
+//start working on only making this page available during the hours of the meeting
