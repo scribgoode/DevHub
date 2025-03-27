@@ -15,7 +15,7 @@ const $self = {
         iceTransportPolicy: "all"
     },
     media_constraints: {
-        audio: false,
+        audio: true,
         video: true,
     },
     video_constraints: {
@@ -24,11 +24,11 @@ const $self = {
     },
     media_stream: new MediaStream(),
     media_tracks: {},
-    features: { audio: false },
+    features: {},
     ws: null,
     ws_json: function(data) {
-        console.log('this is the ws_json function being called');
-        console.log('sending:', JSON.stringify(data));
+        //console.log('this is the ws_json function being called');
+        //console.log('sending:', JSON.stringify(data));
         this.ws.send(JSON.stringify(data));
     }
 };
@@ -41,7 +41,7 @@ function element_id(id='self') {
 }
 
 function signal(recipient, signal) {
-    console.log('this is the signal function being called');
+    //console.log('this is the signal function being called');
     //singalled is not being called for some reason
     $self.ws_json(
         
@@ -162,8 +162,10 @@ function display_stream(stream, id = 'self') {
 async function request_user_media(media_constraints) {
     $self.media = await navigator.mediaDevices.getUserMedia(media_constraints);
     $self.media_tracks.video = $self.media.getVideoTracks()[0];
+    $self.media_tracks.audio = $self.media.getAudioTracks()[0];
     $self.media_tracks.video.applyConstraints($self.video_constraints);
     $self.media_stream.addTrack($self.media_tracks.video);
+    $self.media_stream.addTrack($self.media_tracks.audio);
     display_stream($self.media_stream);
 }
 
@@ -181,8 +183,23 @@ function add_features(id) {
           }
         }
       }
+    function manage_audio(audio_feature) {
+        other.features['audio'] = audio_feature;
+        if (other.media_tracks.audio) {
+            if (audio_feature) {
+                other.media_stream.addTrack(other.media_tracks.audio);
+            }
+            else {
+                other.media_stream.removeTrack(other.media_tracks.audio);
+                display_stream(other.media_stream, id);
+            }
+        }
+    }
     other.features_channel = other.connection.createDataChannel('features', {negotiated: true, id: 500 });
+    console.log('connection:', other.connection);
+    console.log('features channel:', other.features_channel);
 	other.features_channel.onopen = function(event){
+        console.log('features channel open');
 		other.features_channel.send(JSON.stringify($self.features))
 	};
 	other.features_channel.onmessage = function(event) {
@@ -190,6 +207,9 @@ function add_features(id) {
         console.log('features:', features);
         if ('video' in features) {
             manage_video(features['video']);
+        }
+        if ('audio' in features) {
+            manage_audio(features['audio']);
         }
 	};
 }
@@ -309,6 +329,7 @@ function conn_negotiation(id) {
         } finally {
             console.log('this is the finally block of the conn_negotiation function being called');
             console.log('local description:', other.connection.localDescription);
+            console.log('connection2', other.connection);
             signal(id, {'description': other.connection.localDescription});
             console.log('after signal call');
             self_state.making_offer = false;
@@ -407,4 +428,21 @@ function toggleCam(event) {
     }
 }
 
-//create toggle mic event
+function toggleMic(event) {
+    const button = event.target;
+    const audio = $self.media_tracks.audio;
+    const state = audio.enabled = !audio.enabled; //this is changing state state of audio.enabled AND assigning that value to state
+    $self.features.audio = state;
+    button.setAttribute('aria-checked', state);
+
+    for (let id of $others.keys()) {
+        share_features(id, 'audio');
+    }
+    console.log(state, 'this is the state of the audio');
+    if (state) {
+        $self.media_stream.addTrack($self.media_tracks.audio);
+    } else {
+        $self.media_stream.removeTrack($self.media_tracks.audio);
+		display_stream($self.media_stream);
+    }
+}

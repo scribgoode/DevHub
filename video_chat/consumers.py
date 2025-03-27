@@ -60,22 +60,22 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
 
     async def connect(self):
         rtc_name = self.scope['url_route']['kwargs']['rtc_name'] #how does the rtc_name get passed in?
-        print(self.channel_name)
+        #print(self.channel_name)
         await self._presence_disconnect(self.channel_name) #removes there channel from every room associated #connect is being ran as soon as the a new websocket is created(ws-connect= on index) and this particular line is deleting a presence if it has the same channel name
         self.rtc_call = 'rtc_%s' % rtc_name
-        print(self.rtc_call)
+        #print(self.rtc_call)
         await self._presence_connect(self.rtc_call)
 
         await self.accept()
-        print(1)
+        #print(1)
         await self.send_json({#i need to find out what is receiving this data
                 'video_chat': {'type': 'connect', 'channel_name': self.channel_name} #this is the app that is trying be called. The apps object is created in tr.js and used in client.js
         })
-        print(2)
+        #print(2)
         await self.send_json({
                 'html': render_to_string('video_chat/header.html', {'room': rtc_name}) #how the room name is displayed
         })
-        print(3)
+        #print(3)
 
     async def disconnect(self, close_code):
         # Leave room group
@@ -95,11 +95,11 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
     # Receive message from WebSocket
     async def receive_json(self, content):
         await self._presence_touch()
-        print(content, "print statement in receive_josn function in consumer.py") #this function does not receive data from send_json in this file
+        #print(content, "print statement in receive_josn function in consumer.py") #this function does not receive data from send_json in this file
 
         for message_key, message_value in content.items():
             if message_key in self.function_dict:
-                print(message_key, message_value, "message_key and message_value in receive_json function in consumer.py")
+                #print(message_key, message_value, "message_key and message_value in receive_json function in consumer.py")
                 await self.function_dict[message_key](message_value)
 
     async def _hangup(self, hangup=None):
@@ -117,8 +117,8 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
         self.rtc_call = None
 
     async def _join(self, rtc_call):
-        print(rtc_call, "rtc_call in _join function in consumer.py")
-        print(self.rtc_call, "self.rtc_call in _join function in consumer.py")
+        #print(rtc_call, "rtc_call in _join function in consumer.py")
+        #print(self.rtc_call, "self.rtc_call in _join function in consumer.py")
         if self.rtc_call:
             await self._leave_room(self.rtc_call)
 
@@ -129,8 +129,8 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
 
         # Send list of connected peers (occupants) to self
         occupants = await self._room_occupants(self.rtc_call) #this is where the occupants are defined
-        if occupants:
-            print(occupants)
+        #if occupants:
+            #print(occupants)
         all_divs = "\n".join([
             self._create_other_div(occupant)
             for occupant in occupants
@@ -176,8 +176,8 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
     async def _rtc(self, rtc):
         # If there's a recipient, send to it.
         if 'recipient' in rtc:
-            print(rtc, "rtc in _rtc function in consumer.py")
-            print(self.channel_layer, "self.channel_name in _rtc function in consumer.py")
+            #print(rtc, "rtc in _rtc function in consumer.py")
+            #print(self.channel_layer, "self.channel_name in _rtc function in consumer.py")
             await self.channel_layer.send(
                 rtc['recipient'], {
                     'type': 'rtc_message',
@@ -191,7 +191,7 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
                     'video_chat': rtc
                 }
             )
-        print("sent to recipient")
+        #print("sent to recipient")
 
 
     @database_sync_to_async
@@ -223,7 +223,7 @@ class RtcConsumer(AsyncJsonWebsocketConsumer):
 
     async def rtc_message(self, event):
         # Send message to WebSocket
-        print(event, 'helloooooooooo') 
+        #print(event, 'helloooooooooo') 
         await self.send_json({
             'video_chat': event['video_chat'] #not sure how rtc_message is being called or what the event parameter is
         })
