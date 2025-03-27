@@ -15,7 +15,7 @@ const $self = {
         iceTransportPolicy: "all"
     },
     media_constraints: {
-        audio: true,
+        audio: { echoCancellation: true, noiseSuppression: true },
         video: true,
     },
     video_constraints: {
