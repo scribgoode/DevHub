@@ -1,5 +1,7 @@
 'use strict';
-
+//video chat is only working some of the time right now after clicking on the toggle buttons and trying mulitple times
+//could be something to do with async but not sure and want to wait until we are in production because maybe it is something to do with local host
+//also prob need to change the ice servers and make sure that presences are deleted in every scenario a user leaves the call 3/27/25
 const $self = {
     user_name: "",
     rtc_config: {
@@ -302,6 +304,14 @@ function register_rtc_callbacks(id) {
     other.connection.onnegotiationneeded = conn_negotiation(id);
     other.connection.onicecandidate = ice_candidate(id);
     other.connection.ontrack = other_track(id);
+    other.connection.onicecandidate = (event) => {
+        if (event.candidate) {
+            console.log("ICE candidate:", event.candidate);
+            // Send candidate to remote peer
+        } else {
+            console.log("All ICE candidates sent.");
+        }
+    };
 }
 
 function conn_state_change(id) {
@@ -349,6 +359,7 @@ function other_track(id) {
         other.media_tracks[track.kind] = track;
         other.media_stream.addTrack(track);
         display_stream(other.media_stream, id);
+        console.log('this is the other_track function being called');
     };
 }
 
