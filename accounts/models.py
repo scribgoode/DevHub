@@ -31,6 +31,10 @@ class Engineer(AbstractUser):
         TEXT = 'text', 'text'
 
     meeting_preference = models.CharField(max_length=9, choices=MeetingPreference.choices, default=MeetingPreference.INPERSON)
+    class OpenToContributingDecision(models.TextChoices):
+        YES = 'yes', 'yes'
+        NO = 'no', 'no'
+    open_to_contributing = models.CharField(max_length=3, choices=OpenToContributingDecision.choices, default=OpenToContributingDecision.YES)
 
     def __str__(self):
         return self.first_name
@@ -53,11 +57,15 @@ class Project(models.Model):
     pal = models.ForeignKey(Engineer, on_delete=models.CASCADE) #if we end up doing a clean up of the code then rename engineer to pal
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(max_length=4000)
-    class Visibility(models.TextChoices): #maybe should make active its own switch
-        ACTIVE = 'active', 'active'
-        PUBLIC = 'public', 'private'
-        PRIVATE = 'private', 'private' 
-    visibility = models.CharField(max_length=7, choices=Visibility.choices, default=Visibility.ACTIVE)
+    class YesandNo(models.TextChoices):
+        YES = 'yes', 'yes'
+        NO = 'no', 'no'
+    display_on_page = models.CharField(max_length=3, choices=YesandNo.choices, default=YesandNo.YES)
+    actively_recruiting  = models.CharField(max_length=3, choices=YesandNo.choices, default=YesandNo.YES)
+    start_date = models.DateField(default=date.today)
+    end_date = models.DateField(default=date.today)
+    link = models.URLField(max_length=255, blank=True, null=True)
+
     #if we end up making it a project management site too, then we need to add a way to add users to a project but we might want to go ahead and add this so we can use the meetup spot algorithm to find a place between three people
     #we might want to end up setting that up as best we can before putting the website up because ETL is an expensive process but maybe not because of scope creep
  

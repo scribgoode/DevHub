@@ -25,10 +25,20 @@
         </div>
     {% endif %}
     <div class="profile-info">
-        <p><b>Name:</b> {{user.first_name}}</p>
-        <p><b>Status:</b> {{user.status}}</p>
-        <p><b>City:</b> {{user.city}}</p>
-        <button type="submit">Edit Personal Info</button>
+        <form id="edit-profile-info-form" method="POST" style= "display:none">
+            {% csrf_token %}
+            <input type="hidden" name="form_type" value="edit_profile_info">
+            {{ edit_profile_info_form.as_p }}
+            <button id="submit-profile-info-edits" type="submit">Update</button>
+        </form>
+        <div class="profile-info-container" id="profile-info-container">
+            <button id="edit-personal-info" onclick=showForm() >Edit Personal Info</button>
+            <p><b>Name:</b> {{user.first_name}}</p>
+            <p><b>City:</b> {{user.city}}</p>
+            <p><b>Meeting Preference:</b> {{user.meeting_preference}}</p>
+            <p><b>Status:</b> {{user.status}}</p>
+            <p><b>Willing to Contribute to Another's Project:</b> {{user.open_to_contributing}}</p>
+        </div>
     </div>
     <div class="spacer"></div>
     <div class="meetings-list">
@@ -97,7 +107,7 @@
             {% for project in projects %}
             <div class="project-rows">
                 <header>{{project.title}}</header>
-                <p>Visibility: {{project.visibility}}</p>
+                <p>Actively Recruiting?: {{project.actively_recruiting}}</p>
                 <p>Description: {{project.description}}</p>
             </div>
             <div class="add-project-popup hidden" id="add-project-popup">
@@ -282,6 +292,13 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+</script>
+
+<script>
+    function showForm() {
+        document.getElementById("edit-profile-info-form").style.display = "block";  // Show form
+        document.getElementById("profile-info-container").style.display = 'none'; // Hide "Edit" button
+    }
 </script>
 
 

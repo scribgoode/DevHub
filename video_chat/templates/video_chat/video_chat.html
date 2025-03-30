@@ -10,10 +10,9 @@
 {% block app_content %}
 <div id="websocket-div" ws-connect="/ws/chat/video/" hx-ext="tr-ext, ws">
   <main class="videoContent">
+    <div class="video-page-header">Meeting Duration: {{meeting.start_time}} - {{meeting.end_time}}</div>
     <div id="videos" class="video-row">
       <div class="col-sm-4 col-md-3 col-lg-3 col-xl-2">
-        <div id="header">
-        </div>
         <div id="self-div">
           <figure id="self">
             <video autoplay muted playsinline poster="{% static 'img/placeholder.png' %}"></video>

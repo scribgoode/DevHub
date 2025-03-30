@@ -266,6 +266,21 @@ transform: scale(1.05) translateY(.125rem);
     background-color: #fff;
     border-right: 0.5vh solid black;
     border-top: 0.5vh solid black;
+    position: relative;
+}
+
+#edit-personal-info{
+    margin-left: 69%;
+}
+
+#submit-profile-info-edits{
+    position: absolute;
+    right: 0;
+    top: 26vh;
+}
+
+#profile-info-container{
+    display: block
 }
 
 .spacer{
@@ -739,11 +754,16 @@ body {
 	background-color: #c7d8df;
 }
 */
+.video-page-header{
+    display: flex;
+    justify-content: center;
+}
+
 video {
 	background-color: #ddd;
 	display: block;
-	width: 800px;
-	height: 450px; 
+	width: 43vw; /*96*/
+	height: 49vh; /*54*/
 }
 
 #appContent {

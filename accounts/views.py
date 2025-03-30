@@ -20,7 +20,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from video_chat.forms import MeetingRequestForm
 from django.contrib import messages
-from accounts.forms import ProjectCreationForm
+from accounts.forms import ProjectCreationForm, EditProfileForm
 import requests
 from django.db.models import Case, When
 
@@ -70,6 +70,8 @@ def home(request):
         if pitch == 'false':
             profiles = profiles.filter(Q(elevator_pitch=True) | Q(elevator_pitch=''))
     
+
+    projects = Project.objects.all()
     cities = City.objects.all()
     context = {'profiles': profiles,
                'cities': cities,
@@ -77,7 +79,8 @@ def home(request):
                'preference': preference,
                'pitch': pitch,
                'city': city,
-               'search': search} 
+               'search': search,
+               'projects': projects,} 
     
     return render(request, 'home.html', context)
 
@@ -237,6 +240,11 @@ def myProfile(request):
                 project = form.save(commit=False)
                 project.pal = request.user
                 project.save()
+        if form_type == "edit_profile_info":
+            form = EditProfileForm(request.POST, instance=request.user)
+            if form.is_valid:
+                user = form.save(commit=False)
+                user.save()
        
        # acknowledgement accepted
         if form_type == 'sent-meeting-acknowledgement':
@@ -295,13 +303,16 @@ def myProfile(request):
     ).order_by('status_order')
     projects = Project.objects.filter(pal=request.user)
     project_creation_form = ProjectCreationForm()
+    edit_profile_info_form = EditProfileForm(instance=request.user)
 
     context = {'meetings': meetings,
                'meeting_requests': meeting_requests,
                'sent_meetings': sent_meetings,
                'projects': projects,
                'now': current_time_unix,
-               'project_creation_form': project_creation_form}
+               'project_creation_form': project_creation_form,
+               'edit_profile_info_form': edit_profile_info_form,
+               }
 
     return render(request, 'my_profile.html', context)
 
@@ -357,7 +368,9 @@ def index(request):
 
 @login_required
 def videoChat(request, room_token):
+    meeting = Meeting.objects.get(room_token=room_token)
     context = {'room_token': room_token,
+                'meeting': meeting,
                }
     return render(request, 'video_chat/video_chat.html', context)
 

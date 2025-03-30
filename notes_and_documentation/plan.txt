@@ -17,24 +17,24 @@ To Do List Before Production:
     Video Chat
     -✔️add microphone button
     -only make video chat accessible during the time of the meeting and during video chat meetings
-    -include important information on this page
+    -✔️include important information on this page
     
     Meetings
     -only let people cancel meetings 24 hours before without getting a strike
     -simple meeting reports from both people after meeting(maybe allow each person to see their own meeting reports they filled out)
 
     User Profiles Page
-    -add online/last online
     -maybe add meeting statistics for bottom right of profile page(something needs to go in that bottom right corner)
 
     Home Page
     -✔️add real time search
     -✔️display last online(online within the last week, online within the past month)(filter)(we decided there was no point for this filter right now)
+    -display currently online using websocket
     -pagination
     -footer
     -default sorting
     -logo
-    -render projects on home page
+    -render projects on home page(the current project box contains "Project 1: Fornite", etc.)(on hover all project information is shown)
     -✔️elevator pitch filter
     -✔️meeting preference filter
     -✔️stackable filters and search with filters applied notification
@@ -48,12 +48,14 @@ To Do List Before Production:
     -time stamps and date stamps
 
     My Profile Page
-    -allow edits to only some profile information
+    -✔️allow edits to only some profile information
     -need to be sure do add something like display projects with dates and links so people can show off their past projects
     -can only switch to creator status if you have at least one project displaying
     -if your status is recuit, state and display the type of projects you are open to joining(maybe do this for creators to, maybe for creators state whether they are open to contributing to another project)
     -add favorites list of profiles
-    -add strike system
+    -display strikes
+    -notifier that states whether someone is willing to contribute to someone elses project(default is yes)
+    -remove sent meeting invites and provide a link to a meeting history page
 
     Signup Page
     -allow to select dob using calendar and change format(some type of library)

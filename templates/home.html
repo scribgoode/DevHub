@@ -75,8 +75,14 @@
                         </div>
                         <div class="name">{{ profile.first_name }}</div>
                         <div class="location">{{ profile.city }}</div>
-                        <div class="current-projects" id="scrollBox">{{ profile.current_project }}</div>
-                        <!--make that scrolly-->
+                        <div class="current-projects" id="scrollBox">
+                        {% if profile.status == 'creator' %}
+                            {% for project in projects %}
+                                    <p>Project 1: {{ project.title }}</p>
+                            {% endfor %}
+                        {% else %} 
+                        {% endif %}
+                        </div>
                         <div class="meeting-preferences">{{ profile.meeting_preference }}</div>
                     </div>
                 {% endif %}
