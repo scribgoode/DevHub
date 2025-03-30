@@ -37,10 +37,12 @@ def get_meeting_requests_by_sender_and_recipient(request):
 def update_meeting_request(request, pk):
     try:
         meeting_request = MeetingRequest.objects.get(pk=pk)
+        print(f"Meeting Request: {meeting_request}")  # Debugging line
     except MeetingRequest.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     serializer = MeetingRequestSerializer(meeting_request, data=request.data, partial=True)
+
     if serializer.is_valid():
         serializer.save()
         return Response(serializer.data)

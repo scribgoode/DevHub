@@ -1,14 +1,59 @@
+from datetime import date, timezone, datetime
+from time import mktime
 from django.db import models
+from tzlocal import get_localzone
 from accounts.models import Engineer
 from text_chat.models import Room
 from meetup_point.models import Address
 import string
 import random
+from django.utils.timezone import now, activate, localtime
+
 # Create your models here.
 
 def generate_random_token(length=20):
     characters = string.ascii_letters + string.digits
     return ''.join(random.choice(characters) for _ in range(length))
+
+# Track acknowledgement status for sender and recipient independently
+class MeetingReview(models.Model):
+    class Status(models.TextChoices):
+        PENDING = 'pending', 'pending'
+        REVIEWED = 'reviewed', 'reviewed'
+    
+    # Track if both users have submitted their reviews
+    review_status = models.CharField(
+        max_length=50, choices=Status.choices, default=Status.PENDING
+    )
+
+    # Track review status for sender
+    sender_status = models.CharField(
+        max_length=50, choices=Status.choices, default=Status.PENDING
+    )
+    sender_review = models.TextField(null=True, blank=True)
+    sender_rating = models.FloatField(null=True, blank=True)
+
+    # Track review status for recipient
+    recipient_status = models.CharField(
+        max_length=50, choices=Status.choices, default=Status.PENDING
+    )
+    recipient_review = models.TextField(null=True, blank=True)
+    recipient_rating = models.FloatField(null=True, blank=True)
+
+    # Track the meeting associated with the review
+    meeting_date = models.DateField(default=date.today)
+    submitted_date = models.DateField(default=date.today)
+
+
+    def has_reviewed(self, user_id, role):
+        if role == 'sender':
+            return self.sender_status == self.Status.REVIEWED
+        elif role == 'recipient':
+            return self.recipient_status == self.Status.REVIEWED
+        return False
+        
+    def __str__(self):
+        return f"Sender: {self.sender_status}, Recipient: {self.recipient_status}"
 
 class Meeting(models.Model):
     sender = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name='sender')
@@ -21,24 +66,62 @@ class Meeting(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    # Track REVIEW status for sender and recipient independently
+    review = models.OneToOneField(
+        'video_chat.MeetingReview',  # Use a string reference to avoid circular imports
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name='meeting_review'
+    )
+     
+    # Track if sender acknowledged the request (reschedule, declined, cancel)
+    acknowledged = models.BooleanField(default=False)
+
     class Status(models.TextChoices):
         UPCOMING = 'upcoming', 'upcoming'
         ONGOING = 'ongoing', 'ongoing'
         COMPLETED = 'completed', 'completed'
+        REVIEWING = 'reviewing', 'reviewing'
+        RESCHEDULED = 'rescheduled', 'rescheduled'
         CANCELLED = 'cancelled', 'cancelled'
         DECLINED = 'declined', 'declined'
+
     status = models.CharField(max_length=50, choices=Status.choices, default=Status.UPCOMING)
+
     class Type(models.TextChoices):
         INPERSON = 'in-person', 'in-person'
         VIDEO = 'video', 'video'
         TEXT = 'text', 'text'
-    type = models.CharField(max_length=50, choices=Type.choices, default=Type.INPERSON)
-    #room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='room')
-    #create the room as soon the meeting is created
-    #create room token regardless of the meeting type
-    room_token = models.CharField(max_length=255, default=generate_random_token(20))
-    meeting_request = models.ForeignKey('MeetingRequest', on_delete=models.CASCADE, related_name='meeting_request', null=True, blank=True)
 
+    type = models.CharField(max_length=50, choices=Type.choices, default=Type.INPERSON)
+    room_token = models.CharField(max_length=255, default=generate_random_token(20))
+    meeting_request = models.ForeignKey(
+        'MeetingRequest', on_delete=models.CASCADE, related_name='meeting_request', null=True, blank=True
+    )
+
+    cancel_reason = models.TextField(null=True, blank=True)
+    cancel_user = models.ForeignKey(
+        Engineer, on_delete=models.CASCADE, related_name='cancel_user', null=True, blank=True
+    )
+    
+    def can_cancel(self):
+        # Check if the meeting is in the future
+        if self.status != self.Status.UPCOMING:
+            return False
+        # Check if the meeting is in the past
+        if self.start_time_unix < int(mktime(localtime(now()).timetuple())):
+            return False
+        
+        # Activate the system's timezone
+        system_timezone = get_localzone()
+        activate(system_timezone)
+        # Get the current time in the local timezone
+        current_time_unix = int(mktime(now().timetuple()))
+        # Check if the meeting can be canceled at least 24 hours before the start time
+        return self.start_time_unix - current_time_unix >= 24 * 60 * 60
+    
 #we need to be sure but we may only need a meeting model for meetings and meeting requests as long as we have enough switches
 class MeetingRequest(models.Model):
     sender = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name='request_sender')
@@ -48,44 +131,24 @@ class MeetingRequest(models.Model):
     end_time = models.TimeField()
     message = models.TextField()
     sent_date = models.DateTimeField(auto_now_add=True)
-
-    # track if sender has seen the response and want to remove it from the list
-    class Acknowledgement(models.TextChoices):
-        PENDING = 'pending', 'pending'
-        RESOLVED = 'resolved', 'resolved'
-    acknowledgement = models.CharField(max_length=50, choices=Acknowledgement.choices, default=Acknowledgement.PENDING)
-
+    
     class Status(models.TextChoices):
-        PENDING = 'pending', 'pending' # pending status
-        ACCEPTED = 'accepted', 'accepted' # accepted status
-        DECLINED = 'declined', 'declined' # declined status
-        RESCHEDULED = 'rescheduled', 'rescheduled' # rescheduling by recipient
-        CANCELLED = 'cancelled', 'cancelled' # cancelled status by sender
+        PENDING = 'pending', 'pending'  # pending status
+        ACCEPTED = 'accepted', 'accepted'  # accepted status
+        DECLINED = 'declined', 'declined'  # declined status
+        RESCHEDULED = 'rescheduled', 'rescheduled'  # rescheduling by recipient
+        CANCELLED = 'cancelled', 'cancelled'  # cancelled status by sender
+
     status = models.CharField(max_length=50, default=Status.PENDING, choices=Status.choices)
-    location_name = models.CharField(max_length=255, default='') # store name (only applicable for in-person meetings)
+    location_name = models.CharField(max_length=255, default='')  # store name (only applicable for in-person meetings)
     lat = models.FloatField(null=True, blank=True)
     lng = models.FloatField(null=True, blank=True)
-    address = models.CharField(max_length=255, default='', null=True, blank=True) # either url or address string
+    address = models.CharField(max_length=255, default='', null=True, blank=True)  # either URL or address string
     locationUpdateURL = models.CharField(max_length=255, default='', null=True, blank=True)
+
     class Type(models.TextChoices):
         INPERSON = 'in-person', 'in-person'
         VIDEO = 'video', 'video'
         TEXT = 'text', 'text'
+
     type = models.CharField(max_length=50, choices=Type.choices, default=Type.INPERSON)
-
-# serializers.py
-from rest_framework import serializers
-from accounts.serializers import EngineerSerializer
-from .models import MeetingRequest
-
-class MeetingRequestSerializer(serializers.ModelSerializer):
-    sender = EngineerSerializer()
-    recipient = EngineerSerializer()
-    
-    class Meta:
-        model = MeetingRequest
-        fields = [
-            'id', 'sender', 'recipient', 'date', 'start_time', 'end_time', 
-            'message', 'sent_date', 'status', 'location_name',
-            'locationUpdateURL', 'type'
-        ]
