@@ -25,6 +25,17 @@ class Engineer(AbstractUser):
     city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True)
     elevator_pitch = models.FileField(upload_to=video_upload_path, null=True, blank=True)
     address = models.OneToOneField(Address, on_delete=models.CASCADE, null=True, blank=True) #cant be a one to one field here because two people that live together can have the same address
+    
+    # Rating system
+    rating = models.FloatField(default=0)
+    rating_count = models.IntegerField(default=0)
+    reviews = models.ManyToManyField('Reviews', blank=True, related_name='engineer_reviews')  # Fixed model name and added related_name
+
+    # Meeting
+    NumMeetings = models.IntegerField(default=0)
+    NumInPersonMeetings = models.IntegerField(default=0)
+    NumVideoMeetings = models.IntegerField(default=0)
+    
     class MeetingPreference(models.TextChoices):
         INPERSON = 'in-person', 'in-person'
         VIDEO = 'video', 'video'
@@ -61,3 +72,23 @@ class Project(models.Model):
     #if we end up making it a project management site too, then we need to add a way to add users to a project but we might want to go ahead and add this so we can use the meetup spot algorithm to find a place between three people
     #we might want to end up setting that up as best we can before putting the website up because ETL is an expensive process but maybe not because of scope creep
  
+
+ # I think there should be a list of reviews for users to see, we should use it internally to see if the reviews are valid for the rating
+class Reviews(models.Model):
+    reviewer = models.ForeignKey(
+        'accounts.Engineer', on_delete=models.CASCADE, related_name='reviews_given'
+    )
+    reviewee = models.ForeignKey(
+        'accounts.Engineer', on_delete=models.CASCADE, related_name='reviews_received'
+    )
+    meeting = models.ForeignKey(
+        'video_chat.Meeting', on_delete=models.CASCADE, related_name='meeting_reviews'
+    )  # Use a string reference for the Meeting model
+    review = models.TextField(max_length=1000)
+    rating = models.FloatField(default=0)
+    meeting_date = models.DateField(default=date.today)
+    submitted_date = models.DateField(default=date.today)
+
+    def __str__(self):
+        return self.review
+    

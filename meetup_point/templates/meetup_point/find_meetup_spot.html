@@ -186,6 +186,7 @@
                 // Handle the meeting request data
                 const mr = data[data.length - 1]; // Assuming the last meeting request is the one you want to update
                 mr.location_name = name;
+                console.log('mr:', address);
                 mr.address = address;
                 mr.lat = location.lat;
                 mr.lng = location.lng;

@@ -29,7 +29,7 @@ class EngineerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Engineer
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'status', 'projects', 'dob', 'country', 'city', 'elevator_pitch', 'address']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'status', 'projects', 'dob', 'country', 'city', 'elevator_pitch', 'address', 'rating', 'rating_count', 'NumMeetings', 'NumInPersonMeetings', 'NumVideoMeetings', 'meeting_preference']
 
 class RoomSerializer(serializers.ModelSerializer):
     users = EngineerSerializer(many=True)
