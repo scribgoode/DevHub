@@ -306,7 +306,7 @@ def myProfile(request):
              
             elif request.POST.get('pal_attendance') == 'no':
                 print('meeting not success')
-                # moderation on review and rating (prevent spam, etc.)
+                # TODO: moderation on review and rating (prevent spam, etc.)
 
             return redirect('/my-profile/')
             # Save the review and rating to the user
