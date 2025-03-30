@@ -78,7 +78,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def rtc_message(self, event):
         # Send message to WebSocket
-        print(event, 'helloooooooooo') 
+        #print(event, 'helloooooooooo') 
         await self.send_json({
             'video_chat': event['video_chat'] #not sure how rtc_message is being called or what the event parameter is
         })
@@ -130,7 +130,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             sender=self.scope["user"],
             messageContent=message
         )
-        print(self.message, "self.message in createMessage function in consumer.py")
+        #print(self.message, "self.message in createMessage function in consumer.py")
         await self.message.asave()
     
     
@@ -244,7 +244,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     
     async def receive_json(self, content):
         await self._presence_touch()
-        print(content, "print statement in receive_josn function in consumer.py") #this function does not receive data from send_json in this file
+        #print(content, "print statement in receive_josn function in consumer.py") #this function does not receive data from send_json in this file
 
         for message_key, message_value in content.items():
             if message_key == "text":
@@ -254,23 +254,23 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 await self.grabChatRoom(message_value)
 
             if message_key == "room_token":
-                print(message_value, "message_value in receive_json function in consumer.py")
+                #print(message_value, "message_value in receive_json function in consumer.py")
                 self.room_token = message_value
                 await self._presence_connect(self.room_token)
 
             if message_key in self.function_dict:
-                print(message_key, message_value, "message_key and message_value in receive_json function in consumer.py")
+                #print(message_key, message_value, "message_key and message_value in receive_json function in consumer.py")
                 await self.function_dict[message_key](message_value)
 
     async def send_message(self, content):
         #text_data_json = json.loads(content)
-        print("text_data_json: ", content)
+        #print("text_data_json: ", content)
         # Create a new message instance and save it to the database
         
         await self.createMessage(content["message"])
 
         # send data to send_message()
-        print(self.room_group_name, "self.channel_layer in send_message function in consumer.py")
+        #print(self.room_group_name, "self.channel_layer in send_message function in consumer.py")
         await self.channel_layer.group_send(
             self.room_group_name, {"type": "chat.message", "msgObj": content} #chat_message receives this
         )
@@ -304,7 +304,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
             "sender_full_name": msgObj["sender_full_name"],
             "sender_id": msgObj["sender_id"]
         }))
-        print("sent: ", msgObj) 
+        #print("sent: ", msgObj) 
 
     async def _join(self, rtc_call):
         #print(rtc_call, "rtc_call in _join function in consumer.py")
@@ -315,9 +315,9 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         self.rtc_call = rtc_call
         # Send list of connected peers (occupants) to self
         occupants = await self._room_occupants(self.rtc_call) #this is where the occupants are defined
-        print(occupants, "occupants in _join function in consumer.py")
-        if occupants:
-            print(occupants)
+        #print(occupants, "occupants in _join function in consumer.py")
+        #if occupants:
+            #print(occupants)
         all_divs = "\n".join([
             self._create_other_div(occupant)
             for occupant in occupants
@@ -363,8 +363,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def _rtc(self, rtc):
         # If there's a recipient, send to it.
         if 'recipient' in rtc:
-            print(rtc, "rtc in _rtc function in consumer.py")
-            print(self.channel_layer, "self.channel_name in _rtc function in consumer.py")
+            #print(rtc, "rtc in _rtc function in consumer.py")
+            #print(self.channel_layer, "self.channel_name in _rtc function in consumer.py")
             await self.channel_layer.send(
                 rtc['recipient'], {
                     'type': 'rtc_message',
@@ -378,4 +378,4 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                     'video_chat': rtc
                 }
             )
-        print("sent to recipient")
+        #print("sent to recipient")

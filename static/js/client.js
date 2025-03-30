@@ -1,5 +1,7 @@
 'use strict';
-
+//video chat is only working some of the time right now after clicking on the toggle buttons and trying mulitple times
+//could be something to do with async but not sure and want to wait until we are in production because maybe it is something to do with local host
+//also prob need to change the ice servers and make sure that presences are deleted in every scenario a user leaves the call 3/27/25
 const $self = {
     user_name: "",
     rtc_config: {
@@ -15,7 +17,7 @@ const $self = {
         iceTransportPolicy: "all"
     },
     media_constraints: {
-        audio: false,
+        audio: { echoCancellation: true, noiseSuppression: true },
         video: true,
     },
     video_constraints: {
@@ -24,11 +26,11 @@ const $self = {
     },
     media_stream: new MediaStream(),
     media_tracks: {},
-    features: { audio: false },
+    features: {},
     ws: null,
     ws_json: function(data) {
-        console.log('this is the ws_json function being called');
-        console.log('sending:', JSON.stringify(data));
+        //console.log('this is the ws_json function being called');
+        //console.log('sending:', JSON.stringify(data));
         this.ws.send(JSON.stringify(data));
     }
 };
@@ -41,7 +43,7 @@ function element_id(id='self') {
 }
 
 function signal(recipient, signal) {
-    console.log('this is the signal function being called');
+    //console.log('this is the signal function being called');
     //singalled is not being called for some reason
     $self.ws_json(
         
@@ -162,8 +164,10 @@ function display_stream(stream, id = 'self') {
 async function request_user_media(media_constraints) {
     $self.media = await navigator.mediaDevices.getUserMedia(media_constraints);
     $self.media_tracks.video = $self.media.getVideoTracks()[0];
+    $self.media_tracks.audio = $self.media.getAudioTracks()[0];
     $self.media_tracks.video.applyConstraints($self.video_constraints);
     $self.media_stream.addTrack($self.media_tracks.video);
+    $self.media_stream.addTrack($self.media_tracks.audio);
     display_stream($self.media_stream);
 }
 
@@ -181,8 +185,23 @@ function add_features(id) {
           }
         }
       }
+    function manage_audio(audio_feature) {
+        other.features['audio'] = audio_feature;
+        if (other.media_tracks.audio) {
+            if (audio_feature) {
+                other.media_stream.addTrack(other.media_tracks.audio);
+            }
+            else {
+                other.media_stream.removeTrack(other.media_tracks.audio);
+                display_stream(other.media_stream, id);
+            }
+        }
+    }
     other.features_channel = other.connection.createDataChannel('features', {negotiated: true, id: 500 });
+    console.log('connection:', other.connection);
+    console.log('features channel:', other.features_channel);
 	other.features_channel.onopen = function(event){
+        console.log('features channel open');
 		other.features_channel.send(JSON.stringify($self.features))
 	};
 	other.features_channel.onmessage = function(event) {
@@ -190,6 +209,9 @@ function add_features(id) {
         console.log('features:', features);
         if ('video' in features) {
             manage_video(features['video']);
+        }
+        if ('audio' in features) {
+            manage_audio(features['audio']);
         }
 	};
 }
@@ -282,6 +304,14 @@ function register_rtc_callbacks(id) {
     other.connection.onnegotiationneeded = conn_negotiation(id);
     other.connection.onicecandidate = ice_candidate(id);
     other.connection.ontrack = other_track(id);
+    other.connection.onicecandidate = (event) => {
+        if (event.candidate) {
+            console.log("ICE candidate:", event.candidate);
+            // Send candidate to remote peer
+        } else {
+            console.log("All ICE candidates sent.");
+        }
+    };
 }
 
 function conn_state_change(id) {
@@ -309,6 +339,7 @@ function conn_negotiation(id) {
         } finally {
             console.log('this is the finally block of the conn_negotiation function being called');
             console.log('local description:', other.connection.localDescription);
+            console.log('connection2', other.connection);
             signal(id, {'description': other.connection.localDescription});
             console.log('after signal call');
             self_state.making_offer = false;
@@ -328,6 +359,7 @@ function other_track(id) {
         other.media_tracks[track.kind] = track;
         other.media_stream.addTrack(track);
         display_stream(other.media_stream, id);
+        console.log('this is the other_track function being called');
     };
 }
 
@@ -407,6 +439,21 @@ function toggleCam(event) {
     }
 }
 
-//create toggle mic event
-//feed important information into this page
-//start working on only making this page available during the hours of the meeting
+function toggleMic(event) {
+    const button = event.target;
+    const audio = $self.media_tracks.audio;
+    const state = audio.enabled = !audio.enabled; //this is changing state state of audio.enabled AND assigning that value to state
+    $self.features.audio = state;
+    button.setAttribute('aria-checked', state);
+
+    for (let id of $others.keys()) {
+        share_features(id, 'audio');
+    }
+    console.log(state, 'this is the state of the audio');
+    if (state) {
+        $self.media_stream.addTrack($self.media_tracks.audio);
+    } else {
+        $self.media_stream.removeTrack($self.media_tracks.audio);
+		display_stream($self.media_stream);
+    }
+}

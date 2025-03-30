@@ -15,7 +15,7 @@ To Do List Before Production:
     -pick friendly font
 
     Video Chat
-    -add microphone button
+    -✔️add microphone button
     -only make video chat accessible during the time of the meeting and during video chat meetings
     -include important information on this page
     

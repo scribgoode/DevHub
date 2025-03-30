@@ -8,3 +8,4 @@ router.register(r'meeting-requests', MeetingRequestViewSet)
 urlpatterns = [
     path('', include(router.urls)),
 ]
+#test

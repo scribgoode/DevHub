@@ -22,8 +22,10 @@
           <button class="leave" type="button" id="leave-button" hx-on:click="handleCallButton(event)" onclick="window.history.back()">Leave Call</button> <!-- This button needs to be in the upcoming meeetings tab and also function as a redirect -->
           <button aria-label="Toggle camera" role="switch" aria-checked="true"
               type="button" id="toggle-cam" hx-on:click="toggleCam(event)">Cam</button>
+          <button aria-label="Toggle mic" role="switch" aria-checked="true"
+              type="button" id="toggle-mic" hx-on:click="toggleMic(event)">Mic</button>
         </div>
-      </div>
+      </div
       <div class="col-sm-8 col-md-9 col-lg-9 col-xl-10">
         <div id="others" class="video-row">
         </div>
