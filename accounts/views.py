@@ -80,7 +80,8 @@ def home(request):
                'pitch': pitch,
                'city': city,
                'search': search,
-               'projects': projects,} 
+               'projects': projects,}
+    #tomorrow
     
     return render(request, 'home.html', context)
 
