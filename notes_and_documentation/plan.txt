@@ -44,7 +44,7 @@ To Do List Before Production:
         - If meeting request declined - the recipient should be able to send a message to sender on why it was declined (or use reschedule)
     -✔️make it possible to access someones profile from contacts page in messages
     -add feature to search contacts
-    -notifcation on the contact name that says how many new message you have from them(1 new message)
+    -notification on the contact name that says how many new message you have from them(1 new message)
     -notification on the message icon that states how many total new messages you have
     -time stamps and date stamps
 

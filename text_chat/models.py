@@ -136,6 +136,8 @@ class Message(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     messageContent = models.TextField()
+    
+    is_read = models.BooleanField(default=False) # Track if message has been read by recipient
 
 
     def get_messageContent(self):

@@ -20,12 +20,14 @@
                 </form>
                 <div class="spacer2"></div>
                 <button type="submit" id="loginLink" class="message-button">&#9993;</button>
+                <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
             {% elif user.is_authenticated and request.path != '/my-profile/' %}
                 <form id="login-form" action="/my-profile" method="get">
                     <button type="submit" id="loginLink" >My Profile</button>
                 </form>
                 <div class="spacer2"></div>
                 <button type="submit" id="loginLink" class="message-button">&#9993;</button>
+                <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
             {% elif not user.is_authenticated and request.path != '/accounts/signup/' %}
                 <form id="login-form" action="{% url 'account_login' %}" method="get">
                     <button type="submit" id="loginLink">Login</button>
@@ -48,6 +50,13 @@
                 </section>
             </div>
         </div>
+        <div id="notification-dropdown" class="dropdown hidden">
+            {% for sender in unread_message_senders %}
+              <div class="notif-item" data-sender="{{ sender.id }}">
+                New Messages from {{ sender.name }} ({{ sender.unread_count }})
+              </div>
+            {% endfor %}
+        </div>
     {% block content %}
     {% endblock %}
 
@@ -55,6 +64,11 @@
     //logic that lets you hide text chat
     document.querySelector('.message-button').addEventListener('click', function() {
         document.querySelector('.text-chat').classList.toggle('hidden');
+    });
+    
+    //logic that lets you see notifications
+    document.querySelector('.notification-button').addEventListener('click', function() {
+        document.querySelector('#notification-dropdown').classList.toggle('hidden');
     });
     
     //logic that lets you click enter to send message
