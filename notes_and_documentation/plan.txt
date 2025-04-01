@@ -16,7 +16,7 @@ To Do List Before Production:
 
     Video Chat
     -✔️add microphone button
-    -only make video chat accessible during the time of the meeting and during video chat meetings
+    -✔️only make video chat accessible during the time of the meeting and during video chat meetings
     -✔️include important information on this page
     
     Meetings
@@ -29,12 +29,13 @@ To Do List Before Production:
     Home Page
     -✔️add real time search
     -✔️display last online(online within the last week, online within the past month)(filter)(we decided there was no point for this filter right now)
+    -fix last online to work if you login with cached login info
     -display currently online using websocket
     -pagination
     -footer
     -default sorting
     -logo
-    -render projects on home page(the current project box contains "Project 1: Fornite", etc.)(on hover all project information is shown)
+    -✔️render projects on home page(the current project box contains "Project 1: Fornite", etc.)(on hover all project information is shown)
     -✔️elevator pitch filter
     -✔️meeting preference filter
     -✔️stackable filters and search with filters applied notification
@@ -49,13 +50,15 @@ To Do List Before Production:
 
     My Profile Page
     -✔️allow edits to only some profile information
-    -need to be sure do add something like display projects with dates and links so people can show off their past projects
-    -can only switch to creator status if you have at least one project displaying
+    -✔️need to be sure do add something like display projects with dates and links so people can show off their past projects
+    -automatically put in creator status if you have at least one project you are actively recruiting for(if you have projects and want to switch to recruit then all project's actively recruiting switch is turned off)
     -if your status is recuit, state and display the type of projects you are open to joining(maybe do this for creators to, maybe for creators state whether they are open to contributing to another project)
+        -(if your are a recruit or are a creator and willing to contribute to anothers project that the interests tab is revealed)
     -add favorites list of profiles
     -display strikes
-    -notifier that states whether someone is willing to contribute to someone elses project(default is yes)
+    -✔️notifier that states whether someone is willing to contribute to someone elses project(default is yes)
     -remove sent meeting invites and provide a link to a meeting history page
+    -only update ratings every 5-10 ratings
 
     Signup Page
     -allow to select dob using calendar and change format(some type of library)
@@ -69,8 +72,8 @@ To Do List Before Production:
 
     Projects
     -allow people a section to put links
-    -allow an optional section where you can state how you want a person to contribute to the project
-    -better logic for project display feature(improve public, private, and active)
+    -allow an optional section where you can state how you want a person to contribute to the project('will figure it out', or custom)
+    -✔️better logic for project display feature(improve public, private, and active)
 
 
 
@@ -104,6 +107,7 @@ Future Ideas and Add Ons
     descriptions for their projects)(maybe you just want to be more private too)
     -project management software
     -screen share in video call
+    -projects and paid gigs tab
     
 
 
@@ -112,6 +116,7 @@ Business Developement
     -recruiting business
     -work with wework
     -makret to youtubers for a way for people to gain extras in their youtube vids
+    -similar sites are cragislist, meetup.com, upwork(too many bad experiences)(add payment and require video)
 
 
 

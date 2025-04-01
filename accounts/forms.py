@@ -52,7 +52,7 @@ class ElevatorPitchForm(forms.ModelForm):
 class ProjectCreationForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ['title', 'description', 'display_on_page', 'actively_recruiting'] 
+        fields = ['title', 'description', 'display_on_profile', 'actively_recruiting'] 
 
 class EditProfileForm(forms.ModelForm):
     class Meta:

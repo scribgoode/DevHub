@@ -75,13 +75,27 @@
                         </div>
                         <div class="name">{{ profile.first_name }}</div>
                         <div class="location">{{ profile.city }}</div>
-                        <div class="current-projects" id="scrollBox">
+                        <div class="current-projects-row" id="scrollBox">
                         {% if profile.status == 'creator' %}
                             {% for project in projects %}
-                                    <p>Project 1: {{ project.title }}</p>
+                                {% if project.pal.id == profile.id %}
+                                    <p>Title: {{ project.title }}</p>
+                                {% endif %}
                             {% endfor %}
                         {% else %} 
                         {% endif %}
+                        </div>
+                        <div class="current-projects-popup">
+                            <div class="current-projects-popup-content">
+                                {% if profile.status == 'creator' %}
+                                    {% for project in projects %}
+                                        {% if project.pal.id == profile.id and project.actively_recruiting == 'yes'%}
+                                            <p>Title: {{ project.title }}</p>
+                                            <p>Description: {{ project.description }}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                            </div>
                         </div>
                         <div class="meeting-preferences">{{ profile.meeting_preference }}</div>
                     </div>
@@ -200,6 +214,20 @@
             typingTimer = setTimeout(() => {
                 searchForm.submit();
             }, debounceTime);
+            });
+        </script>
+
+        <script>
+            const current_projects_box = document.querySelectorAll('.current-projects-row');
+            const current_projects_popup = document.querySelectorAll('.current-projects-popup');
+
+            current_projects_box.forEach((box, index) => {
+                box.addEventListener('mouseover', function() {
+                    current_projects_popup[index].classList.toggle('show');
+                });
+                box.addEventListener('mouseout', function() {
+                    current_projects_popup[index].classList.toggle('show');
+                });
             });
         </script>
 {% endblock %}

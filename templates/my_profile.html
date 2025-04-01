@@ -245,8 +245,10 @@
             {% for project in projects %}
             <div class="project-rows">
                 <header>{{project.title}}</header>
-                <p>Actively Recruiting?: {{project.actively_recruiting}}</p>
-                <p>Description: {{project.description}}</p>
+                <div id="project-dates">{{project.start_date}} - {% if project.current %}current{% else %}{{project.end_date}}{% endif %}</div>
+                <div>Actively Recruiting?: {{project.actively_recruiting}}</div>
+                <div>Description: {{project.description}}</div>
+                {% if project.link %}<div>Relevant Link: <a href="{{project.link}}">{{project.link}}</a></div>{% endif %}
             </div>
             <div class="add-project-popup hidden" id="add-project-popup">
                 <button class="close-window">X</button>
