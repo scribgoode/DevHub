@@ -116,7 +116,11 @@
             // get all chatrooms that user is in and render them as buttons
             data.forEach(room => {
                 console.log('current room:', room.room_id);
-                console.log(room)
+                console.log('room messagable:', room.messagable);
+                // check if room is messagable
+                if (!room.messagable) {
+                    return;
+                }
 
                 // get the name of the other user in the chatroom
                 let newChatroomname = room.users[1 - room.users.findIndex(user => user.id === user_id)].first_name;
@@ -144,7 +148,10 @@
                     }
 
                     let messagesHeader = document.querySelector('#messages-header')
-                    messagesHeader.innerHTML = newChatroomname
+                    // TODO: Create css for button name
+                    chat_user_id = room.users[1 - room.users.findIndex(user => user.id === user_id)].id
+                    messagesHeader.innerHTML = `<button onclick="window.location.href='/profile/${chat_user_id}';">${newChatroomname}</button>`;
+
 
                     // get chat history
                     console.log('selected chatroom:', room);
