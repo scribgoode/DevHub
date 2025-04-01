@@ -112,6 +112,10 @@ class Room(models.Model): #this should be renamed to TextRoom
     roomOwner = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name="room_owner", null=True, blank=True)
     roomClient = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name="room_client", null=True, blank=True)
 
+    # Track if both user agreed to meeting request
+    messagable = models.BooleanField(default=False) #if false, no messages can be sent in the room
+    
+
     # def save(self, *args, **kwargs):
     #     if not self.room_id:
     #         self.room_id = uuid4()c

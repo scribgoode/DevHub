@@ -52,6 +52,10 @@ class Engineer(AbstractUser):
     
     def last_login_within_7_days(self):
         seven_days_ago = datetime.now().date() - timedelta(days=7)
+        # Check if last_login is not None to avoid AttributeError
+        if self.last_login is None:
+            return False
+        # Check if last_login is within the last 7 days
         if self.last_login.date() > seven_days_ago:
             return True
         else:
@@ -59,6 +63,10 @@ class Engineer(AbstractUser):
     
     def last_login_within_30_days(self):
         thirty_days_ago = datetime.now().date() - timedelta(days=30)
+        # Check if last_login is not None to avoid AttributeError
+        if self.last_login is None:
+            return False
+        
         if self.last_login.date() > thirty_days_ago:
             return True
         else:

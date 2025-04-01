@@ -1,0 +1,36 @@
+Evaluation of meetings
+
+Journey:
+1. user1 finds user2
+2. user1 sends a meeting requst to user2 (either online or in-person)
+3. users2 accepts the meeting request from user1
+4. user1 and user2 meet
+5. once meeting time is over
+    1. user1 submits a review
+    2. user2 submits a review
+6. meeting is closed - complated state and won't be shown in the either user's upcoming list
+
+
+review shall contain:
+1. Did the pal show up?
+Yes -> 2.
+No -> Feedback on experience -> submit form
+
+2. Did the pal show up late?
+Yes
+No
+
+3. Did you show up late?
+Yes
+No
+
+4. Did both pals worked on expected agenda?
+Yes
+No
+
+5. Was the agenda covered in the meeting time?
+Yes
+No -> 6.
+
+6. What was the reason?
+

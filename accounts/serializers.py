@@ -32,6 +32,8 @@ class EngineerSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'email', 'first_name', 'last_name', 'status', 'projects', 'dob', 'country', 'city', 'elevator_pitch', 'address', 'rating', 'rating_count', 'NumMeetings', 'NumInPersonMeetings', 'NumVideoMeetings', 'meeting_preference']
 
 class RoomSerializer(serializers.ModelSerializer):
+    messagable = serializers.SerializerMethodField()
+
     users = EngineerSerializer(many=True)
     class Meta:
         model = Room
@@ -41,7 +43,12 @@ class RoomSerializer(serializers.ModelSerializer):
             'roomClient',
             'token',
             'room_id', 
+            'messagable',
         )
+    
+    def get_messagable(self, obj):
+        # Return the value of the messagable attribute
+        return obj.messagable
 
 class MessageSerializer(serializers.ModelSerializer):
     sender = EngineerSerializer()

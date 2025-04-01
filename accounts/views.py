@@ -189,175 +189,188 @@ def myProfile(request):
     if request.method == 'POST':
         form_type = request.POST.get("form_type")
         print("form type:", form_type)
-        if form_type ==  "meeting_request_decision":
-            meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
-            if request.POST.get('decision') == 'accept':
-                #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
-                meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request)
-                meeting_request.status = MeetingRequest.Status.ACCEPTED
+        match form_type:
+            case "meeting_request_decision":
+                meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
+                match request.POST.get('decision'):
+                    case 'accept':
+                        # Get the room with users involved
+                        room = Room.objects.filter(roomOwner=meeting_request.sender, roomClient=meeting_request.recipient).first()
+                        if not room:
+                            room = Room.objects.filter(roomOwner=meeting_request.recipient, roomClient=meeting_request.sender).first()
+                        if not room:
+                            print('No room found for the meeting request.')
+                            return redirect('my-profile')
+                        room.messagable = True # allow messages to be sent in the room
+                        room.save() 
 
-                # Create review object for Meeting
-                meeting.review = MeetingReview(review_status=MeetingReview.Status.PENDING, meeting_date=meeting_request.date)
-                meeting.review.save()   
-                # Ensure meeting.date and meeting.start_time/end_time are valid
-                if meeting.date and meeting.start_time and meeting.end_time:
-                    # Combine date and time into a datetime object
-                    start_datetime = datetime.combine(meeting.date, meeting.start_time)
-                    end_datetime = datetime.combine(meeting.date, meeting.end_time)
+                        #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
+                        meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request)
+                        meeting_request.status = MeetingRequest.Status.ACCEPTED
 
-                # Convert to naive datetime if timezone-aware
-                if is_aware(start_datetime):
-                    start_datetime = make_naive(start_datetime)
-                if is_aware(end_datetime):
-                    end_datetime = make_naive(end_datetime)
+                        # Create review object for Meeting
+                        meeting.review = MeetingReview(review_status=MeetingReview.Status.PENDING, meeting_date=meeting_request.date)
+                        meeting.review.save()   
+                        # Ensure meeting.date and meeting.start_time/end_time are valid
+                        if meeting.date and meeting.start_time and meeting.end_time:
+                            # Combine date and time into a datetime object
+                            start_datetime = datetime.combine(meeting.date, meeting.start_time)
+                            end_datetime = datetime.combine(meeting.date, meeting.end_time)
+
+                            # Convert to naive datetime if timezone-aware
+                            if is_aware(start_datetime):
+                                start_datetime = make_naive(start_datetime)
+                            if is_aware(end_datetime):
+                                end_datetime = make_naive(end_datetime)
 
 
-                # Convert to Unix timestamps
-                meeting.start_time_unix = int(time.mktime(start_datetime.timetuple()))
-                meeting.end_time_unix = int(time.mktime(end_datetime.timetuple()))
+                            # Convert to Unix timestamps
+                            meeting.start_time_unix = int(time.mktime(start_datetime.timetuple()))
+                            meeting.end_time_unix = int(time.mktime(end_datetime.timetuple()))
 
-                meeting_request.save()
-                meeting.save()
-            elif request.POST.get('decision') == 'decline':
-                #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
-                meeting_request.status = MeetingRequest.Status.DECLINED
-                meeting_request.save()
-                meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.DECLINED)
-                meeting.save()
-            elif request.POST.get('decision') == 'reschedule':
-                meeting_request.status = MeetingRequest.Status.RESCHEDULED
-                meeting_request.save()
-                meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.RESCHEDULED)
-                meeting.save()
-                return redirect('profile', id=request.POST.get('meeting_request_sender_id'))
-        if form_type == "video_upload":
-            user = request.user
-            user.elevator_pitch = request.FILES['elevator_pitch']
-            user.save()
-        if form_type == "video_remove":
-            user = request.user
-            user.elevator_pitch.delete()
-        if form_type == "add_project":
-            form = ProjectCreationForm(request.POST)
-            if form.is_valid:
-                project = form.save(commit=False)
-                project.pal = request.user
-                project.save()
-        if form_type == "edit_profile_info":
-            form = EditProfileForm(request.POST, instance=request.user)
-            if form.is_valid:
-                user = form.save(commit=False)
-                user.save()
-       
-        # meeting review form submission
-        if form_type == 'meeting-review-form':
-            reviewee_id = request.POST.get('reviewee_id')
-            reviewee = Engineer.objects.get(id=reviewee_id)
-            meeting_type = request.POST.get('meeting_type')
-            print('meeting_type:', meeting_type)
-            print('reviewee:', reviewee.first_name)
-            meeting = Meeting.objects.get(id=request.POST.get('meeting_id'))
-            # Determine if the reviewee is the sender or recipient
-            reviewee_role = None
-            if meeting.sender == reviewee:
-                reviewee_role = 'sender'
-            elif meeting.recipient == reviewee:
-                reviewee_role = 'recipient'
- 
-            if request.POST.get('pal_attendance') == 'yes':
-                print('meeting success')
-                # moderation on review and rating (prevent spam, etc.)
-                
-                # check if review has been created
-                if meeting.review:
-                    # Update the existing review
-                    review = meeting.review
-                    if reviewee_role == 'sender':
-                        review.sender_review = request.POST.get('meeting_feedback')
-                        review.sender_rating = request.POST.get('pal_rating')
-                        review.recipient_status = MeetingReview.Status.REVIEWED
-                    elif reviewee_role == 'recipient':
-                        review.recipient_review = request.POST.get('meeting_feedback')
-                        review.recipient_rating = request.POST.get('pal_rating')
-                        review.sender_status = MeetingReview.Status.REVIEWED
-                    
-                    # Check if both users has submitted their reviews
-                    if review.sender_status == MeetingReview.Status.REVIEWED and review.recipient_status == MeetingReview.Status.REVIEWED:
-                        # Update the review status to reviewed
-                        print('both users have reviewed')   
-                        meeting.review.review_status = MeetingReview.Status.REVIEWED
-                        meeting.status = Meeting.Status.COMPLETED # update meeting to completed, it will not show up in the upcoming meetings
-                        meeting.acknowledged = True # mark meeting as acknowledged
+                            meeting_request.save()
+                            meeting.save()
+                    case 'decline':
+                        #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
+                        meeting_request.status = MeetingRequest.Status.DECLINED
+                        meeting_request.save()
+                        meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.DECLINED)
                         meeting.save()
-                        meeting.refresh_from_db()
-                        print(f"Refreshed status: {meeting.status}")  # Debugging
-                    review.save()
-                
-                else:
-                    # Create a new review (but should not go to this as we create the meeting review when the meeting is REVIEW status)
-                    if reviewee_role == 'sender':
-                        review = MeetingReview(recipient_review=request.POST.get('meeting_feedback'), recipient_rating=request.POST.get('rating'), meeting_date=meeting.date, submitted_date=datetime.now(), recipient_status=MeetingReview.Status.REVIEWED, review_status=MeetingReview.Status.PENDING)
-                    elif reviewee_role == 'recipient':
-                        review = MeetingReview(sender_review=request.POST.get('meeting_feedback'), sender_rating=request.POST.get('rating'), meeting_date=meeting.date, submitted_date=datetime.now(), sender_status=MeetingReview.Status.REVIEWED, review_status=MeetingReview.Status.PENDING)
-                    review.save()
-                    
-                    # Associate the review with the meeting
-                    meeting.review = review
-                    meeting.save()
-             
-            elif request.POST.get('pal_attendance') == 'no':
-                print('meeting not success')
-                # TODO: moderation on review and rating (prevent spam, etc.)
-
-            return redirect('/my-profile/')
-            # Save the review and rating to the user
-            reviewee.rating_count += 1
-            reviewee.rating = (reviewee.rating + int(rating)) / reviewee.rating_count # should update system
-
-            # Update reviewee's meeting stats (though I am hesisitant to do this - should we have the count go up after a review is submmited?)
-            reviewee.NumMeetings += 1
-            # check if online or inperson meeting
-            reviewee.NumMeetings += 1; reviewee.NumVideoMeetings += (meeting_type == 'video'); reviewee.NumInPersonMeetings += (meeting_type == 'in-person')
-
-            # Save the review and rating to the user
-            reviewee.save()
-
-            # Update meeting status
-            meeting = Meeting.objects.get(id=request.POST.get('meeting_id'))
-            meeting.status = Meeting.Status.COMPLETED
-            meeting.save()
-
-            # Review Object
-            review = Reviews(reviewer=request.user, reviewee=reviewee, meeting=meeting, review=review, rating=rating, meeting_date=meeting.date, submitted_date=datetime.now())
-            review.save()
-
-            print('Meeting marked as unsuccessful with review and rating saved.')
-        elif form_type == 'acknowledge_meeting':
-            meeting = Meeting.objects.get(id=request.POST.get('meeting_id'))
-            meeting.acknowledged = True
-            meeting.save()
-            print(f'meeting marked as {meeting.status}')
+                    case 'reschedule':
+                        meeting_request.status = MeetingRequest.Status.RESCHEDULED
+                        meeting_request.save()
+                        meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.RESCHEDULED)
+                        meeting.save()
+                        return redirect('profile', id=request.POST.get('meeting_request_sender_id'))
+            case "video_upload":
+                user = request.user
+                user.elevator_pitch = request.FILES['elevator_pitch']
+                user.save()
+            case "video_remove":
+                user = request.user
+                user.elevator_pitch.delete()
+            case "add_project":
+                form = ProjectCreationForm(request.POST)
+                if form.is_valid:
+                    project = form.save(commit=False)
+                    project.pal = request.user
+                    project.save()
+            case "edit_profile_info":
+                form = EditProfileForm(request.POST, instance=request.user)
+                if form.is_valid:
+                    user = form.save(commit=False)
+                    user.save()
         
-        elif form_type == 'cancel-meeting-form': # Happens when someone cancels the meeting
-            cancel_reason = request.POST.get('cancel_reason', None)
-            if cancel_reason is not None:
+            # meeting review form submission
+            case 'meeting-review-form':
+                reviewee_id = request.POST.get('reviewee_id')
+                reviewee = Engineer.objects.get(id=reviewee_id)
+                meeting_type = request.POST.get('meeting_type')
+                print('meeting_type:', meeting_type)
+                print('reviewee:', reviewee.first_name)
                 meeting = Meeting.objects.get(id=request.POST.get('meeting_id'))
-                print(meeting)
+                # Determine if the reviewee is the sender or recipient
+                reviewee_role = None
+                if meeting.sender == reviewee:
+                    reviewee_role = 'sender'
+                elif meeting.recipient == reviewee:
+                    reviewee_role = 'recipient'
+    
+                if request.POST.get('pal_attendance') == 'yes':
+                    print('meeting success')
+                    # TODO: Need to formulate our feedback system
+                    # moderation on review and rating (prevent spam, etc.)
+                    
+                    # check if review has been created
+                    if meeting.review:
+                        # Update the existing review
+                        review = meeting.review
+                        if reviewee_role == 'sender':
+                            review.sender_review = request.POST.get('meeting_feedback')
+                            review.sender_rating = request.POST.get('pal_rating')
+                            review.recipient_status = MeetingReview.Status.REVIEWED
+                        elif reviewee_role == 'recipient':
+                            review.recipient_review = request.POST.get('meeting_feedback')
+                            review.recipient_rating = request.POST.get('pal_rating')
+                            review.sender_status = MeetingReview.Status.REVIEWED
+                        
+                        # Check if both users has submitted their reviews
+                        if review.sender_status == MeetingReview.Status.REVIEWED and review.recipient_status == MeetingReview.Status.REVIEWED:
+                            # Update the review status to reviewed
+                            print('both users have reviewed')   
+                            meeting.review.review_status = MeetingReview.Status.REVIEWED
+                            meeting.status = Meeting.Status.COMPLETED # update meeting to completed, it will not show up in the upcoming meetings
+                            meeting.acknowledged = True # mark meeting as acknowledged
+                            meeting.save()
+                            meeting.refresh_from_db()
+                            print(f"Refreshed status: {meeting.status}")  # Debugging
+                        review.save()
+                    
+                    else:
+                        # Create a new review (but should not go to this as we create the meeting review when the meeting is REVIEW status)
+                        if reviewee_role == 'sender':
+                            review = MeetingReview(recipient_review=request.POST.get('meeting_feedback'), recipient_rating=request.POST.get('rating'), meeting_date=meeting.date, submitted_date=datetime.now(), recipient_status=MeetingReview.Status.REVIEWED, review_status=MeetingReview.Status.PENDING)
+                        elif reviewee_role == 'recipient':
+                            review = MeetingReview(sender_review=request.POST.get('meeting_feedback'), sender_rating=request.POST.get('rating'), meeting_date=meeting.date, submitted_date=datetime.now(), sender_status=MeetingReview.Status.REVIEWED, review_status=MeetingReview.Status.PENDING)
+                        review.save()
+                        
+                        # Associate the review with the meeting
+                        meeting.review = review
+                        meeting.save()
                 
-                meeting.cancel_user = Engineer.objects.get(id=request.POST.get('cancel_user'))
-                meeting.status = Meeting.Status.CANCELLED
-                meeting.meeting_request.status = MeetingRequest.Status.CANCELLED
-                meeting.cancel_reason = cancel_reason
+                elif request.POST.get('pal_attendance') == 'no':
+                    print('meeting not success')
+                    # TODO: moderation on review and rating (prevent spam, etc.)
+
+                return redirect('/my-profile/')
+                # Save the review and rating to the user
+                reviewee.rating_count += 1
+                reviewee.rating = (reviewee.rating + int(rating)) / reviewee.rating_count # should update system
+
+                # Update reviewee's meeting stats (though I am hesisitant to do this - should we have the count go up after a review is submmited?)
+                reviewee.NumMeetings += 1
+                # check if online or inperson meeting
+                reviewee.NumMeetings += 1; reviewee.NumVideoMeetings += (meeting_type == 'video'); reviewee.NumInPersonMeetings += (meeting_type == 'in-person')
+
+                # Save the review and rating to the user
+                reviewee.save()
+
+                # Update meeting status
+                meeting = Meeting.objects.get(id=request.POST.get('meeting_id'))
+                meeting.status = Meeting.Status.COMPLETED
                 meeting.save()
-        elif form_type == 'cancel_sent_request': # Happens only when sender cancels the request
-            meeting_request = MeetingRequest.objects.get(id=request.POST.get('sent_meeting_id'))
-            meeting_request.status = MeetingRequest.Status.CANCELLED
-            meeting_request.save()
-            meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.CANCELLED)
-            meeting.acknowledged = True # mark meeting as acknowledged as request was cancelled
-            meeting.save()
-        else:
-            print('did not get meeting_success msg. something went wrong')
+
+                # Review Object
+                review = Reviews(reviewer=request.user, reviewee=reviewee, meeting=meeting, review=review, rating=rating, meeting_date=meeting.date, submitted_date=datetime.now())
+                review.save()
+
+                print('Meeting marked as unsuccessful with review and rating saved.')
+            case 'acknowledge_meeting':
+                meeting = Meeting.objects.get(id=request.POST.get('meeting_id'))
+                meeting.acknowledged = True
+                meeting.save()
+                print(f'meeting marked as {meeting.status}')
+        
+            case 'cancel-meeting-form': # Happens when someone cancels the meeting
+                cancel_reason = request.POST.get('cancel_reason', None)
+                if cancel_reason is not None:
+                    meeting = Meeting.objects.get(id=request.POST.get('meeting_id'))
+                    print(meeting)
+                    
+                    meeting.cancel_user = Engineer.objects.get(id=request.POST.get('cancel_user'))
+                    meeting.status = Meeting.Status.CANCELLED
+                    meeting.meeting_request.status = MeetingRequest.Status.CANCELLED
+                    meeting.cancel_reason = cancel_reason
+                    meeting.save()
+            case 'cancel_sent_request': # Happens only when sender cancels the request
+                meeting_request = MeetingRequest.objects.get(id=request.POST.get('sent_meeting_id'))
+                meeting_request.status = MeetingRequest.Status.CANCELLED
+                meeting_request.save()
+                meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.CANCELLED)
+                meeting.acknowledged = True # mark meeting as acknowledged as request was cancelled
+                meeting.save()
+            case _:
+                print('did not get post msg. something went wrong')
 
 
     meetings = Meeting.objects.filter( Q(recipient=request.user) | Q(sender=request.user) )

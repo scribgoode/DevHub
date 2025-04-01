@@ -20,7 +20,7 @@ To Do List Before Production:
     -✔️include important information on this page
     
     Meetings
-    -only let people cancel meetings 24 hours before without getting a strike
+    -✔️only let people cancel meetings 24 hours before without getting a strike (Strike system still needs to be implemented)
     -simple meeting reports from both people after meeting(maybe allow each person to see their own meeting reports they filled out)
 
     User Profiles Page
@@ -40,8 +40,9 @@ To Do List Before Production:
     -✔️stackable filters and search with filters applied notification
 
     Text Chat
-    -make sure people will only be added to contacts once they send a meeting request(chat is opened at this point but if the other person declines the meeting, only they can message the person and have the choice to remove that person from their contacts)
-    -make it possible to access someones profile from contacts page in messages
+    -✔️make sure that users are added once a meeting request is accepted
+        - If meeting request declined - the recipient should be able to send a message to sender on why it was declined (or use reschedule)
+    -✔️make it possible to access someones profile from contacts page in messages
     -add feature to search contacts
     -notifcation on the contact name that says how many new message you have from them(1 new message)
     -notification on the message icon that states how many total new messages you have
