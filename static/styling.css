@@ -737,7 +737,7 @@ transform: scale(1.05) translateY(.125rem);
 
 .favorites{
     position: fixed;
-    width: 100vh;
+    width: 25vh;
     height:82vh;
     background-color: #fff;
     margin-left: auto;

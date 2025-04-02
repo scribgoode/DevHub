@@ -54,7 +54,7 @@
             <header id="favorites-header">Favorites</header>
             {% for favorite in favorites %}
                 <div class="favorite">
-                    <p>{{ favorite }}</p>
+                    <p><a href="{% url 'profile' favorite.id %}"> {{ favorite.get_full_name }}</a></p>
                 </div>
             {% endfor %}
         </div>
@@ -65,6 +65,10 @@
     //logic that lets you hide text chat
     document.querySelector('.message-button').addEventListener('click', function() {
         document.querySelector('.text-chat').classList.toggle('hidden');
+    });
+
+    document.querySelector('.save-for-later').addEventListener('click', function() {
+        document.querySelector('.favorites').classList.toggle('hidden');
     });
     
     //logic that lets you click enter to send message

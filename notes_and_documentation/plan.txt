@@ -55,7 +55,7 @@ To Do List Before Production:
     -automatically put in creator status if you have at least one project you are actively recruiting for(if you have projects and want to switch to recruit then all project's actively recruiting switch is turned off)
     -if your status is recuit, state and display the type of projects you are open to joining(maybe do this for creators to, maybe for creators state whether they are open to contributing to another project)
         -(if your are a recruit or are a creator and willing to contribute to anothers project that the interests tab is revealed)
-    -add favorites list of profiles
+    -✔️add favorites list of profiles
     -display strikes
     -✔️notifier that states whether someone is willing to contribute to someone elses project(default is yes)
     -remove sent meeting invites and provide a link to a meeting history page
@@ -72,8 +72,8 @@ To Do List Before Production:
     -make sure meeting point api cannot be exploited
 
     Projects
-    -allow people a section to put links
-    -allow an optional section where you can state how you want a person to contribute to the project('will figure it out', or custom)
+    -✔️allow people a section to put links
+    -allow an !!optional!! section where you can state how you want a person to contribute to the project
     -✔️better logic for project display feature(improve public, private, and active)
 
 

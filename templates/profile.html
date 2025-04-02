@@ -18,6 +18,7 @@
                         {% csrf_token %}
                         <input type="hidden" name="favorite" value={{profile.id}}>
                         <button id="add-save-for-later">&star;</button>
+                    </form>
                     <p><b>Name:</b> {{profile.first_name}}</p>
                     <p><b>City:</b> {{profile.city}}</p>
                     <p><b>Meeting Preference:</b> {{profile.meeting_preference}}</p>
