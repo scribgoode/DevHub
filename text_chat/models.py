@@ -132,7 +132,7 @@ class Room(models.Model): #this should be renamed to TextRoom
 # Message model
 class Message(models.Model):
     sender = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name="sender_user")
-   #reciever = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name="reciever_user", null=True, blank=True)
+    recipient = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name="reciever_user", null=True, blank=True)
     room = models.ForeignKey(Room, on_delete=models.CASCADE)
     timestamp = models.DateTimeField(auto_now_add=True)
     messageContent = models.TextField()
