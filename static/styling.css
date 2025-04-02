@@ -22,17 +22,21 @@ body {
     align-items: center;
 }
 
+.head-buttons{
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    margin-left: auto;
+}
+
 h1 a{
     color:#000;
     text-decoration: none;
     font-size: 60px;
 }
 
-#login-form {
-    margin-left: auto;
-}
-
 #loginLink{
+    margin-left: 0.3vw;
     background: #fff;
     backface-visibility: hidden;
     border-radius: .375rem;
@@ -95,10 +99,6 @@ transform: scale(1.05) translateY(.125rem);
     width: 50%;
 }
 
-.profile-link a {
-    margin-left: 90.7%;
-}
-
 
 .title a {
     font-size: 60px;
@@ -155,7 +155,7 @@ transform: scale(1.05) translateY(.125rem);
     border-radius: 5px;
 }
 
-.table-row .status, .table-row .name, .table-row .location, .table-row .current-projects, .table-row .meeting-preferences{
+.table-row .status, .table-row .name, .table-row .location, .table-row .current-projects-row, .table-row .meeting-preferences{
     padding: 5px;
     margin: 2px;;
     background-color: #fff;
@@ -186,11 +186,23 @@ transform: scale(1.05) translateY(.125rem);
     background-color: #fff;
 }
 
-.table-row .current-projects{
+.table-row .current-projects-row{
     flex: 40%;
     overflow-y: auto;
     scroll-behavior: smooth;
     background-color: #fff;
+}
+
+.current-projects-popup{
+    display: none;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    height: 40vh;
+    width: 90vh;
+    background-color: #fff;
+    border: 0.5vh solid black;
 }
 
 .table-row .meeting-preferences{
@@ -270,7 +282,13 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 #edit-personal-info{
-    margin-left: 69%;
+    position: absolute;
+    right: 0;
+}
+
+#add-save-for-later{
+    position: absolute;
+    right: 0;
 }
 
 #submit-profile-info-edits{
@@ -280,7 +298,8 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 #profile-info-container{
-    display: block
+    display: block;
+    position: relative;
 }
 
 .spacer{
@@ -360,8 +379,16 @@ transform: scale(1.05) translateY(.125rem);
 
 .project-rows{
     height:10vh;
-    padding: 1vh;
+    padding: 0.5vh;
     border: 0.5vh dotted black;
+    position: relative;
+}
+
+#project-dates{
+    font-size: 2vh;
+    position: absolute;
+    right: 0.5vw;
+    top: 0;
 }
 
 #add-project{
@@ -706,6 +733,20 @@ transform: scale(1.05) translateY(.125rem);
     justify-content: left;
     flex-direction: column;
     margin-bottom: 10px;
+}
+
+.favorites{
+    position: fixed;
+    width: 25vh;
+    height:82vh;
+    background-color: #fff;
+    margin-left: auto;
+    z-index: 1000;
+    top: 11vh;
+    right: 10vh;
+    border-radius: 1%;
+    box-shadow: 30px 30px 40px 10px rgba(0, 0, 0, 0.7);
+    border: 2px solid black;
 }
 
 .online {

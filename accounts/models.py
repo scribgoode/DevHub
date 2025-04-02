@@ -25,6 +25,7 @@ class Engineer(AbstractUser):
     city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True)
     elevator_pitch = models.FileField(upload_to=video_upload_path, null=True, blank=True)
     address = models.OneToOneField(Address, on_delete=models.CASCADE, null=True, blank=True) #cant be a one to one field here because two people that live together can have the same address
+    favorites = models.ManyToManyField('Engineer', symmetrical=False, blank=True) #not working
     
     # Rating system
     rating = models.FloatField(default=0)
@@ -71,6 +72,8 @@ class Engineer(AbstractUser):
             return True
         else:
             return False
+    
+    
 
 class Project(models.Model):
     pal = models.ForeignKey(Engineer, on_delete=models.CASCADE) #if we end up doing a clean up of the code then rename engineer to pal
@@ -79,10 +82,11 @@ class Project(models.Model):
     class YesandNo(models.TextChoices):
         YES = 'yes', 'yes'
         NO = 'no', 'no'
-    display_on_page = models.CharField(max_length=3, choices=YesandNo.choices, default=YesandNo.YES)
-    actively_recruiting  = models.CharField(max_length=3, choices=YesandNo.choices, default=YesandNo.YES)
+    display_on_profile = models.CharField(max_length=3, choices=YesandNo.choices, default=YesandNo.YES)
+    actively_recruiting  = models.CharField(max_length=3, choices=YesandNo.choices, default=YesandNo.YES, help_text="'Yes also makes the project show up on the home page'")
     start_date = models.DateField(default=date.today)
     end_date = models.DateField(default=date.today)
+    current = models.BooleanField(default=False)
     link = models.URLField(max_length=255, blank=True, null=True)
 
     #if we end up making it a project management site too, then we need to add a way to add users to a project but we might want to go ahead and add this so we can use the meetup spot algorithm to find a place between three people

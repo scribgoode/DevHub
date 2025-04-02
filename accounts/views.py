@@ -69,7 +69,6 @@ def home(request):
             profiles = profiles.filter(elevator_pitch__isnull=False).exclude(elevator_pitch='')
         if pitch == 'false':
             profiles = profiles.filter(Q(elevator_pitch=True) | Q(elevator_pitch=''))
-    
 
     projects = Project.objects.all()
     cities = City.objects.all()
@@ -162,7 +161,14 @@ def Profile(request, id):
                 return redirect('profile', id=request.user.id)  # Redirect to the profile page after form submission
             else:
                 messages.warning(request, 'Meeting request created successfully, but failed to find half way point. THIS SHOULD NOT HAVE HAPPENED!')
-                return redirect('profile', id=id)  # Redirect to the profile page after form submission
+                return redirect('profile', id=id)  # Redirect to the profile page after form submission\
+            
+        if 'favorite' in request.POST:
+            current_user = Engineer.objects.get(id=request.user.id)
+            current_user.favorites.add(Engineer.objects.get(id=id))
+            current_user.save()
+            messages.success(request, 'Profile added to favorites.')
+            print(current_user.favorites.all(), 'print statement for favorites')
     else:
         meeting_request_form = MeetingRequestForm()
 

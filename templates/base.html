@@ -14,25 +14,27 @@
     <div class="container">
         <div class="head">
             <h1><a href="/">ProjectPals</a></h1>
-            {% if user.is_authenticated and request.path == '/my-profile/' %}
-                <form id="login-form" action="{% url 'account_logout' %}" method="get">
-                    <button type="submit" id="loginLink" >Logout</button>
-                </form>
-                <div class="spacer2"></div>
-                <button type="submit" id="loginLink" class="message-button">&#9993;</button>
-                <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
+            <div class="head-buttons">
+                {% if user.is_authenticated and request.path == '/my-profile/' %}
+                    <form id="login-form" action="{% url 'account_logout' %}" method="get">
+                        <button type="submit" id="loginLink" >Logout</button>
+                    </form>
+                    <button type="submit" id="loginLink" class="message-button">&#9993;</button>
+                    <button type="submit" id="loginLink" class="save-for-later">&starf;</button>
+                    <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
             {% elif user.is_authenticated and request.path != '/my-profile/' %}
-                <form id="login-form" action="/my-profile" method="get">
-                    <button type="submit" id="loginLink" >My Profile</button>
-                </form>
-                <div class="spacer2"></div>
-                <button type="submit" id="loginLink" class="message-button">&#9993;</button>
-                <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
+                    <form id="login-form" action="/my-profile" method="get">
+                        <button type="submit" id="loginLink" >My Profile</button>
+                    </form>
+                    <button type="submit" id="loginLink" class="message-button">&#9993;</button>
+                    <button type="submit" id="loginLink" class="save-for-later">&starf;</button>
+                    <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
             {% elif not user.is_authenticated and request.path != '/accounts/signup/' %}
-                <form id="login-form" action="{% url 'account_login' %}" method="get">
-                    <button type="submit" id="loginLink">Login</button>
-                </form>
-            {% endif %}
+                    <form id="login-form" action="{% url 'account_login' %}" method="get">
+                        <button type="submit" id="loginLink">Login</button>
+                    </form>
+                {% endif %}
+            </div>
         </div>
         <div class="text-chat hidden">
             <header id="text-chat-header">Messages</header>
@@ -50,6 +52,14 @@
                 </section>
             </div>
         </div>
+        <div class="favorites hidden"><!--have to add context processor to be able to access favorites on every template-->
+            <header id="favorites-header">Favorites</header>
+            {% for favorite in favorites %}
+                <div class="favorite">
+                    <p><a href="{% url 'profile' favorite.id %}"> {{ favorite.get_full_name }}</a></p>
+                </div>
+            {% endfor %}
+        </div>
         <div id="notification-dropdown" class="dropdown hidden">
             {% for sender in unread_message_senders %}
               <div class="notif-item" data-sender="{{ sender.id }}">
@@ -64,6 +74,10 @@
     //logic that lets you hide text chat
     document.querySelector('.message-button').addEventListener('click', function() {
         document.querySelector('.text-chat').classList.toggle('hidden');
+    });
+
+    document.querySelector('.save-for-later').addEventListener('click', function() {
+        document.querySelector('.favorites').classList.toggle('hidden');
     });
     
     //logic that lets you see notifications

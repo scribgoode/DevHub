@@ -13,9 +13,18 @@
                 <div class="video-placeholder"></div>
             {% endif %}
             <div class="profile-info">
-                <p><b>Name:</b> {{profile.first_name}}</p>
-                <p><b>Status:</b> {{profile.status}}</p>
-                <p><b>City:</b> {{profile.city}}</p>
+                <div class="profile-info-container" id="profile-info-container">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <input type="hidden" name="favorite" value={{profile.id}}>
+                        <button id="add-save-for-later">&star;</button>
+                    </form>
+                    <p><b>Name:</b> {{profile.first_name}}</p>
+                    <p><b>City:</b> {{profile.city}}</p>
+                    <p><b>Meeting Preference:</b> {{profile.meeting_preference}}</p>
+                    <p><b>Status:</b> {{profile.status}}</p>
+                    {% if profile.status == 'creator' %}<p><b>Willing to Contribute to Another's Project:</b> {{profile.open_to_contributing}}{% endif %}</p>
+                </div>
             </div>
         </div>
         <div class="projects">
