@@ -1247,3 +1247,41 @@ figcaption {
     margin-left: 20%;
 }
 
+.dropdown {
+    position: fixed;
+    width: 100vh;
+    height:82vh;
+    background-color: #fff;
+    margin-left: auto;
+    z-index: 1000;
+    top: 11vh;
+    right: 10vh;
+    border-radius: 1%;
+    box-shadow: 30px 30px 40px 10px rgba(0, 0, 0, 0.7);
+    border: 2px solid black;
+}
+
+.message-button {
+    position: relative; /* Ensure the badge is positioned relative to this button */
+    font-size: 24px;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.badge {
+    position: absolute;
+    top: 8px; /* Adjust as needed */
+    right: 16px; /* Adjust as needed */
+    transform: translate(50%, -50%); /* Center the badge on the top-right corner */
+    background-color: red;
+    color: white;
+    font-size: 12px;
+    padding: 3px 6px;
+    border-radius: 50%;
+    font-weight: bold;
+    line-height: 1;
+    min-width: 18px;
+    text-align: center;
+    z-index: 10; /* Ensure it appears above other elements */
+}

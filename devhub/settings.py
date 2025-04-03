@@ -88,7 +88,6 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'accounts.context_processors.global_data',
-                'accounts.context_processors.unread_message_notifications',
             ],
         },
     },

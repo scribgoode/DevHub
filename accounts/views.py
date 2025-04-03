@@ -1,10 +1,13 @@
 from datetime import datetime
+import json
 import time
 from django.utils.timezone import make_naive, is_aware
 from django.urls import reverse
 from django.views.generic import TemplateView
 from django.template.loader import get_template
 from django.shortcuts import redirect, render, get_object_or_404, get_list_or_404
+
+from accounts.context_processors import global_data
 from .models import Engineer, Project, Reviews
 from cities_light.models import City
 from text_chat.models import Room, Message
@@ -26,6 +29,13 @@ from django.db.models import Case, When
 
 from django.utils.timezone import now, activate, localtime
 from tzlocal import get_localzone
+
+
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+from text_chat.models import Message
+
+from django.template.loader import render_to_string
 
 '''
 class HomePageView(TemplateView):
@@ -513,3 +523,35 @@ def videoChat(request):
     return render(request, 'video_chat/video_chat.html', {})
 '''
 
+@require_POST
+def mark_message_read(request):
+    print('mark_message_read')
+
+    data = json.loads(request.body)
+    message_id = data.get('message_id')
+    print("📬 message_id from JS:", message_id)
+
+    if message_id and request.user.is_authenticated:
+        try:
+            message = Message.objects.get(id=message_id, recipient=request.user)
+            message.is_read = True
+            message.save()
+            print('message:', message)
+            return JsonResponse({'success': True})
+        except Message.DoesNotExist:
+            return JsonResponse({'success': False, 'error': 'Not found'}, status=404)
+
+    return JsonResponse({'success': False}, status=400)
+
+
+@login_required
+def get_notification_box(request):
+    context = global_data(request)  # <- your context processor
+    html = render_to_string('partials/notification_box.html', context, request=request)
+    return JsonResponse({'html': html})
+
+@login_required
+def get_message_button(request):
+    context = global_data(request)
+    html = render_to_string('partials/message_button.html', context, request=request)
+    return JsonResponse({'html': html})

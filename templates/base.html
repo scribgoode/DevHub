@@ -11,7 +11,7 @@
     
 </head>
 <body>
-    <div class="container">
+    <div class="container"> 
         <div class="head">
             <h1><a href="/">ProjectPals</a></h1>
             <div class="head-buttons">
@@ -19,14 +19,38 @@
                     <form id="login-form" action="{% url 'account_logout' %}" method="get">
                         <button type="submit" id="loginLink" >Logout</button>
                     </form>
-                    <button type="submit" id="loginLink" class="message-button">&#9993;</button>
+                    
+                    <div id="message-button-wrapper">
+                        {% if unread_message_notifications.unread %}
+                            <button type="submit" id="loginLink" class="message-button">
+                                &#9993;
+                                <span class="badge">{{ unread_message_notifications.unread_total_count }}</span>
+                            </button>
+                        {% else %}
+                            <button type="submit" id="loginLink" class="message-button">&#9993;</button>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- <button type="submit" id="loginLink" class="message-button">&#9993;</button> -->
                     <button type="submit" id="loginLink" class="save-for-later">&starf;</button>
                     <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
             {% elif user.is_authenticated and request.path != '/my-profile/' %}
                     <form id="login-form" action="/my-profile" method="get">
                         <button type="submit" id="loginLink" >My Profile</button>
                     </form>
-                    <button type="submit" id="loginLink" class="message-button">&#9993;</button>
+
+                    <div id="message-button-wrapper">
+                        {% if unread_message_notifications.unread %}
+                            <button type="submit" id="loginLink" class="message-button">
+                                &#9993;
+                                <span class="badge">{{ unread_message_notifications.unread_total_count }}</span>
+                            </button>
+                        {% else %}
+                            <button type="submit" id="loginLink" class="message-button">&#9993;</button>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- <button type="submit" id="loginLink" class="message-button">&#9993;</button> -->
                     <button type="submit" id="loginLink" class="save-for-later">&starf;</button>
                     <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
             {% elif not user.is_authenticated and request.path != '/accounts/signup/' %}
@@ -36,6 +60,8 @@
                 {% endif %}
             </div>
         </div>
+
+
         <div class="text-chat hidden">
             <header id="text-chat-header">Messages</header>
             <div class="contacts-and-messages">
@@ -52,6 +78,8 @@
                 </section>
             </div>
         </div>
+
+
         <div class="favorites hidden"><!--have to add context processor to be able to access favorites on every template-->
             <header id="favorites-header">Favorites</header>
             {% for favorite in favorites %}
@@ -60,12 +88,19 @@
                 </div>
             {% endfor %}
         </div>
+
         <div id="notification-dropdown" class="dropdown hidden">
-            {% for sender in unread_message_senders %}
-              <div class="notif-item" data-sender="{{ sender.id }}">
-                New Messages from {{ sender.name }} ({{ sender.unread_count }})
-              </div>
-            {% endfor %}
+            {% if unread_message_notifications.unread %}
+                {% for notification in unread_message_notifications.unread %}
+                    <div class="notif-item">
+                        You have unread messages: <br>
+                        <span class="sender-name">{ Sender: {{ notification.sender__first_name  }},</span>
+                        <span class="timestamp">Number of unread messages: {{ notification.unread_count  }} }</span>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="notif-item empty">No unread notifications</div>
+            {% endif %}
         </div>
     {% block content %}
     {% endblock %}
@@ -94,9 +129,19 @@
 </script>
 
 {{user.id|json_script:"user_id"}}
+{{ unread_message_notifications.unread_total_count|json_script:"unread_total_count" }}
+{{ unread_message_notifications.unread|json_script:"unread_list" }}
+
 
 <script>
-    // wait for DOM to load
+    // get unread
+    const unread = JSON.parse(document.getElementById('unread_total_count').textContent);
+    console.log('unread:', unread);
+
+    const unread_list = JSON.parse(document.getElementById('unread_list').textContent);
+    console.log('unread_list:', unread_list);
+
+    // wait for DOM to load 
     let sendButton = null;
     document.addEventListener('DOMContentLoaded', function() {
         // Your code to run since DOM is loaded and ready
@@ -140,14 +185,32 @@
                     return;
                 }
 
+
                 // get the name of the other user in the chatroom
                 let newChatroomname = room.users[1 - room.users.findIndex(user => user.id === user_id)].first_name;
+                let newChatroomid = room.users[1 - room.users.findIndex(user => user.id === user_id)].id;
 
+                
                 const newChatroom = document.createElement('button');
                 newChatroom.id = 'contact-button';
-                newChatroom.innerHTML = newChatroomname;
+                //newChatroom.innerHTML = newChatroomname;
+
+                // get # of unread messages
+                const index = unread_list.findIndex(item => item.sender__id === newChatroomid);
+                console.log("chatroomname, index:", newChatroomid, index);
+                if (index !== -1) {
+                    console.log('unread:', unread_list[index].unread_count);
+                    const unreadCount = unread_list[index].unread_count;
+                    newChatroom.innerHTML = `${newChatroomname} (${unreadCount})`;
+                } else {
+                    newChatroom.innerHTML = newChatroomname;
+                }
+
                 
                 newChatroom.addEventListener('click', () => {
+
+                    // remove unread messages
+                    newChatroom.innerHTML = newChatroomname;
                     // disable send button
                     newChatroom.disabled = true;
 
@@ -169,7 +232,7 @@
                     // TODO: Create css for button name
                     chat_user_id = room.users[1 - room.users.findIndex(user => user.id === user_id)].id
                     messagesHeader.innerHTML = `<button onclick="window.location.href='/profile/${chat_user_id}';">${newChatroomname}</button>`;
-
+                    
 
                     // get chat history
                     console.log('selected chatroom:', room);
@@ -185,14 +248,65 @@
                             console.log(typeof receiver_id);
                             data.forEach(chat => {
                                 const newChat = document.createElement('div');
+                                console.log('chat:', chat);
                                 if (chat.sender.id === current_user.id) {
                                     newChat.innerHTML = `<div class="user-message">${chat.messageContent}</div>`;
                                 }
                                 else {
+                                    // update message has been read
+                                    if (chat.is_read !== true) {
+                                        chat.is_read = true;
+                                        console.log('chat id:', chat.id);
+                                        console.log('message read:', chat, "is now read:", chat.is_read);
+                                        fetch('/api/messages/mark-read/', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRFToken': getCookie('csrftoken')
+                                            },
+                                            body: JSON.stringify({ message_id: chat.id })
+                                        })
+                                        .then(res => res.json())
+                                        .then(() => {fetch('/api/messages/mark-read/', {
+                                            method: 'POST',
+                                            headers: {
+                                                'Content-Type': 'application/json',
+                                                'X-CSRFToken': getCookie('csrftoken')
+                                            },
+                                            body: JSON.stringify({ message_id: chat.id })
+                                        })
+                                        .then(res => res.json())
+                                        .then(response => {
+                                            if (response.success) {
+                                                // ✅ Refresh both notifications and message icon
+                                                Promise.all([
+                                                    fetch('/notifications/html/').then(res => res.json()),
+                                                    fetch('/messages/button/html/').then(res => res.json())
+                                                ]).then(([notif, button]) => {
+                                                    document.getElementById('notification-dropdown').innerHTML = notif.html;
+                                                    document.getElementById('message-button-wrapper').innerHTML = button.html;
+                                                });
+                                            } else {
+                                                console.error("❌ Failed to mark message as read:", response.error || 'Unknown error');
+                                            }
+                                        })
+                                        .catch(error => {
+                                            console.error("❌ Network or server error:", error);
+                                        });
+
+                                            // Refresh notification box
+                                            fetch('/notifications/html/')  // URL to your new view
+                                                .then(res => res.json())
+                                                .then(data => {
+                                                    document.getElementById('notification-dropdown').innerHTML = data.html;
+                                                });
+                                        });
+                                    }
                                     newChat.innerHTML = `<div class="contact-message">${chat.messageContent}</div>`;
                                 }
                                 chatbox.appendChild(newChat);
                             });
+
                             chat_type = "text";
                             socket = new WebSocket(
                                 'ws://'
@@ -255,6 +369,22 @@
             messageInput.value = '';
         }
     }
+
+
+    function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 </script>
 <script>
     //scroll to bottom of message container
