@@ -50,13 +50,17 @@ class RoomSerializer(serializers.ModelSerializer):
         # Return the value of the messagable attribute
         return obj.messagable
 
+
 class MessageSerializer(serializers.ModelSerializer):
-    sender = EngineerSerializer()
+    sender = EngineerSerializer(read_only=True)  # Include sender details
+
     class Meta:
         model = Message
         fields = (
+            'id',               # ✅ for marking messages read
             'sender',
             'messageContent',
             'timestamp',
             'room_id',
+            'is_read',          # ✅ optional, for frontend logic
         )

@@ -1,0 +1,8 @@
+{% for notification in unread_message_notifications.unread %}
+  <div class="notif-item" data-sender="{{ notification.sender__id }}">
+    <span class="sender-name">{{ notification.sender__first_name }}</span>:
+    <span class="unread-count">{{ notification.unread_count }} unread message{{ notification.unread_count|pluralize }}</span>
+  </div>
+{% empty %}
+  <div class="notif-item">No unread messages</div>
+{% endfor %}

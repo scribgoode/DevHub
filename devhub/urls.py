@@ -44,6 +44,12 @@ urlpatterns = [
     path('api/get-meeting-requests/', meeting_request_views.get_meeting_requests_by_sender_and_recipient),
     path('api/update-meeting-request/<int:pk>/', meeting_request_views.update_meeting_request, name='update_meeting_request'),
 
+    
+    path('api/messages/mark-read/', accounts_views.mark_message_read, name='mark_message_read'),
+    path('notifications/html/', accounts_views.get_notification_box, name='get_notification_html'),
+    path('messages/button/html/', accounts_views.get_message_button, name='get_message_button'),
+
+    
     # chat pages
     path('index/', index, name='index'),#this is apart of testing for the implementation of the video chat
     path('meetup_point/home.html', meetup_views.meetup_home, name='home'),

@@ -124,10 +124,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         return self.new_chatroom.token
 
     async def createMessage(self, message):
+        print(message, "message in createMessage function in consumer.py")
         create_message = sync_to_async(Message.objects.create)
         self.message = await create_message(
             room=self.new_chatroom,
             sender=self.scope["user"],
+            recipient=self.profile_user,
             messageContent=message
         )
         #print(self.message, "self.message in createMessage function in consumer.py")

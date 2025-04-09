@@ -1,0 +1,8 @@
+{% if unread_message_notifications.unread %}
+    <button type="submit" id="loginLink" class="message-button">
+        &#9993;
+        <span class="badge">{{ unread_message_notifications.unread_total_count }}</span>
+    </button>
+{% else %}
+    <button type="submit" id="loginLink" class="message-button">&#9993;</button>
+{% endif %}
