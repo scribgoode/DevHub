@@ -88,6 +88,7 @@ class Project(models.Model):
     end_date = models.DateField(default=date.today)
     current = models.BooleanField(default=False)
     link = models.URLField(max_length=255, blank=True, null=True)
+    contribution_explanation = models.TextField(max_length=15, null=True, blank=True)
 
     #if we end up making it a project management site too, then we need to add a way to add users to a project but we might want to go ahead and add this so we can use the meetup spot algorithm to find a place between three people
     #we might want to end up setting that up as best we can before putting the website up because ETL is an expensive process but maybe not because of scope creep

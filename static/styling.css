@@ -152,14 +152,14 @@ transform: scale(1.05) translateY(.125rem);
 
 .table-row:hover{
     background-color: black;
-    border-radius: 5px;
+    border-radius: 3px; 
 }
 
 .table-row .status, .table-row .name, .table-row .location, .table-row .current-projects-row, .table-row .meeting-preferences{
     padding: 5px;
-    margin: 2px;;
+    margin: 1.7px;;
     background-color: #fff;
-    border-radius: 5px;
+    border-radius: 3px;
 }
 
 .table-row .status{
@@ -369,6 +369,24 @@ transform: scale(1.05) translateY(.125rem);
     font-size: 4vh;
 }
 
+#projects-button{
+    border: .5vh solid black;
+}
+
+#projects-button:hover{
+    background-color:rgba(0, 0, 0, 0.1);
+    cursor: pointer
+}
+
+#interests-button{
+    border: .5vh solid black;
+}
+
+#interests-button:hover{
+    background-color:rgba(0, 0, 0, 0.1);
+    cursor: pointer
+}
+
 .projects-box{
     display:flex;
     flex-direction: column;
@@ -448,10 +466,11 @@ transform: scale(1.05) translateY(.125rem);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    height: 40vh;
+    height: 70vh;
     width: 90vh;
     background-color: #fff;
     border: 0.5vh solid black;
+    z-index: 1000;
 
 }
 

@@ -21,10 +21,10 @@ To Do List Before Production:
     
     Meetings
     -✔️only let people cancel meetings 24 hours before without getting a strike (Strike system still needs to be implemented)
-    -simple meeting reports from both people after meeting(maybe allow each person to see their own meeting reports they filled out)
+    -✔️simple meeting reports from both people after meeting(maybe allow each person to see their own meeting reports they filled out)
 
     User Profiles Page
-    -maybe add meeting statistics for bottom right of profile page(something needs to go in that bottom right corner)
+    -maybe add meeting statistics for bottom right of profile page(something needs to go in that bottom right corner)(completed(onhover: numbers of types of meetings), sent meeting, reiceved meeting requests)
 
     Home Page
     -✔️add real time search
@@ -33,7 +33,7 @@ To Do List Before Production:
     -display currently online using websocket
     -pagination
     -footer
-    -default sorting
+    -default sorting(online status, city, creator/status)
     -logo
     -✔️render projects on home page(the current project box contains "Project 1: Fornite", etc.)(on hover all project information is shown)
     -✔️elevator pitch filter
@@ -45,8 +45,8 @@ To Do List Before Production:
         - If meeting request declined - the recipient should be able to send a message to sender on why it was declined (or use reschedule)
     -✔️make it possible to access someones profile from contacts page in messages
     -add feature to search contacts
-    -notifcation on the contact name that says how many new message you have from them(1 new message)
-    -notification on the message icon that states how many total new messages you have
+    -✔️notifcation on the contact name that says how many new message you have from them(1 new message)
+    -✔️notification on the message icon that states how many total new messages you have
     -time stamps and date stamps
 
     My Profile Page
@@ -59,7 +59,7 @@ To Do List Before Production:
     -display strikes
     -✔️notifier that states whether someone is willing to contribute to someone elses project(default is yes)
     -remove sent meeting invites and provide a link to a meeting history page
-    -only update ratings every 5-10 ratings
+    -only update ratings every 5-10 ratings(objective questions and positive)
 
     Signup Page
     -allow to select dob using calendar and change format(some type of library)
@@ -70,10 +70,11 @@ To Do List Before Production:
 
     Meeting Point
     -make sure meeting point api cannot be exploited
+    -css
 
     Projects
     -✔️allow people a section to put links
-    -allow an !!optional!! section where you can state how you want a person to contribute to the project
+    -✔️allow an !!optional!! section where you can state how you want a person to contribute to the project
     -✔️better logic for project display feature(improve public, private, and active)
 
 
@@ -109,6 +110,7 @@ Future Ideas and Add Ons
     -project management software
     -screen share in video call
     -projects and paid gigs tab
+    -elevator pitch reels
     
 
 

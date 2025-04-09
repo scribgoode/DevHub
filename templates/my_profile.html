@@ -238,7 +238,9 @@
 
 <div class="projects-and-requests">
     <div class="projects">
-        <div class="projects-header">Projects
+        <div class="projects-header">
+            <span id="projects-button" onclick="showProjects()" >Projects</span>
+            <span id="interests-button" onclick="showInterests()" >Interests</span>
             <button id="add-project">&#43;</button>
         </div>
         <div class="projects-box">
@@ -248,8 +250,10 @@
                 <div id="project-dates">{{project.start_date}} - {% if project.current %}current{% else %}{{project.end_date}}{% endif %}</div>
                 <div>Actively Recruiting?: {{project.actively_recruiting}}</div>
                 <div>Description: {{project.description}}</div>
+                {% if project.contribution_explanation %}<div>How I would like someone to contribute: {{project.contribution_explanation}}</div>{% endif %}
                 {% if project.link %}<div>Relevant Link: <a href="{{project.link}}">{{project.link}}</a></div>{% endif %}
             </div>
+            {% endfor %}
             <div class="add-project-popup hidden" id="add-project-popup">
                 <button class="close-window">X</button>
                 <form class="add-project" method="post">
@@ -258,8 +262,15 @@
                     {{ project_creation_form.as_p }}
                     <button type="submit">Create</button>
                 </form>
-                </div>   
-            {% endfor %}
+            </div>
+        </div>
+        <div class="interests-box hidden">
+            <header>Interests</header>
+            <div class="interests-rows">
+                {% for interest in interests %}
+                    <p>{{interest}}</p>
+                {% endfor %}
+            </div>
         </div>
     </div>
     <div class="spacer"></div>
@@ -439,6 +450,29 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+</script>
+
+<script>
+    const interests_button = document.getElementById("interests-button");
+    const projects_button = document.getElementById("projects-button");
+    function showInterests() {
+        const projectsBox = document.querySelector(".projects-box");
+        projectsBox.classList.add("hidden");
+        const interestsBox = document.querySelector(".interests-box");
+        interestsBox.classList.remove("hidden");
+        interests_button.style.backgroundColor = "grey";
+        projects_button.style.backgroundColor = "#fff";
+    }
+
+    function showProjects() {
+        const projectsBox = document.querySelector(".projects-box");
+        projectsBox.classList.remove("hidden");
+        const interestsBox = document.querySelector(".interests-box");
+        interestsBox.classList.add("hidden");
+        projects_button.style.backgroundColor = "grey";
+        interests_button.style.backgroundColor = "#fff";
+
+    }
 </script>
 
 <script>
