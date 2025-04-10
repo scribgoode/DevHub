@@ -13,6 +13,9 @@ To Do List Before Production:
     -notifcation across top of all screens that says you have a meeting that start 1 hour before meeting and during meeting(link if text or video meeting)
     -consider order of information in the rows on the home page
     -pick friendly font
+    -change creator and recruit to: 1. "I'm starting something" — I have a project and want collaborators(have a tab for each one: projects, interests, ideas)(just make sure there is something showing the connection between the three agendas)
+                                    2. "I'm joining in" — I'm looking to join someone else's project
+                                    3. "I'm brainstorming" — I want to meet someone and co-create a new project
 
     Video Chat
     -✔️add microphone button

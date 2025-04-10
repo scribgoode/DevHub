@@ -238,7 +238,7 @@ transform: scale(1.05) translateY(.125rem);
 .profile-page-left-side{
     display: flex;
     flex-direction: column;
-    width: 108vh;
+    flex: 65%;
 }
 
 .profile-data-profile-page{
@@ -474,6 +474,13 @@ transform: scale(1.05) translateY(.125rem);
 
 }
 
+.profile-page-right-side{
+    display: flex;
+    flex-direction: column;
+    margin-left: 1%;
+    flex: 35%;
+}
+
 .close-window{
     position: absolute;
     right: 0;
@@ -482,10 +489,39 @@ transform: scale(1.05) translateY(.125rem);
 /* meeting request */
 .meeting-request-form {
     background-color: #fff;
-    flex: 40%;
-    height: 50vh;
+    flex: 60%;
+    height: 40vh;
     border: 0.5vh solid black;
 }
+
+.statistics{
+    margin-top: 1%;
+    flex: 40%;
+    background-color: #fff;
+    border: 0.5vh solid black;
+}
+
+.individual-statistics{
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    height: 90%;
+}
+
+.statistics-box{
+    display: flex;
+    flex-direction: column;
+}
+
+.meetings-completed-symbol{
+    height: 10vh;
+    width: 7vw;
+}
+
+.meeting-statistics-nums{
+    font-size: 4vh;
+}
+
 
 .incoming-and-sent-invites{
     display: flex;

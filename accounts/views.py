@@ -168,7 +168,7 @@ def Profile(request, id):
             elif meeting_request.type == 'video':
                 meeting_request.status = 'pending'
                 meeting_request.save()
-                return redirect('profile', id=request.user.id)  # Redirect to the profile page after form submission
+                return redirect('my-profile')  # Redirect to the profile page after form submission
             else:
                 messages.warning(request, 'Meeting request created successfully, but failed to find half way point. THIS SHOULD NOT HAVE HAPPENED!')
                 return redirect('profile', id=id)  # Redirect to the profile page after form submission\
@@ -182,11 +182,18 @@ def Profile(request, id):
     else:
         meeting_request_form = MeetingRequestForm()
 
+    num_completed_meetings = Meeting.objects.filter(sender__id=id, status=Meeting.Status.COMPLETED).count() + Meeting.objects.filter(recipient__id=id, status=Meeting.Status.COMPLETED).count()
+    num_meetings_sent = MeetingRequest.objects.filter(sender__id=id).count()
+    num_meetings_received = MeetingRequest.objects.filter(recipient__id=id).count()
     profile = Engineer.objects.get(id=id)
     projects = Project.objects.filter(pal__id=id)
     context = {'profile': profile,
                'form': meeting_request_form,
-               'projects': projects}
+               'projects': projects,
+               'num_completed_meetings': num_completed_meetings,
+               'num_meetings_sent': num_meetings_sent,
+               'num_meetings_received': num_meetings_received,}
+    
     return render(request, 'profile.html', context)
 
 def myProfile(request):
@@ -197,9 +204,9 @@ def myProfile(request):
     # Get the current time in the system's timezone
     current_time = localtime(now())
     current_time_unix = int(time.mktime(current_time.timetuple()))
-    print(type(current_time_unix))
-    print(current_time_unix)
-    print(f"Current Time in {system_timezone}: {current_time}")
+    # print(type(current_time_unix))
+    # print(current_time_unix)
+    # print(f"Current Time in {system_timezone}: {current_time}")
 
     print(request.POST)
     if request.method == 'POST':

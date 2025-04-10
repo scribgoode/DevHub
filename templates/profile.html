@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
     {% comment %} <div class="bio-background"></div>
     <div class="elevator-pitch-video">This is {{profile.first_name}}'s profile page</div> {% endcomment %}
@@ -50,22 +51,36 @@
         </div>
     </div>
 
-    <div class="spacer"></div>
+    <div class="profile-page-right-side">
+        <form class= "meeting-request-form" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" id="send-meeting-request" onclick="sendMeetingRequest(this)">Send Meeting Request</button>
+        </form>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
 
-    <form class= "meeting-request-form" method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" id="send-meeting-request" onclick="sendMeetingRequest(this)">Send Meeting Request</button>
-    </form>
-    {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-
-    <div class="statistics">Statistics
+        <div class="statistics">Meeting Statistics
+            <div class="individual-statistics">
+                <div class="statistic-box">
+                    <img src="{% static 'img/meetings_completed_symbol.png' %}" alt="Symbol" class="meetings-completed-symbol"/>
+                    <p><b class="meeting-statistics-nums">{{num_completed_meetings}}</b> Completed</p>
+                </div>
+                <div class="statistic-box">
+                    <img src="{% static 'img/meetings_sent.png' %}" alt="Symbol" class="meetings-completed-symbol"/>
+                    <p><b class="meeting-statistics-nums">{{num_meetings_sent}}</b> Sent</p>
+                </div>
+                <div class="statistic-box">
+                    <img src="{% static 'img/meetings_received.png' %}" alt="Symbol" class="meetings-completed-symbol"/>
+                    <p><b class="meeting-statistics-nums">{{num_meetings_received}}</b> Received</p>
+                </div>
+        </div>
+    
     </div>
 </div>
 
