@@ -386,6 +386,59 @@
     return cookieValue;
 }
 </script>
+
+
+<!-- script for notifications on meeting -->
+<script>
+    const notifSocket = new WebSocket(
+        'ws://' + window.location.host + '/ws/chat/notifications/'  // can be any route as long as consumer accepts it
+    );
+
+    notifSocket.onopen = function (e) {
+        console.log("🔔 Notification socket connected");
+    };
+
+    notifSocket.onmessage = function (event) {
+        console.log("🔔 Notification message received:", event.data);
+        const data = JSON.parse(event.data);
+
+        if (data.notification) {
+            const message = data.notification.message;
+            const createdAt = data.notification.created_at;
+            console.log("🔔 New notification:", message);
+
+            // Update notification dropdown
+            const notifBox = document.getElementById('notification-dropdown');
+            const newNotif = document.createElement('div');
+            newNotif.classList.add('notif-item');
+            newNotif.innerHTML = `
+                <span>${message}</span><br>
+                <small>${createdAt}</small>
+            `;
+            notifBox.prepend(newNotif);
+
+            // Show notification dropdown visually (optional)
+            notifBox.classList.remove('hidden');
+
+            // Add badge to the bell
+            const bellButton = document.querySelector('.notification-button');
+            if (!bellButton.querySelector('.badge')) {
+                const badge = document.createElement('span');
+                badge.classList.add('badge');
+                badge.textContent = '1';
+                bellButton.appendChild(badge);
+            } else {
+                const badge = bellButton.querySelector('.badge');
+                badge.textContent = parseInt(badge.textContent) + 1;
+            }
+        }
+    };
+
+    notifSocket.onerror = function (e) {
+        console.error("❌ Notification WebSocket error:", e);
+    };
+</script>
+
 <script>
     //scroll to bottom of message container
     const messagesBox = document.querySelector('.messages-box');

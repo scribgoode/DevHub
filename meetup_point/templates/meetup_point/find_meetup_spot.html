@@ -202,7 +202,9 @@
                         location_name: mr.location_name,
                         address: mr.address,
                         lat: mr.lat,
-                        lng: mr.lng
+                        lng: mr.lng,
+                        status: 'pending',
+                        sender_id: sender_id,
                     })
                 })
                 .then(response => response.json())

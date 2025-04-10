@@ -132,14 +132,16 @@ class MeetingRequest(models.Model):
     message = models.TextField()
     sent_date = models.DateTimeField(auto_now_add=True)
     
+    
     class Status(models.TextChoices):
+        CREATING = 'creating', 'creating'  # creating status
         PENDING = 'pending', 'pending'  # pending status
         ACCEPTED = 'accepted', 'accepted'  # accepted status
         DECLINED = 'declined', 'declined'  # declined status
         RESCHEDULED = 'rescheduled', 'rescheduled'  # rescheduling by recipient
         CANCELLED = 'cancelled', 'cancelled'  # cancelled status by sender
 
-    status = models.CharField(max_length=50, default=Status.PENDING, choices=Status.choices)
+    status = models.CharField(max_length=50, default=Status.CREATING, choices=Status.choices)
     location_name = models.CharField(max_length=255, default='')  # store name (only applicable for in-person meetings)
     lat = models.FloatField(null=True, blank=True)
     lng = models.FloatField(null=True, blank=True)
@@ -152,3 +154,26 @@ class MeetingRequest(models.Model):
         TEXT = 'text', 'text'
 
     type = models.CharField(max_length=50, choices=Type.choices, default=Type.INPERSON)
+
+    def save(self, *args, **kwargs):
+        print("In save method of MeetingRequest")
+        if self.pk:
+            print("MeetingRequest with pk exists")
+            old = MeetingRequest.objects.get(pk=self.pk)
+            if old.status != self.status:
+                actor = getattr(self, "_actor", None)  # user who triggered the change
+                print(f"Actor: {actor}")
+                if actor:
+                    recipient = self.recipient if actor == self.sender else self.sender
+                    
+                    from .utils import notify_meeting_request_status_change
+                    notify_meeting_request_status_change(self, old.status, self.status, actor, recipient)
+        super().save(*args, **kwargs)
+
+
+# Notification model for sending notifications to users
+class Notification(models.Model):
+    user = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name="notifications")
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)

@@ -218,6 +218,13 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
     async def connect(self):
         self.endpoint_name = self.scope['url_route']['kwargs']['chat_type']
         self.rtc_call = "video" #this needs to be left for now
+        self.current_user = self.scope["user"]
+        self.user_group = f'user_{self.current_user.id}'
+
+        print("🔌 Adding user to group:", self.user_group)
+
+        await self.channel_layer.group_add(self.user_group, self.channel_name)
+
         await self.accept()
 
         if self.endpoint_name == 'video':
@@ -381,3 +388,13 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 }
             )
         #print("sent to recipient")
+
+    async def notification_message(self, event):
+        print("📩 Notification message received in consumer")  # ← DEBUG PRINT
+        await self.send_json({
+            'notification': {
+                'message': event['message'],
+                'created_at': event['created_at'],
+                'type': event.get('notification_type', 'info'),
+            }
+        })

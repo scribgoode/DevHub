@@ -17,6 +17,7 @@ from django.db.models import Count
 def global_data(request):
     if request.user. is_authenticated:
         
+        # unread messages
         unread = (
             Message.objects
             .filter(recipient=request.user, is_read=False)
@@ -31,9 +32,11 @@ def global_data(request):
             .count()
         )
 
-
+        # Favorites
         current_user = Engineer.objects.get(id=request.user.id)
         favorites = current_user.favorites.all()
+         
+         # Notifications on Meetings
          
         
     else:
