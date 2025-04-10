@@ -159,6 +159,8 @@ def Profile(request, id):
                         redirect_url = f"{data['redirect_url']}?sender={request.user.id}&recipient={Engineer.objects.get(id=id).id}"
                         print('redirect_url:', redirect_url)
                         meeting_request.locationUpdateURL = redirect_url
+
+                        # Creating the meeting request without location - no notification is needed yet...
                         meeting_request.save()
                         return redirect(redirect_url)
                     else:

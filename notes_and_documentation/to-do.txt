@@ -36,3 +36,26 @@ Bugs
 to-do
 1. scroll feature - chat overflow
 2. timestamps on messages
+
+
+
+# others
+Once submit meeting form, should notify the user that the meeting was sent
+
+# Notification
+1. Change in status for sent_meeting (accept/decline/reschedule/cancel)
+    - Upon accepted ->  (additionally send email or text)
+2. Recieving the meeting request
+3. 24 hours before the meeting (additionally send email or text)
+4. Review the meeting once the meeting is over
+5. That meeting the going on - meeting started
+6. 
+
+
+
+# 4/9
+request meeting has notifications
+to-do:
+mark them as read
+if offline, need to implement a way to see those notifications afterwards as well
+- work on video chat logic as well

@@ -35,15 +35,21 @@ def get_meeting_requests_by_sender_and_recipient(request):
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])  # Restrict access to authenticated users
 def update_meeting_request(request, pk):
+    print(f"Request Data: {request.data}")  # Debugging line
+    print(f"User: {request.user}, Auth: {request.auth}")
     try:
         meeting_request = MeetingRequest.objects.get(pk=pk)
         print(f"Meeting Request: {meeting_request}")  # Debugging line
     except MeetingRequest.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    serializer = MeetingRequestSerializer(meeting_request, data=request.data, partial=True)
+    serializer = MeetingRequestSerializer(meeting_request, data=request.data, partial=True, 
+                                          context={'request': request})
 
     if serializer.is_valid():
+        # saving the location to the meeting request
+
+        print('saving location to the meeting request')
         serializer.save()
         return Response(serializer.data)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
