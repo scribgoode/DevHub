@@ -16,6 +16,7 @@ To Do List Before Production:
     -change creator and recruit to: 1. "I'm starting something" — I have a project and want collaborators(have a tab for each one: projects, interests, ideas)(just make sure there is something showing the connection between the three agendas)
                                     2. "I'm joining in" — I'm looking to join someone else's project
                                     3. "I'm brainstorming" — I want to meet someone and co-create a new project
+                                    (change text of creator and recruit and not just status)
 
     Video Chat
     -✔️add microphone button

@@ -18,12 +18,12 @@
                         </select>
                     </div>
                     <div class="status-filter">
-                        <button type="button" class="status-filter-button" id="status-filter-button">Status &#8964;</button>
+                        <button type="button" class="status-filter-button" id="status-filter-button">Agenda &#8964;</button>
                         <div class="status-filter-content">
                             <div class="status-filter-form">
-                                <label><input type="radio" name="status" value="any" onchange="this.form.submit()" {% if status == 'any' or not status %}checked{% endif %}>Any</label>
-                                <label><input type="radio" name="status" value="creator" onchange="this.form.submit()" {% if status == 'creator' %}checked{% endif %}>Creator</label>
-                                <label><input type="radio" name="status" value="recruit" onchange="this.form.submit()" {% if status == 'recruit' %}checked{% endif %}>Recruit</label>
+                                <label><input type="radio" name="agenda" value="any" onchange="this.form.submit()" {% if agenda == 'any' or not agenda %}checked{% endif %}>Any</label>
+                                <label><input type="radio" name="agenda" value="I'm starting something" onchange="this.form.submit()" {% if agenda == "I'm starting something" %}checked{% endif %}>"I'm starting something"</label>
+                                <label><input type="radio" name="agenda" value="I'm joining in" onchange="this.form.submit()" {% if agenda == "I'm joining in" %}checked{% endif %}>"I'm joining in"</label>
                             </div>
                         </div>
                     </div>
@@ -53,7 +53,7 @@
         </div>
         <div class="engineer-table">
             <div class="table-head">
-                <div class ="status">Status</div>
+                <div class ="status">Agendas</div>
                 <div class="name">Name</div>
                 <div class="location">Location</div>
                 <div class="current-projects">Current Projects</div>
@@ -70,13 +70,13 @@
                     <div class="table-row">
                         <div class="row-background"></div>
                         <div class="status">
-                            <span>{{ profile.status }}</span>
+                            <span>{{ profile.agenda }}</span>
                             <span id="online-status-notifier"> *{% if profile.last_login_within_7_days %} Online within the past 7 days {% elif profile.last_login_within_30_days %} Online within the past 30 days {% else %} Has not been online for at least a month{% endif %}</span>
                         </div>
                         <div class="name">{{ profile.first_name }}</div>
                         <div class="location">{{ profile.city }}</div>
                         <div class="current-projects-row" id="scrollBox">
-                        {% if profile.status == 'creator' %}
+                        {% if "I'm starting something" in profile.agenda %}
                             {% for project in projects %}
                                 {% if project.pal.id == profile.id %}
                                     <p>Title: {{ project.title }}</p>
@@ -87,7 +87,7 @@
                         </div>
                         <div class="current-projects-popup">
                             <div class="current-projects-popup-content">
-                                {% if profile.status == 'creator' %}
+                                {% if "I'm starting something" in profile.agenda %}
                                     {% for project in projects %}
                                         {% if project.pal.id == profile.id and project.actively_recruiting == 'yes'%}
                                             <p>Title: {{ project.title }}</p>

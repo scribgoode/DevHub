@@ -23,8 +23,8 @@
                     <p><b>Name:</b> {{profile.first_name}}</p>
                     <p><b>City:</b> {{profile.city}}</p>
                     <p><b>Meeting Preference:</b> {{profile.meeting_preference}}</p>
-                    <p><b>Status:</b> {{profile.status}}</p>
-                    {% if profile.status == 'creator' %}<p><b>Willing to Contribute to Another's Project:</b> {{profile.open_to_contributing}}{% endif %}</p>
+                    <p><b>Agendas:</b> {{profile.agenda}}</p>
+                    {% if "I'm starting something" in profile.agenda %}<p><b>Willing to Contribute to Another's Project:</b> {{profile.open_to_contributing}}{% endif %}</p>
                 </div>
             </div>
         </div>

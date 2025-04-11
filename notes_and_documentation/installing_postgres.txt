@@ -1,0 +1,16 @@
+1. install postgres
+2. add bin location in program files to systems path to use cli tools
+3. make sure postgres server is running
+4. clear old databse history
+5. psql -U postgres
+    CREATE DATABASE postgresdatabase;
+    CREATE USER scrib WITH PASSWORD 'fortnite123';
+    ALTER ROLE scrib SET client_encoding TO 'utf8';
+    ALTER ROLE scrib SET default_transaction_isolation TO 'read committed';
+    ALTER ROLE scrib SET timezone TO 'UTC';
+    GRANT ALL PRIVILEGES ON DATABASE postgresdatabase TO scrib;
+6. psql -U postgres -d postgresdatabase
+    GRANT USAGE ON SCHEMA public TO scrib;
+    GRANT CREATE ON SCHEMA public TO scrib;
+    GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO scrib;
+7. make migrations, migrate, create superuser

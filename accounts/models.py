@@ -3,9 +3,16 @@ from datetime import date
 from django.contrib.auth.models import AbstractUser
 from meetup_point.models import Address
 from datetime import timedelta, datetime
+from django.contrib.postgres.fields import ArrayField
 
 def video_upload_path(instance, filename):
     return f'videos/{filename}'
+
+AGENDA_CHOICES = (
+    ('Im starting something', 'Im starting something'),
+    ('Im joining in', 'Im joining in'),
+    ('Im brainstorming', 'Im brainstorming')
+)
 
 class Engineer(AbstractUser):
     class Meta:
@@ -13,12 +20,8 @@ class Engineer(AbstractUser):
     email = models.EmailField(verbose_name='email address', max_length=255, unique=True)
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30, blank=True, null=True)
-    class Status(models.TextChoices):
-        CREATOR = 'creator', 'creator'
-        RECRUIT = 'recruit', 'recruit'
-    #made updates to other branch but want daily commit
 
-    status = models.CharField(max_length=7, choices=Status.choices, default=Status.RECRUIT)
+    agenda = ArrayField(models.CharField(max_length=100), blank=True, choices=AGENDA_CHOICES, default=list, null=True)
     # address = models.CharField(max_length=255, blank=True, null=True)
     projects = models.ManyToManyField('Project', blank=True) 
     dob = models.DateField(default=date.today)
