@@ -16,6 +16,7 @@ class Engineer(AbstractUser):
     class Status(models.TextChoices):
         CREATOR = 'creator', 'creator'
         RECRUIT = 'recruit', 'recruit'
+    #made updates to other branch but want daily commit
 
     status = models.CharField(max_length=7, choices=Status.choices, default=Status.RECRUIT)
     # address = models.CharField(max_length=255, blank=True, null=True)
