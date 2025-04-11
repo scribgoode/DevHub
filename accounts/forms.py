@@ -57,4 +57,4 @@ class ProjectCreationForm(forms.ModelForm):
 class EditProfileForm(forms.ModelForm):
     class Meta:
         model = Engineer
-        fields = ['first_name', 'last_name', 'city', 'meeting_preference', 'status', 'open_to_contributing',] 
+        fields = ['first_name', 'last_name', 'city', 'meeting_preference', 'agenda', 'open_to_contributing',] 

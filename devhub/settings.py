@@ -104,8 +104,12 @@ ASGI_APPLICATION = "devhub.asgi.application"
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgresdatabase',
+        'USER': 'scrib',
+        'PASSWORD': 'fortnite123',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
