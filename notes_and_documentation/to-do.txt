@@ -59,3 +59,12 @@ to-do:
 mark them as read
 if offline, need to implement a way to see those notifications afterwards as well
 - work on video chat logic as well
+
+# 4/15
+meeting request notification is updated real time and after if the users logs back in
+users can mark them as read afterwards
+
+meeting request notification request updated for video and inperson meetings
+to-do:
+- maybe when they mark as read - redirect to my_profile? maybe kinda annoying
+- implement meeting object notifications.
