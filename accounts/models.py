@@ -9,9 +9,9 @@ def video_upload_path(instance, filename):
     return f'videos/{filename}'
 
 AGENDA_CHOICES = (
-    ('Im starting something', 'Im starting something'),
-    ('Im joining in', 'Im joining in'),
-    ('Im brainstorming', 'Im brainstorming')
+    ('I\'m starting something', 'I\'m starting something'),
+    ('I\'m joining in', '\'m joining in'),
+    ('I\'m brainstorming', 'I\'m brainstorming')
 )
 
 class Engineer(AbstractUser):
@@ -21,7 +21,7 @@ class Engineer(AbstractUser):
     first_name = models.CharField(max_length=30)
     last_name = models.CharField(max_length=30, blank=True, null=True)
 
-    agenda = ArrayField(models.CharField(max_length=100), blank=True, choices=AGENDA_CHOICES, default=list, null=True)
+    agenda = ArrayField(models.CharField(max_length=100, choices=AGENDA_CHOICES), blank=True, default=list, null=True)
     # address = models.CharField(max_length=255, blank=True, null=True)
     projects = models.ManyToManyField('Project', blank=True) 
     dob = models.DateField(default=date.today)

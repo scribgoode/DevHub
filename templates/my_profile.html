@@ -40,7 +40,7 @@
             <p><b>City:</b> {{user.city}}</p>
             <p><b>Meeting Preference:</b> {{user.meeting_preference}}</p>
             <p><b>Agendas:</b> {{user.agenda}}</p>
-            <p><b>Willing to Contribute to Another's Project:</b> {{user.open_to_contributing}}</p>
+            <p><b>Willing to Contribute to Another's Project Too:</b> {{user.open_to_contributing}}</p>
         </div>
     </div>
     <div class="spacer"></div>
@@ -239,11 +239,13 @@
 <div class="projects-and-requests">
     <div class="projects">
         <div class="projects-header">
-            <span id="projects-button" onclick="showProjects()" >Projects</span>
-            <span id="interests-button" onclick="showInterests()" >Interests</span>
+            {% if 'I\'m starting something' in user.agenda %}<span id="projects-button" onclick="showProjects()" >Projects</span>{% endif %}
+            {% if 'I\'m joining in' in user.agenda %}<span id="interests-button" onclick="showInterests()" >Interests</span>{% endif %}
+            {% if 'I\'m brainstorming' in user.agenda %}<span id="ideas-button" onclick="showIdeas()" >Ideas</span>{% endif %}
             <button id="add-project">&#43;</button>
         </div>
         <div class="projects-box">
+        {% if 'I\'m starting something' in user.agenda %}
             {% for project in projects %}
             <div class="project-rows">
                 <header>{{project.title}}</header>
@@ -254,6 +256,7 @@
                 {% if project.link %}<div>Relevant Link: <a href="{{project.link}}">{{project.link}}</a></div>{% endif %}
             </div>
             {% endfor %}
+        {% endif %}
             <div class="add-project-popup hidden" id="add-project-popup">
                 <button class="close-window">X</button>
                 <form class="add-project" method="post">
@@ -270,6 +273,11 @@
                 {% for interest in interests %}
                     <p>{{interest}}</p>
                 {% endfor %}
+            </div>
+        </div>
+        <div class="ideas-box hidden">
+            <header>Ideas</header>
+            <div class="ideas-rows">
             </div>
         </div>
     </div>
@@ -384,6 +392,7 @@
         </div>
     </div>
 </div>
+</div>
 
 
 {% comment %} <div class="chat-header">Chat Messages
@@ -453,24 +462,43 @@ document.addEventListener("DOMContentLoaded", function () {
 </script>
 
 <script>
+    const ideas_button = document.getElementById("ideas-button");
     const interests_button = document.getElementById("interests-button");
     const projects_button = document.getElementById("projects-button");
-    function showInterests() {
+    function showIdeas() {
         const projectsBox = document.querySelector(".projects-box");
         projectsBox.classList.add("hidden");
+        const interestsBox = document.querySelector(".interests-box");
+        interestsBox.classList.add("hidden");
+        const ideasBox = document.querySelector(".ideas-box");
+        ideasBox.classList.remove("hidden");
+        ideas_button.style.backgroundColor = "grey";
+        projects_button.style.backgroundColor = "#fff";
+        interests_button.style.backgroundColor = "#fff";
+    }
+
+    function showInterests() {
+        const projectsBox = document.querySelector(".projects-box");
+        const ideasBox = document.querySelector(".ideas-box");
+        projectsBox.classList.add("hidden");
+        ideasBox.classList.add("hidden");
         const interestsBox = document.querySelector(".interests-box");
         interestsBox.classList.remove("hidden");
         interests_button.style.backgroundColor = "grey";
         projects_button.style.backgroundColor = "#fff";
+        ideas_button.style.backgroundColor = "#fff";
     }
 
     function showProjects() {
         const projectsBox = document.querySelector(".projects-box");
         projectsBox.classList.remove("hidden");
         const interestsBox = document.querySelector(".interests-box");
+        const ideasBox = document.querySelector(".ideas-box");
         interestsBox.classList.add("hidden");
+        ideasBox.classList.add("hidden");
         projects_button.style.backgroundColor = "grey";
         interests_button.style.backgroundColor = "#fff";
+        ideas_button.style.backgroundColor = "#fff";
 
     }
 </script>

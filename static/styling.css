@@ -387,6 +387,15 @@ transform: scale(1.05) translateY(.125rem);
     cursor: pointer
 }
 
+#ideas-button{
+    border: .5vh solid black;
+}
+
+#ideas-button:hover{
+    background-color:rgba(0, 0, 0, 0.1);
+    cursor: pointer
+}
+
 .projects-box{
     display:flex;
     flex-direction: column;
@@ -804,6 +813,12 @@ transform: scale(1.05) translateY(.125rem);
     border: 2px solid black;
 }
 
+.footer{
+    height: 12vh;
+    background-color: #f1f1f1;
+    text-align: center;
+}
+
 .online {
     position: absolute;
     color: black;
@@ -1218,6 +1233,21 @@ figcaption {
 .signup-input-box{
     display: flex;
     justify-content: center;
+}
+
+.django-flatpickr{
+    display: flex;
+    justify-content: center;
+}
+
+.signup-input-box-widget{
+    width: 60%;
+    border-radius: 1vh;
+    height: 3vh;
+    border: none;
+    font-size: 3vh;
+    border:cornflowerblue 0.2vh solid;
+    background-color: #fff;
 }
 
 .signup-input-box input{
