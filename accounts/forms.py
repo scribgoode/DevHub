@@ -1,9 +1,10 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import Engineer, Project
+from .models import Engineer, Project, AGENDA_CHOICES
 from allauth.account.forms import SignupForm
 from django import forms
 from cities_light.models import City, Country
 from meetup_point.models import Address
+from django_flatpickr.widgets import DatePickerInput
 
 class CustomUserCreationForm(UserCreationForm):
 
@@ -12,17 +13,21 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ("username", "email")
 
 class CustomUserChangeForm(UserChangeForm):
-
+    agenda = forms.MultipleChoiceField(
+        choices=AGENDA_CHOICES,
+        required=False,
+        widget=forms.CheckboxSelectMultiple  # Or SelectMultiple if you prefer dropdown
+    )
     class Meta:
         model = Engineer
-        fields = ("username", "email")
+        fields = '__all__'
 
 
 class CustomSignupForm(SignupForm):
     first_name = forms.CharField(max_length=30, label='first_name')
     last_name = forms.CharField(max_length=30, label='last_name')
-    dob = forms.DateField(label='dob')
-    address = forms.CharField(max_length=255, label='address')
+    dob = forms.DateField(label='dob', widget=DatePickerInput(attrs={"class": "signup-input-box-widget"}))
+    address = forms.CharField(max_length=255, label='address') 
     city = forms.ModelChoiceField(queryset=City.objects.all(), empty_label="Select City", label='city')
     country = forms.ModelChoiceField(queryset=Country.objects.all(), empty_label="Select Country", label='country')
 

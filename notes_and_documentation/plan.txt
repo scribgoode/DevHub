@@ -13,10 +13,11 @@ To Do List Before Production:
     -notifcation across top of all screens that says you have a meeting that start 1 hour before meeting and during meeting(link if text or video meeting)
     -consider order of information in the rows on the home page
     -pick friendly font
-    -change creator and recruit to: 1. "I'm starting something" — I have a project and want collaborators(have a tab for each one: projects, interests, ideas)(just make sure there is something showing the connection between the three agendas)
+    -✔️change creator and recruit to: 1. "I'm starting something" — I have a project and want collaborators(have a tab for each one: projects, interests, ideas)
                                     2. "I'm joining in" — I'm looking to join someone else's project
                                     3. "I'm brainstorming" — I want to meet someone and co-create a new project
                                     (change text of creator and recruit and not just status)
+    -just make sure there is something like a symbol showing the connection between the three agendas and the tabs. Also, format it better across site and fix filters
 
     Video Chat
     -✔️add microphone button
@@ -28,15 +29,15 @@ To Do List Before Production:
     -✔️simple meeting reports from both people after meeting(maybe allow each person to see their own meeting reports they filled out)
 
     User Profiles Page
-    -maybe add meeting statistics for bottom right of profile page(something needs to go in that bottom right corner)(completed(onhover: numbers of types of meetings), sent meeting, reiceved meeting requests)
+    -✔️maybe add meeting statistics for bottom right of profile page(something needs to go in that bottom right corner)(completed(onhover: numbers of types of meetings), sent meeting, reiceved meeting requests)
 
     Home Page
     -✔️add real time search
     -✔️display last online(online within the last week, online within the past month)(filter)(we decided there was no point for this filter right now)
     -fix last online to work if you login with cached login info
-    -display currently online using websocket
+    -display currently online using websocket(would you want people to know you are currently online using the site?)
     -pagination
-    -footer
+    -✔️footer
     -default sorting(online status, city, creator/status)
     -logo
     -✔️render projects on home page(the current project box contains "Project 1: Fornite", etc.)(on hover all project information is shown)
@@ -56,17 +57,17 @@ To Do List Before Production:
     My Profile Page
     -✔️allow edits to only some profile information
     -✔️need to be sure do add something like display projects with dates and links so people can show off their past projects
-    -automatically put in creator status if you have at least one project you are actively recruiting for(if you have projects and want to switch to recruit then all project's actively recruiting switch is turned off)
-    -if your status is recuit, state and display the type of projects you are open to joining(maybe do this for creators to, maybe for creators state whether they are open to contributing to another project)
+    -✔️automatically put in creator status if you have at least one project you are actively recruiting for(if you have projects and want to switch to recruit then all project's actively recruiting switch is turned off)
+    -✔️if your status is recuit, state and display the type of projects you are open to joining(maybe do this for creators to, maybe for creators state whether they are open to contributing to another project)
         -(if your are a recruit or are a creator and willing to contribute to anothers project that the interests tab is revealed)
     -✔️add favorites list of profiles
-    -display strikes
+    -display strikes(maybe display and allow user to add a reason for why they missed the meeting)
     -✔️notifier that states whether someone is willing to contribute to someone elses project(default is yes)
     -remove sent meeting invites and provide a link to a meeting history page
     -only update ratings every 5-10 ratings(objective questions and positive)
 
     Signup Page
-    -allow to select dob using calendar and change format(some type of library)
+    -✔️allow to select dob using calendar and change format(some type of widget)(add this for send meeting invite form too)
     -send code to email to verify email
 
     Signin Page
@@ -115,6 +116,8 @@ Future Ideas and Add Ons
     -screen share in video call
     -projects and paid gigs tab
     -elevator pitch reels
+    -completed statistic (onhover: numbers of types of meetings)
+    -maybe add "willing to contribute to anothers project" to each project
     
 
 

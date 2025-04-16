@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 {% block content %}
+{{ form.media }} <!--loads files needed for date/time picker widget-->
     {% comment %} <div class="bio-background"></div>
     <div class="elevator-pitch-video">This is {{profile.first_name}}'s profile page</div> {% endcomment %}
 <div class="profile-page-container">
@@ -24,7 +25,7 @@
                     <p><b>City:</b> {{profile.city}}</p>
                     <p><b>Meeting Preference:</b> {{profile.meeting_preference}}</p>
                     <p><b>Agendas:</b> {{profile.agenda}}</p>
-                    {% if "I'm starting something" in profile.agenda %}<p><b>Willing to Contribute to Another's Project:</b> {{profile.open_to_contributing}}{% endif %}</p>
+                    {% if "I'm starting something" in profile.agenda %}<p><b>Willing to Contribute to Another's Project Too:</b> {{profile.open_to_contributing}}{% endif %}</p>
                 </div>
             </div>
         </div>
@@ -37,15 +38,6 @@
                     <p>Visibility: {{project.visibility}}</p>
                     <p>Description: {{project.description}}</p>
                 </div>
-                <div class="add-project-popup hidden" id="add-project-popup">
-                    <button class="close-window">X</button>
-                    <form class="add-project" method="post">
-                        <input type="hidden" name="form_type" value="add_project">
-                        {% csrf_token %}
-                        {{ project_creation_form.as_p }}
-                        <button type="submit">Create</button>
-                    </form>
-                    </div>   
                 {% endfor %}
             </div>
         </div>
@@ -54,7 +46,7 @@
     <div class="profile-page-right-side">
         <form class= "meeting-request-form" method="post">
             {% csrf_token %}
-            {{ form.as_p }}
+            {{ form.as_div }}
             <button type="submit" id="send-meeting-request" onclick="sendMeetingRequest(this)">Send Meeting Request</button>
         </form>
         {% if messages %}
@@ -83,7 +75,8 @@
     
     </div>
 </div>
-
+</div>
+</div>
 
 
 {{profile.id|json_script:"profile_id"}}

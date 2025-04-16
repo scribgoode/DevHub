@@ -43,6 +43,7 @@ CSRF_TRUSTED_ORIGINS = [
 # Application definition
 
 INSTALLED_APPS = [
+    'django_flatpickr',
     'cities_light',
     'text_chat',
     'video_chat',
