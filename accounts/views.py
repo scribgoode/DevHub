@@ -8,10 +8,11 @@ from django.template.loader import get_template
 from django.shortcuts import redirect, render, get_object_or_404, get_list_or_404
 
 from accounts.context_processors import global_data
+from video_chat.serializers import NotificationSerializer
 from .models import Engineer, Project, Reviews
 from cities_light.models import City
 from text_chat.models import Room, Message
-from video_chat.models import Meeting, MeetingRequest, MeetingReview
+from video_chat.models import Meeting, MeetingRequest, MeetingReview, Notification
 from django.contrib.auth.decorators import login_required
 
 from django.http import JsonResponse
@@ -168,7 +169,14 @@ def Profile(request, id):
                 else:
                     messages.warning(request, 'Both users must have an address to request an in-person meeting.')
             elif meeting_request.type == 'video':
+                meeting_request.save()
+                meeting_request._actor = request.user  # ⬅️ Powers the real-time notification
                 meeting_request.status = 'pending'
+                meeting_request.location_name = 'online'
+                meeting_request.lat = None  
+                meeting_request.lng = None
+                meeting_request.address = None
+                print('video meeting request')
                 meeting_request.save()
                 return redirect('my-profile')  # Redirect to the profile page after form submission
             else:
@@ -533,6 +541,7 @@ def videoChat(request):
 '''
 
 @require_POST
+@login_required
 def mark_message_read(request):
     print('mark_message_read')
 
@@ -552,6 +561,23 @@ def mark_message_read(request):
 
     return JsonResponse({'success': False}, status=400)
 
+@require_POST
+@login_required
+def mark_notification_read(request):
+    if request.method == "POST":
+        try:
+            data = json.loads(request.body)
+            notif_id = data.get("id")
+            print("📬 notif_id from JS:", notif_id)
+            notif = Notification.objects.get(id=notif_id)
+            print("notif:", notif.is_read)
+            notif.is_read = True
+            notif.save()
+            return JsonResponse({"success": True})
+        except Notification.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Notification not found."})
+    return JsonResponse({"success": False, "error": "Invalid request."})
+
 
 @login_required
 def get_notification_box(request):
@@ -564,3 +590,11 @@ def get_message_button(request):
     context = global_data(request)
     html = render_to_string('partials/message_button.html', context, request=request)
     return JsonResponse({'html': html})
+    
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_unread_notifications(request):
+    unread = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')
+    serializer = NotificationSerializer(unread, many=True)
+    return Response({"notifications": serializer.data})

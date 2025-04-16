@@ -20,39 +20,59 @@
                         <button type="submit" id="loginLink" >Logout</button>
                     </form>
                     
+                    <!-- message button -->
                     <div id="message-button-wrapper">
-                        {% if unread_message_notifications.unread %}
+                        {% if unread_notifications.unread_msgs %}
                             <button type="submit" id="loginLink" class="message-button">
                                 &#9993;
-                                <span class="badge">{{ unread_message_notifications.unread_total_count }}</span>
+                                <span class="badge">{{ unread_message_notifications.unread_msgs_total_count }}</span>
                             </button>
                         {% else %}
                             <button type="submit" id="loginLink" class="message-button">&#9993;</button>
                         {% endif %}
                     </div>
                     
-                    <!-- <button type="submit" id="loginLink" class="message-button">&#9993;</button> -->
+                    <!-- favorte button -->
                     <button type="submit" id="loginLink" class="save-for-later">&starf;</button>
-                    <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
+
+                    <!-- notification button -->
+                    {% if unread_notifications.unread_meeting_status %}
+                        <button type="submit" id="loginLink" class="notification-button">
+                            &#128276;
+                            <span class="badge">{{ unread_notifications.unread_meeting_status_count }}</span>
+                        </button>
+                    {% else %}
+                        <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
+                    {% endif %}
             {% elif user.is_authenticated and request.path != '/my-profile/' %}
                     <form id="login-form" action="/my-profile" method="get">
                         <button type="submit" id="loginLink" >My Profile</button>
                     </form>
 
+                    <!-- message button -->
                     <div id="message-button-wrapper">
-                        {% if unread_message_notifications.unread %}
+                        {% if unread_notifications.unread_msgs %}
                             <button type="submit" id="loginLink" class="message-button">
                                 &#9993;
-                                <span class="badge">{{ unread_message_notifications.unread_total_count }}</span>
+                                <span class="badge">{{ unread_notifications.unread_msgs_total_count }}</span>
                             </button>
                         {% else %}
                             <button type="submit" id="loginLink" class="message-button">&#9993;</button>
                         {% endif %}
                     </div>
                     
-                    <!-- <button type="submit" id="loginLink" class="message-button">&#9993;</button> -->
+                    <!-- favorte button -->
                     <button type="submit" id="loginLink" class="save-for-later">&starf;</button>
-                    <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
+
+                    <!-- notification button -->
+                    {% if unread_notifications.unread_meeting_status %}
+                        <button type="submit" id="loginLink" class="notification-button">
+                            &#128276;
+                            <span class="badge">{{ unread_notifications.unread_meeting_status_count }}</span>
+                        </button>
+                    {% else %}
+                        <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
+                    {% endif %}
             {% elif not user.is_authenticated and request.path != '/accounts/signup/' %}
                     <form id="login-form" action="{% url 'account_login' %}" method="get">
                         <button type="submit" id="loginLink">Login</button>
@@ -79,29 +99,31 @@
             </div>
         </div>
 
+      <!-- Favorites -->
+      <div class="favorites hidden">
+        <header>Favorites</header>
+        {% for favorite in favorites %}
+          <div class="favorite">
+            <p><a href="{% url 'profile' favorite.id %}">{{ favorite.get_full_name }}</a></p>
+          </div>
+        {% endfor %}
+      </div>
+  
+      <div id="notification-dropdown" class="dropdown hidden">
+        {% if unread_notifications.unread_meeting_status %}
+          {% for notification in unread_notifications.unread_meeting_status %}
+            <div class="notif-item" data-id="{{ notification.id }}">
+              <strong>Meeting status:</strong><br />
+              <span class="notif-text">{{ notification.message }}</span><br />
+              <small class="timestamp">{{ notification.created_at|date:"M d, H:i" }}</small><br />
+              <button class="mark-read-btn">Mark as Read</button>
+            </div>
+          {% endfor %}
+        {% else %}
+          <div class="notif-item empty">No unread notifications</div>
+        {% endif %}
+      </div>
 
-        <div class="favorites hidden"><!--have to add context processor to be able to access favorites on every template-->
-            <header id="favorites-header">Favorites</header>
-            {% for favorite in favorites %}
-                <div class="favorite">
-                    <p><a href="{% url 'profile' favorite.id %}"> {{ favorite.get_full_name }}</a></p>
-                </div>
-            {% endfor %}
-        </div>
-
-        <div id="notification-dropdown" class="dropdown hidden">
-            {% if unread_message_notifications.unread %}
-                {% for notification in unread_message_notifications.unread %}
-                    <div class="notif-item">
-                        You have unread messages: <br>
-                        <span class="sender-name">{ Sender: {{ notification.sender__first_name  }},</span>
-                        <span class="timestamp">Number of unread messages: {{ notification.unread_count  }} }</span>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="notif-item empty">No unread notifications</div>
-            {% endif %}
-        </div>
     {% block content %}
     {% endblock %}
 
@@ -114,11 +136,52 @@
     document.querySelector('.save-for-later').addEventListener('click', function() {
         document.querySelector('.favorites').classList.toggle('hidden');
     });
-    
-    //logic that lets you see notifications
+
     document.querySelector('.notification-button').addEventListener('click', function() {
         document.querySelector('#notification-dropdown').classList.toggle('hidden');
     });
+    
+    //logic that lets you see notifications
+    document.addEventListener("click", function (e) {
+  if (e.target && e.target.classList.contains("mark-read-btn")) {
+    const notifItem = e.target.closest(".notif-item");
+    const notifId = notifItem.dataset.id;
+
+    fetch("/api/notifications/mark-read/", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRFToken": getCookie("csrftoken"),
+      },
+      body: JSON.stringify({ id: notifId }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          notifItem.remove();
+
+          // Check if there are no notifications left
+          const remaining = document.querySelectorAll("#notification-dropdown .notif-item");
+          if (remaining.length === 0) {
+            document.getElementById("notification-dropdown").innerHTML = `
+              <div class="notif-item empty">No unread notifications</div>`;
+          }
+
+          // Decrease badge count
+          const badge = document.querySelector(".notification-button .badge");
+          if (badge) {
+            const count = parseInt(badge.textContent);
+            if (count > 1) {
+              badge.textContent = count - 1;
+            } else {
+              badge.remove();
+            }
+          }
+        }
+      })
+      .catch((err) => console.error("❌ Failed to mark notification as read", err));
+  }
+});
     
     //logic that lets you click enter to send message
     document.addEventListener("keydown", function(event) {
@@ -129,8 +192,8 @@
 </script>
 
 {{user.id|json_script:"user_id"}}
-{{ unread_message_notifications.unread_total_count|json_script:"unread_total_count" }}
-{{ unread_message_notifications.unread|json_script:"unread_list" }}
+{{ unread_notifications.unread_msgs_total_count|json_script:"unread_total_count" }}
+{{ unread_notifications.unread_msgs|json_script:"unread_list" }}
 
 
 <script>
@@ -140,6 +203,12 @@
 
     const unread_list = JSON.parse(document.getElementById('unread_list').textContent);
     console.log('unread_list:', unread_list);
+
+    // const unread_notifications = JSON.parse(document.getElementById('unread_notifications').textContent);
+    // console.log('unread_notifications:', unread_notifications);
+
+    // const unread_notifications_count = JSON.parse(document.getElementById('unread_notifications_count').textContent);
+    // console.log('unread_notifications_count:', unread_notifications_count);
 
     // wait for DOM to load 
     let sendButton = null;
@@ -387,11 +456,10 @@
 }
 </script>
 
-
-<!-- script for notifications on meeting -->
+<!-- Script for mark notification as read -->
 <script>
     const notifSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/notifications/'  // can be any route as long as consumer accepts it
+        'ws://' + window.location.host + '/ws/chat/notifications/'
     );
 
     notifSocket.onopen = function (e) {
@@ -405,30 +473,37 @@
         if (data.notification) {
             const message = data.notification.message;
             const createdAt = data.notification.created_at;
-            console.log("🔔 New notification:", message);
+            const notifId = data.notification.id;  // 👈 Needs to be sent from backend
 
-            // Update notification dropdown
             const notifBox = document.getElementById('notification-dropdown');
+
+            // ✅ Remove empty state if exists
+            const emptyMessage = notifBox.querySelector('.notif-item.empty');
+            if (emptyMessage) emptyMessage.remove();
+
+            // ✅ Create the new notification item
             const newNotif = document.createElement('div');
             newNotif.classList.add('notif-item');
+            newNotif.setAttribute('data-id', notifId);
             newNotif.innerHTML = `
-                <span>${message}</span><br>
-                <small>${createdAt}</small>
+                <strong>Meeting status:</strong><br>
+                <span class="notif-text">${message}</span><br>
+                <small class="timestamp">${createdAt}</small><br>
+                <button class="mark-read-btn">Mark as Read</button>
             `;
-            notifBox.prepend(newNotif);
 
-            // Show notification dropdown visually (optional)
+            notifBox.prepend(newNotif);
             notifBox.classList.remove('hidden');
 
-            // Add badge to the bell
+            // ✅ Update or add the badge
             const bellButton = document.querySelector('.notification-button');
-            if (!bellButton.querySelector('.badge')) {
-                const badge = document.createElement('span');
+            let badge = bellButton.querySelector('.badge');
+            if (!badge) {
+                badge = document.createElement('span');
                 badge.classList.add('badge');
                 badge.textContent = '1';
                 bellButton.appendChild(badge);
             } else {
-                const badge = bellButton.querySelector('.badge');
                 badge.textContent = parseInt(badge.textContent) + 1;
             }
         }
@@ -437,7 +512,66 @@
     notifSocket.onerror = function (e) {
         console.error("❌ Notification WebSocket error:", e);
     };
+
+    // ✅ Click handler for "Mark as Read" buttons
+    document.addEventListener("click", function (e) {
+        if (e.target && e.target.classList.contains("mark-read-btn")) {
+            const notifItem = e.target.closest(".notif-item");
+            console.log(notifItem);
+            const notifId = notifItem.dataset.id;
+
+            fetch("/api/notifications/mark-read/", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": getCookie("csrftoken"),
+                },
+                body: JSON.stringify({ id: notifId }),
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    notifItem.remove();
+
+                    const remaining = document.querySelectorAll("#notification-dropdown .notif-item:not(.empty)");
+                    if (remaining.length === 0) {
+                        document.getElementById("notification-dropdown").innerHTML = `
+                            <div class="notif-item empty">No unread notifications</div>`;
+                    }
+
+                    const badge = document.querySelector(".notification-button .badge");
+                    if (badge) {
+                        const count = parseInt(badge.textContent);
+                        if (count > 1) {
+                            badge.textContent = count - 1;
+                        } else {
+                            badge.remove();
+                        }
+                    }
+                }
+            })
+            .catch((err) => console.error("❌ Failed to mark notification as read", err));
+        }
+    });
+
+    // CSRF token getter
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                cookie = cookie.trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 </script>
+
+
 
 <script>
     //scroll to bottom of message container

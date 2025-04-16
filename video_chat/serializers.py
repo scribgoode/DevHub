@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from accounts.serializers import EngineerSerializer
-from .models import MeetingRequest
+from .models import MeetingRequest, Notification
 
 
 class MeetingRequestSerializer(serializers.ModelSerializer):
@@ -22,3 +22,8 @@ class MeetingRequestSerializer(serializers.ModelSerializer):
         # get the actor with id
         instance._actor = actor  # ⬅️ Powers the real-time notification
         return super().update(instance, validated_data)
+    
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['id', 'message', 'created_at']
