@@ -391,10 +391,13 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
 
     async def notification_message(self, event):
         print("📩 Notification message received in consumer")  # ← DEBUG PRINT
+        print("📩 Consumer received event:", event)
         await self.send_json({
             'notification': {
+                'sender': event['sender'],
+                'id': event['id'],
                 'message': event['message'],
                 'created_at': event['created_at'],
-                'type': event.get('notification_type', 'info'),
+                'type': event.get('notification_type', 'request'),
             }
         })

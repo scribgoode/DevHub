@@ -46,6 +46,8 @@ urlpatterns = [
 
     
     path('api/messages/mark-read/', accounts_views.mark_message_read, name='mark_message_read'),
+    path('api/notifications/mark-read/', accounts_views.mark_notification_read, name='mark_notification_read'),
+    path('api/notifications/unread/', accounts_views.get_unread_notifications, name='get_unread_notifications'),
     path('notifications/html/', accounts_views.get_notification_box, name='get_notification_html'),
     path('messages/button/html/', accounts_views.get_message_button, name='get_message_button'),
 

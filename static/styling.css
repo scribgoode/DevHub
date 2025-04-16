@@ -1356,17 +1356,21 @@ figcaption {
 
 .badge {
     position: absolute;
-    top: 8px; /* Adjust as needed */
-    right: 16px; /* Adjust as needed */
-    transform: translate(50%, -50%); /* Center the badge on the top-right corner */
+    top: 6px;
+    right: 6px;
+    transform: translate(50%, -50%);
     background-color: red;
     color: white;
-    font-size: 12px;
-    padding: 3px 6px;
-    border-radius: 50%;
+    font-size: 10px;              /* 🛠 Control text size here */
     font-weight: bold;
+    width: 18px;                  /* 🛠 Equal width/height for perfect circle */
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
     line-height: 1;
-    min-width: 18px;
     text-align: center;
-    z-index: 10; /* Ensure it appears above other elements */
+    z-index: 10;
+    padding: 0;                   /* 🛠 Remove padding for uniform shape */
 }
