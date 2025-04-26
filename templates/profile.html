@@ -8,11 +8,11 @@
     <div class="profile-page-left-side">
         <div class="profile-data-profile-page">
             {% if profile.elevator_pitch %}
-                <video id="elevator-pitch-video" controls>
-                    <source src="{{ profile.elevator_pitch.url }}" type="video/mp4">
-                </video>
+            <video id="elevator-pitch-video" controls>
+                <source src="{{ profile.elevator_pitch.url }}" type="video/mp4">
+            </video>
             {% else %}
-                <div class="video-placeholder"></div>
+            <div class="video-placeholder"></div>
             {% endif %}
             <div class="profile-info">
                 <div class="profile-info-container" id="profile-info-container">
@@ -44,31 +44,33 @@
     </div>
 
     <div class="profile-page-right-side">
-        <form class= "meeting-request-form" method="post">
+        <form class="meeting-request-form" method="post">
             {% csrf_token %}
             {{ form.as_div }}
             <button type="submit" id="send-meeting-request" onclick="sendMeetingRequest(this)">Send Meeting Request</button>
         </form>
         {% if messages %}
-            <ul class="messages">
-                {% for message in messages %}
-                <li {% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-                {% endfor %}
-            </ul>
+        <ul class="messages">
+            {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
         {% endif %}
 
         <div class="statistics">Meeting Statistics
             <div class="individual-statistics">
                 <div class="statistic-box">
-                    <img src="{% static 'img/meetings_completed_symbol.png' %}" alt="Symbol" class="meetings-completed-symbol"/>
+                    <img src="{% static 'img/meetings_completed_symbol.png' %}" alt="Symbol"
+                        class="meetings-completed-symbol" />
                     <p><b class="meeting-statistics-nums">{{num_completed_meetings}}</b> Completed</p>
                 </div>
                 <div class="statistic-box">
-                    <img src="{% static 'img/meetings_sent.png' %}" alt="Symbol" class="meetings-completed-symbol"/>
+                    <img src="{% static 'img/meetings_sent.png' %}" alt="Symbol" class="meetings-completed-symbol" />
                     <p><b class="meeting-statistics-nums">{{num_meetings_sent}}</b> Sent</p>
                 </div>
                 <div class="statistic-box">
-                    <img src="{% static 'img/meetings_received.png' %}" alt="Symbol" class="meetings-completed-symbol"/>
+                    <img src="{% static 'img/meetings_received.png' %}" alt="Symbol"
+                        class="meetings-completed-symbol" />
                     <p><b class="meeting-statistics-nums">{{num_meetings_received}}</b> Received</p>
                 </div>
         </div>
@@ -83,7 +85,46 @@
 {{user.id|json_script:"sender_id"}}
 {{user.is_authenticated|json_script:"is_authenticated" }}
 
-<!-- <script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            console.log("DOM loaded");
+            const profile_id = JSON.parse(document.getElementById('profile_id').textContent);
+            const cur_user_id = JSON.parse(document.getElementById('sender_id').textContent);
+            const is_authenticated = JSON.parse(document.getElementById('is_authenticated').textContent);
+            console.log("profile id:", profile_id)
+            console.log("cur user id:", cur_user_id)
+            console.log("is authenticated:", is_authenticated)
+
+            // first time loading this profile page
+            try {
+                if (is_authenticated) {
+                    // Ensure a room exists between the current user and the profile user
+                    fetch(`/api/ensure-room/${profile_id}/`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                    })
+                        .then(response => response.json())
+                        .then(data => {
+                            if (data.success) {
+                                console.log("Room ensured:", data);
+                                // Additional logic for the room can go here
+                            } else {
+                                console.error("Error ensuring room:", data.error);
+                            }
+                        })
+                        .catch(error => {
+                            console.error("Error fetching room:", error);
+                        });
+                }
+
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        });
+    </script>
+    <!-- <script>
     const is_authenticated = JSON.parse(document.getElementById('is_authenticated').textContent);
     // wait for DOM to load
     document.addEventListener('DOMContentLoaded', function() {
@@ -273,4 +314,4 @@
     }
 
 </script> -->
-{% endblock %}
+    {% endblock %}
