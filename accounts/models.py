@@ -9,9 +9,9 @@ def video_upload_path(instance, filename):
     return f'videos/{filename}'
 
 AGENDA_CHOICES = (
-    ('I\'m starting something', 'I\'m starting something'),
-    ('I\'m joining in', '\'m joining in'),
-    ('I\'m brainstorming', 'I\'m brainstorming')
+    ('starting', 'Starting Something'),
+    ('joining', 'Joining In'),
+    ('brainstorming', 'Brainstorming')
 )
 
 class Engineer(AbstractUser):

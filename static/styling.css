@@ -165,9 +165,6 @@ transform: scale(1.05) translateY(.125rem);
 .table-row .status{
     flex: 14%;
     background-color: #fff;
-    display: flex;
-    flex-direction: column;
-    position: relative;
 }
 
 #online-status-notifier{
@@ -179,6 +176,9 @@ transform: scale(1.05) translateY(.125rem);
 .table-row .name{
     flex: 20%;
     background-color: #fff;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
 .table-row .location{
@@ -257,8 +257,8 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 #elevator-pitch-video {
-    width: 32%;
-    height: 18%;
+    width: 28.5vw;
+    height: 29vh;
     background-color: black;
 }
 
@@ -300,6 +300,7 @@ transform: scale(1.05) translateY(.125rem);
 #profile-info-container{
     display: block;
     position: relative;
+    font-size: 14px;
 }
 
 .spacer{

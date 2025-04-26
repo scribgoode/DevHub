@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 {% load tz %}
 {% now "U" as current_time %}
@@ -39,7 +40,10 @@
             <p><b>Name:</b> {{user.first_name}}</p>
             <p><b>City:</b> {{user.city}}</p>
             <p><b>Meeting Preference:</b> {{user.meeting_preference}}</p>
-            <p><b>Agendas:</b> {{user.agenda}}</p>
+            <div><b>Agendas:</b> 
+            <div>{% if 'starting' in user.agenda %} <img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="20" height="20">Starting Something {% endif %}</div>
+            <div>{% if 'joining' in user.agenda %} <img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="20" height="20">Joining In{% endif %}</div>
+            <div>{% if 'brainstorming' in user.agenda %} <img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="20" height="20">Brainstorming{% endif %}</div></div>
             <p><b>Willing to Contribute to Another's Project Too:</b> {{user.open_to_contributing}}</p>
         </div>
     </div>
@@ -239,9 +243,9 @@
 <div class="projects-and-requests">
     <div class="projects">
         <div class="projects-header">
-            {% if 'I\'m starting something' in user.agenda %}<span id="projects-button" onclick="showProjects()" >Projects</span>{% endif %}
-            {% if 'I\'m joining in' in user.agenda %}<span id="interests-button" onclick="showInterests()" >Interests</span>{% endif %}
-            {% if 'I\'m brainstorming' in user.agenda %}<span id="ideas-button" onclick="showIdeas()" >Ideas</span>{% endif %}
+            {% if 'starting' in user.agenda %}<span id="projects-button" onclick="showProjects()"><img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="20" height="20">Projects</span>{% endif %}
+            {% if 'joining' in user.agenda %}<span id="interests-button" onclick="showInterests()"><img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="20" height="20">Interests</span>{% endif %}
+            {% if 'brainstorming' in user.agenda %}<span id="ideas-button" onclick="showIdeas()"><img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="20" height="20">Ideas</span>{% endif %}
             <button id="add-project">&#43;</button>
         </div>
         <div class="projects-box">

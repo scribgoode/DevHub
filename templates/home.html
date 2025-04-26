@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block content %}
         <div class="filtering-and-search">
@@ -70,10 +71,14 @@
                     <div class="table-row">
                         <div class="row-background"></div>
                         <div class="status">
-                            <span>{{ profile.agenda }}</span>
+                        {% if 'starting' in profile.agenda %}<div><img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="15" height="15">Starting Something</div>{% endif %}
+                        {% if 'joining' in profile.agenda %}<div><img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="15" height="15">Joining In</div>{% endif %}
+                        {% if 'brainstorming' in profile.agenda %}<div><img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="15" height="15">Brainstorming</div>{% endif %}
+                        </div>
+                        <div class="name">
+                            <span>{{ profile.first_name }}</span>
                             <span id="online-status-notifier"> *{% if profile.last_login_within_7_days %} Online within the past 7 days {% elif profile.last_login_within_30_days %} Online within the past 30 days {% else %} Has not been online for at least a month{% endif %}</span>
                         </div>
-                        <div class="name">{{ profile.first_name }}</div>
                         <div class="location">{{ profile.city }}</div>
                         <div class="current-projects-row" id="scrollBox">
                         {% if "I'm starting something" in profile.agenda %}

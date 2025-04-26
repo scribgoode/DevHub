@@ -21,6 +21,9 @@ from accounts import views as accounts_views
 from meetup_point import views as meetup_views
 from video_chat import views as meeting_request_views
 
+from django.conf import settings
+from django.conf.urls.static import static
+
 urlpatterns = [
     # admin pages
     path('admin/', admin.site.urls),
@@ -63,3 +66,6 @@ urlpatterns = [
 
     path('my-profile/video_chat/<str:room_token>', videoChat, name='video_chat'),#i need to serialize the room object into json i think leland has already done this do i need to figure how to use the rest framework #actually nope
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
