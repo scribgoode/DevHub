@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from accounts.context_processors import global_data
 from video_chat.serializers import NotificationSerializer
-from .models import Engineer, Project, Reviews
+from .models import Engineer, Project, Review
 from cities_light.models import City
 from text_chat.models import Room, Message
 from video_chat.models import Meeting, MeetingRequest, MeetingReview, Notification
@@ -381,7 +381,7 @@ def myProfile(request):
                 meeting.save()
 
                 # Review Object
-                review = Reviews(reviewer=request.user, reviewee=reviewee, meeting=meeting, review=review, rating=rating, meeting_date=meeting.date, submitted_date=datetime.now())
+                review = Review(reviewer=request.user, reviewee=reviewee, meeting=meeting, review=review, rating=rating, meeting_date=meeting.date, submitted_date=datetime.now())
                 review.save()
 
                 print('Meeting marked as unsuccessful with review and rating saved.')

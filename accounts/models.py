@@ -34,7 +34,7 @@ class Engineer(AbstractUser):
     # Rating system
     rating = models.FloatField(default=0)
     rating_count = models.IntegerField(default=0)
-    reviews = models.ManyToManyField('Reviews', blank=True, related_name='engineer_reviews')  # Fixed model name and added related_name
+    reviews = models.ManyToManyField('Review', blank=True, related_name='engineer_review')  # Fixed model name and added related_name
 
     # Meeting
     NumMeetings = models.IntegerField(default=0)
@@ -99,15 +99,15 @@ class Project(models.Model):
  
 
  # I think there should be a list of reviews for users to see, we should use it internally to see if the reviews are valid for the rating
-class Reviews(models.Model):
+class Review(models.Model):
     reviewer = models.ForeignKey(
-        'accounts.Engineer', on_delete=models.CASCADE, related_name='reviews_given'
+        'accounts.Engineer', on_delete=models.CASCADE, related_name='review_given'
     )
     reviewee = models.ForeignKey(
-        'accounts.Engineer', on_delete=models.CASCADE, related_name='reviews_received'
+        'accounts.Engineer', on_delete=models.CASCADE, related_name='review_received'
     )
     meeting = models.ForeignKey(
-        'video_chat.Meeting', on_delete=models.CASCADE, related_name='meeting_reviews'
+        'video_chat.Meeting', on_delete=models.CASCADE, related_name='meeting_review'
     )  # Use a string reference for the Meeting model
     review = models.TextField(max_length=1000)
     rating = models.FloatField(default=0)
