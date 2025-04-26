@@ -6,6 +6,7 @@ from django.urls import reverse
 from django.views.generic import TemplateView
 from django.template.loader import get_template
 from django.shortcuts import redirect, render, get_object_or_404, get_list_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 from accounts.context_processors import global_data
 from video_chat.serializers import NotificationSerializer
@@ -240,6 +241,10 @@ def myProfile(request):
                         #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
                         meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request)
                         meeting_request.status = MeetingRequest.Status.ACCEPTED
+                        
+                        # send notification to the sender of the meeting request
+                        meeting_request._actor = request.user  # ⬅️ Powers the real-time notification
+                        meeting_request.save()
 
                         # Create review object for Meeting
                         meeting.review = MeetingReview(review_status=MeetingReview.Status.PENDING, meeting_date=meeting_request.date)
@@ -263,6 +268,8 @@ def myProfile(request):
 
                             meeting_request.save()
                             meeting.save()
+
+                            
                     case 'decline':
                         #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
                         meeting_request.status = MeetingRequest.Status.DECLINED
@@ -503,6 +510,38 @@ def get_room(request, pk):
     rooms = Room.objects.filter(users__id=pk)
     serializer = RoomSerializer(rooms, many=True)
     return Response(serializer.data)
+
+@login_required
+@csrf_exempt
+def ensure_room(request, profile_id):
+    try:
+        cur_user = request.user
+        profile_user = Engineer.objects.get(id=profile_id)
+
+        # Check if a room already exists
+        room = Room.objects.filter(users=cur_user).filter(users=profile_user).first()
+
+        print('room:', room)
+
+        if not room:
+            # Create a new room if it doesn't exist
+            room = Room.objects.create()
+            room.users.add(cur_user, profile_user)
+            room.roomOwner = profile_user
+            room.roomClient = cur_user
+            room.save()
+
+        return JsonResponse({
+            "success": True,
+            "room_id": room.room_id,
+            "room_owner": room.roomOwner.id,
+            "room_client": room.roomClient.id,
+        })
+
+    except Engineer.DoesNotExist:
+        return JsonResponse({"success": False, "error": "Profile user not found."}, status=404)
+    except Exception as e:
+        return JsonResponse({"success": False, "error": str(e)}, status=500)
 
 
 @api_view(['GET'])

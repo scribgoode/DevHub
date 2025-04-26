@@ -37,7 +37,8 @@ urlpatterns = [
     path('api/profiles/', accounts_views.profile_list),
     path('api/get-profile/<int:pk>', accounts_views.profile_detail),
     path('api/rooms/', accounts_views.room_list),
-    path('api/get-rooms/<int:pk>', accounts_views.get_room),
+    path('api/get-rooms/<int:pk>', accounts_views.get_room), # get all rooms that cur user is in
+    path('api/ensure-room/<int:profile_id>/', accounts_views.ensure_room), # check if cur usr has a room with the profile_id
     path('api/messages/', accounts_views.message_list),
     path('api/get-chathistory/<uuid:pk>', accounts_views.get_chat),
     path('api/meeting-requests/', meeting_request_views.meeting_requests_list),
