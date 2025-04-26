@@ -106,9 +106,9 @@ ASGI_APPLICATION = "devhub.asgi.application"
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgresdatabase',
-        'USER': 'scrib',
-        'PASSWORD': 'fortnite123',
+        'NAME': 'projectpaldb',
+        'USER': 'adept',
+        'PASSWORD': '12345',
         'HOST': 'localhost',
         'PORT': '5432',
     }
