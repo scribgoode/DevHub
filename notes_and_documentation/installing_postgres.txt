@@ -14,3 +14,5 @@
     GRANT CREATE ON SCHEMA public TO scrib;
     GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO scrib;
 7. make migrations, migrate, create superuser
+
+Database names and users names needs to be lowercase
