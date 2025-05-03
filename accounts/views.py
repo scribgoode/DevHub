@@ -39,6 +39,9 @@ from text_chat.models import Message
 
 from django.template.loader import render_to_string
 
+from video_chat.tasks.meeting_tasks import set_meeting_status
+
+
 '''
 class HomePageView(TemplateView):
     template_name = "home.html"
@@ -240,6 +243,8 @@ def myProfile(request):
 
                         #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
                         meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request)
+
+                        # meeting_request is now accepted
                         meeting_request.status = MeetingRequest.Status.ACCEPTED
                         
                         # send notification to the sender of the meeting request
@@ -267,7 +272,15 @@ def myProfile(request):
                             meeting.end_time_unix = int(time.mktime(end_datetime.timetuple()))
 
                             meeting_request.save()
-                            meeting.save()
+
+                        else:
+                            messages.error(request, 'Invalid date or time for the meeting.')
+                            return redirect('my-profile')
+
+                        meeting.save()
+                        from video_chat.utils import schedule_meeting_status_updates
+                        print('meeting id:', meeting.id)
+                        schedule_meeting_status_updates(meeting)
 
                             
                     case 'decline':
@@ -337,7 +350,8 @@ def myProfile(request):
                         # Check if both users has submitted their reviews
                         if review.sender_status == MeetingReview.Status.REVIEWED and review.recipient_status == MeetingReview.Status.REVIEWED:
                             # Update the review status to reviewed
-                            print('both users have reviewed')   
+                            print('both users have reviewed')
+                            meeting._actor = "system"  # ⬅️ Powers the real-time notification
                             meeting.review.review_status = MeetingReview.Status.REVIEWED
                             meeting.status = Meeting.Status.COMPLETED # update meeting to completed, it will not show up in the upcoming meetings
                             meeting.acknowledged = True # mark meeting as acknowledged
@@ -391,16 +405,19 @@ def myProfile(request):
                 meeting.save()
                 print(f'meeting marked as {meeting.status}')
         
-            case 'cancel-meeting-form': # Happens when someone cancels the meeting
+            case 'cancel-meeting-form': # Happens when someone cancels the meeting - front end checks if the meeting can be cancelled (24 hours before meeting start time)
                 cancel_reason = request.POST.get('cancel_reason', None)
                 if cancel_reason is not None:
                     meeting = Meeting.objects.get(id=request.POST.get('meeting_id'))
                     print(meeting)
                     
                     meeting.cancel_user = Engineer.objects.get(id=request.POST.get('cancel_user'))
+                    meeting._actor = meeting.cancel_user  # ⬅️ Powers the real-time notification
                     meeting.status = Meeting.Status.CANCELLED
                     meeting.meeting_request.status = MeetingRequest.Status.CANCELLED
                     meeting.cancel_reason = cancel_reason
+                    from video_chat.utils import cancel_meeting_status_tasks
+                    cancel_meeting_status_tasks(meeting, user=meeting.cancel_user)
                     meeting.save()
             case 'cancel_sent_request': # Happens only when sender cancels the request
                 meeting_request = MeetingRequest.objects.get(id=request.POST.get('sent_meeting_id'))
@@ -418,28 +435,30 @@ def myProfile(request):
     # Create a dictionary to track if the user has reviewed each meeting
     has_reviewed = {}
 
-    # Update meeting status based on current time
-    for meeting in meetings:
-        if meeting.status == Meeting.Status.COMPLETED or meeting.status == Meeting.Status.DECLINED or meeting.status == Meeting.Status.CANCELLED or meeting.status == Meeting.Status.RESCHEDULED:
-            continue
+    # Update meeting status based on current time - removed as it is handled by Celery tasks now
+    # for meeting in meetings:
+    #     if meeting.status == Meeting.Status.COMPLETED or meeting.status == Meeting.Status.DECLINED or meeting.status == Meeting.Status.CANCELLED or meeting.status == Meeting.Status.RESCHEDULED:
+    #         continue
         
-        if meeting.start_time_unix <= current_time_unix <= meeting.end_time_unix:
-            meeting.status = Meeting.Status.ONGOING
-            meeting.save()
-        elif meeting.end_time_unix < current_time_unix:
-            meeting.status = Meeting.Status.REVIEWING
-            # Create review object if it doesn't exist
-            if meeting.review is None:
-                review = MeetingReview(review_status=MeetingReview.Status.PENDING, meeting_date=meeting.date)
-                review.save()
-                meeting.review = review
-                meeting.save()
-        if meeting.review:
-            has_reviewed[meeting.id] = meeting.review.has_reviewed(request.user.id, "sender" if meeting.sender.id == request.user.id else "recipient")  # check if the user has reviewed the meeting
-        else:
-            has_reviewed[meeting.id] = False  # Default to False if no review exists
-        meeting.save()  
-    print("aftr filter")
+    #     # if meeting.start_time_unix <= current_time_unix <= meeting.end_time_unix:
+    #     #     meeting._actor = request.user  # ⬅️ Powers the real-time notification"
+    #     #     meeting.status = Meeting.Status.ONGOING
+    #     #     meeting.save()
+    #     # elif meeting.end_time_unix < current_time_unix:
+    #     #     meeting._actor = request.user  # ⬅️ Powers the real-time notification
+    #     #     meeting.status = Meeting.Status.REVIEWING
+    #     #     # Create review object if it doesn't exist
+    #     #     if meeting.review is None:
+    #     #         review = MeetingReview(review_status=MeetingReview.Status.PENDING, meeting_date=meeting.date)
+    #     #         review.save()
+    #     #         meeting.review = review
+    #     #         meeting.save()
+    #     if meeting.review:
+    #         has_reviewed[meeting.id] = meeting.review.has_reviewed(request.user.id, "sender" if meeting.sender.id == request.user.id else "recipient")  # check if the user has reviewed the meeting
+    #     else:
+    #         has_reviewed[meeting.id] = False  # Default to False if no review exists
+    #     meeting.save()  
+    # print("aftr filter")
     # Sort meetings by status priority
     meetings = meetings.annotate(
         status_order=Case(
