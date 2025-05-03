@@ -84,7 +84,7 @@ class Meeting(models.Model):
         ONGOING = 'ongoing', 'ongoing'
         COMPLETED = 'completed', 'completed'
         REVIEWING = 'reviewing', 'reviewing'
-        RESCHEDULED = 'rescheduled', 'rescheduled'
+        RESCHEDULED = 'rescheduled', 'rescheduled' # Creates meeting object to reschedule so we can keep track of all meetings
         CANCELLED = 'cancelled', 'cancelled'
         DECLINED = 'declined', 'declined'
 
@@ -100,6 +100,34 @@ class Meeting(models.Model):
     meeting_request = models.ForeignKey(
         'MeetingRequest', on_delete=models.CASCADE, related_name='meeting_request', null=True, blank=True
     )
+
+    # celery task ID for meeting status updates
+    ongoing_task_id = models.CharField(max_length=255, null=True, blank=True)
+    reviewing_task_id = models.CharField(max_length=255, null=True, blank=True)
+
+    def participants(self):
+        return [self.sender, self.recipient]
+
+    def save(self, *args, **kwargs):
+        print("In save method of Meeting")
+        if self.pk:
+            print("Meeting with pk exists")
+            old = Meeting.objects.get(pk=self.pk)
+            if old.status != self.status:
+                actor = getattr(self, "_actor", None)  # user who triggered the change
+                print(f"Actor: {actor}")
+                if actor:
+                    if actor != "system":
+                        # Notify sender and recipient if the change is made by a user
+                        recipient = self.recipient if actor == self.sender else self.sender
+                        from .utils import notify_meeting_status_cancelled
+                        notify_meeting_status_cancelled(self, old.status, self.status, actor, recipient)
+                    else:
+                        # Notify both sender and recipient if the change is made by the system
+                        from .utils import notify_meeting_status_change
+                        notify_meeting_status_change(self, old.status, self.status, self.sender, self.recipient)
+
+        super().save(*args, **kwargs)
 
     cancel_reason = models.TextField(null=True, blank=True)
     cancel_user = models.ForeignKey(
