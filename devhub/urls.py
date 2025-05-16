@@ -66,6 +66,7 @@ urlpatterns = [
     path("meetup_point/find_meetup_spot/get-directions/", meetup_views.get_directions_view, name="get_directions"),
 
     path('my-profile/video_chat/<str:room_token>', videoChat, name='video_chat'),#i need to serialize the room object into json i think leland has already done this do i need to figure how to use the rest framework #actually nope
+    path('api/contacts/search/', accounts_views.contact_search, name='contact_search'),
 ]
 
 if settings.DEBUG:

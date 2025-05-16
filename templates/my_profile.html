@@ -249,7 +249,7 @@
             <button id="add-project">&#43;</button>
         </div>
         <div class="projects-box">
-        {% if 'I\'m starting something' in user.agenda %}
+        {% if 'starting' in user.agenda %}
             {% for project in projects %}
             <div class="project-rows">
                 <header>{{project.title}}</header>
@@ -261,7 +261,24 @@
             </div>
             {% endfor %}
         {% endif %}
-            <div class="add-project-popup hidden" id="add-project-popup">
+        </div>
+        <div class="interests-box hidden">
+            {% for interest in interests %}
+                <div class="project-rows">
+                    <div>Subject: {{interest.subject}}</div>
+                    <p>Interested In Joining: {{interest.interested_in_joining}}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="ideas-box hidden">
+            {% for idea in ideas %}
+                <div class="project-rows">
+                    <div>Subject: {{idea.subject}}</div>
+                    <p>Rough Idea: {{idea.rough_idea}}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="add-project-popup hidden" id="add-project-popup">
                 <button class="close-window">X</button>
                 <form class="add-project" method="post">
                     <input type="hidden" name="form_type" value="add_project">
@@ -270,20 +287,26 @@
                     <button type="submit">Create</button>
                 </form>
             </div>
-        </div>
-        <div class="interests-box hidden">
-            <header>Interests</header>
-            <div class="interests-rows">
-                {% for interest in interests %}
-                    <p>{{interest}}</p>
-                {% endfor %}
+            <div class="add-project-popup hidden" id="add-interest-popup">
+                <button class="close-window">X</button>
+                <form class="add-interest" method="post">
+                    <input type="hidden" name="form_type" value="add_project">
+                    <header>Interest Form</header>
+                    {% csrf_token %}
+                    {{ interest_creation_form.as_p }}
+                    <button type="submit">Create</button>
+                </form>
             </div>
-        </div>
-        <div class="ideas-box hidden">
-            <header>Ideas</header>
-            <div class="ideas-rows">
+            <div class="add-project-popup hidden" id="add-idea-popup">
+                <button class="close-window">X</button>
+                <form class="add-idea" method="post">
+                    <input type="hidden" name="form_type" value="add_project">
+                    <header>Idea Form</header>
+                    {% csrf_token %}
+                    {{ idea_creation_form.as_p }}
+                    <button type="submit">Create</button>
+                </form>
             </div>
-        </div>
     </div>
     <div class="spacer"></div>
     <div class="incoming-and-sent-invites">
@@ -442,12 +465,6 @@ document.addEventListener("DOMContentLoaded", function () {
         })
     });
 
-    const add_project_button = document.getElementById("add-project")
-    add_project_button.addEventListener('click', function () {
-        const popup = document.getElementById(`add-project-popup`);
-        popup.classList.toggle('hidden');
-    });
-
     /*const close_window = document.getElementById("close-window")
     close_window.addEventListener('click', function () {
         const popup = document.getElementById(`add-project-popup`);
@@ -463,9 +480,35 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
-</script>
 
-<script>
+    let current_tab = "projects";
+
+    document.getElementById("projects-button").addEventListener('click', function() {
+            current_tab = "projects";
+    });
+    document.getElementById("interests-button").addEventListener('click', function() {
+            current_tab = "interests";
+    });
+    document.getElementById("ideas-button").addEventListener('click', function() {
+            current_tab = "ideas";
+    });
+
+    document.getElementById('add-project').addEventListener('click', function () {
+    if (current_tab === 'projects') {
+        document.getElementById('add-project-popup').classList.toggle('hidden');
+    } else if (current_tab === 'interests') {
+        document.getElementById('add-interest-popup').classList.toggle('hidden');
+    } else if (current_tab ==='ideas') {
+        document.getElementById('add-idea-popup').classList.toggle('hidden');
+    }
+});
+
+    /*let add_button = document.getElementById("add-project")
+    add_button.addEventListener('click', function () {
+        const popup = document.getElementById(`add-project-popup`);
+        popup.classList.toggle('hidden');
+    });*/
+
     const ideas_button = document.getElementById("ideas-button");
     const interests_button = document.getElementById("interests-button");
     const projects_button = document.getElementById("projects-button");

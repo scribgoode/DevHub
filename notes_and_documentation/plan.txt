@@ -17,7 +17,9 @@ To Do List Before Production:
                                     2. "I'm joining in" — I'm looking to join someone else's project
                                     3. "I'm brainstorming" — I want to meet someone and co-create a new project
                                     (change text of creator and recruit and not just status)
-    -just make sure there is something like a symbol showing the connection between the three agendas and the tabs. Also, format it better across site and fix filters
+    -✔️just make sure there is something like a symbol showing the connection between the three agendas and the tabs. Also, format it better across site
+    -fix filters
+    -add age
 
     Video Chat
     -✔️add microphone button
@@ -35,11 +37,13 @@ To Do List Before Production:
     -✔️add real time search
     -✔️display last online(online within the last week, online within the past month)(filter)(we decided there was no point for this filter right now)
     -fix last online to work if you login with cached login info
-    -display currently online using websocket(would you want people to know you are currently online using the site?)
+    -✔️display currently online using websocket(would you want people to know you are currently online using the site?)
+    -add button to hide online status
     -pagination
     -✔️footer
     -default sorting(online status, city, creator/status)
     -logo
+    -fix video uploading so that mulitple video are not created and naming conventions are good then add python backend that captures thumbnail or/and add way for people to upload thumbnail
     -✔️render projects on home page(the current project box contains "Project 1: Fornite", etc.)(on hover all project information is shown)
     -✔️elevator pitch filter
     -✔️meeting preference filter
@@ -61,7 +65,7 @@ To Do List Before Production:
     -✔️if your status is recuit, state and display the type of projects you are open to joining(maybe do this for creators to, maybe for creators state whether they are open to contributing to another project)
         -(if your are a recruit or are a creator and willing to contribute to anothers project that the interests tab is revealed)
     -✔️add favorites list of profiles
-    -display strikes(maybe display and allow user to add a reason for why they missed the meeting)
+    -display strikes(maybe display and allow user to add a reason for why they missed the meeting)(maybe do display strikes but make sure they exist and we notify if someone receives one)
     -✔️notifier that states whether someone is willing to contribute to someone elses project(default is yes)
     -remove sent meeting invites and provide a link to a meeting history page
     -only update ratings every 5-10 ratings(objective questions and positive)
@@ -81,6 +85,10 @@ To Do List Before Production:
     -✔️allow people a section to put links
     -✔️allow an !!optional!! section where you can state how you want a person to contribute to the project
     -✔️better logic for project display feature(improve public, private, and active)
+
+    Ideas/ things that might NEED to be added:
+    -maybe just have two colums that show project title and interests titles in the projects, interests, and ideas column
+    -reveal last name to other user once the other user accepts a meeting request
 
 
 

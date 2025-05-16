@@ -23,8 +23,9 @@
                         <div class="status-filter-content">
                             <div class="status-filter-form">
                                 <label><input type="radio" name="agenda" value="any" onchange="this.form.submit()" {% if agenda == 'any' or not agenda %}checked{% endif %}>Any</label>
-                                <label><input type="radio" name="agenda" value="I'm starting something" onchange="this.form.submit()" {% if agenda == "I'm starting something" %}checked{% endif %}>"I'm starting something"</label>
-                                <label><input type="radio" name="agenda" value="I'm joining in" onchange="this.form.submit()" {% if agenda == "I'm joining in" %}checked{% endif %}>"I'm joining in"</label>
+                                <label><input type="radio" name="agenda" value='starting' onchange="this.form.submit()" {% if agenda == "starting" %}checked{% endif %}><img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="15" height="15">Starting Something</label>
+                                <label><input type="radio" name="agenda" value="joining" onchange="this.form.submit()" {% if agenda == "joining" %}checked{% endif %}><img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="15" height="15">Joining In</label>
+                                <label><input type="radio" name="agenda" value="brainstorming" onchange="this.form.submit()" {% if agenda == "brainstorming" %}checked{% endif %}><img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="15" height="15">Brainstorming</label>
                             </div>
                         </div>
                     </div>
@@ -54,11 +55,12 @@
         </div>
         <div class="engineer-table">
             <div class="table-head">
+                <div class ="elevator-pitch">Elevator Pitch</div>
                 <div class ="status">Agendas</div>
                 <div class="name">Name</div>
                 <div class="location">Location</div>
                 <div class="current-projects">Projects, Interests, and Ideas</div>
-                <div class="meeting-preferences">Meeting Preference</div>
+                <div class="meeting-preferences">Meeting Pref</div>
             </div>
             {% for profile in profiles %}
             <div class="table-row-box">
@@ -70,6 +72,13 @@
                 {% if profile.id != user.id %}
                     <div class="table-row">
                         <div class="row-background"></div>
+                        <div class="elevator-pitch">
+                            {% if profile.elevator_pitch_thumbnail %}
+                                <img src="{{ profile.elevator_pitch_thumbnail.url }}" alt="My Image">
+                            {% else %}
+                                <img src="{% static 'img/placeholder.png' %}" alt="My Image">
+                            {% endif %}
+                        </div>
                         <div class="status">
                         {% if 'starting' in profile.agenda %}<div><img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="15" height="15">Starting Something</div>{% endif %}
                         {% if 'joining' in profile.agenda %}<div><img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="15" height="15">Joining In</div>{% endif %}
@@ -77,11 +86,22 @@
                         </div>
                         <div class="name">
                             <span>{{ profile.first_name }}</span>
-                            <span id="online-status-notifier"> *{% if profile.last_login_within_7_days %} Online within the past 7 days {% elif profile.last_login_within_30_days %} Online within the past 30 days {% else %} Has not been online for at least a month{% endif %}</span>
+                            <span id="online-status-notifier">
+                            {% if profile.online_status == True %}
+                                🟢 Online
+                            {% else %}
+                                *{% if profile.last_login_within_7_days %} 
+                                Online within the past 7 days 
+                                {% elif profile.last_login_within_30_days %}
+                                Online within the past 30 days
+                                {% else %}
+                                Has not been online for at least a month
+                                {% endif %}</span>
+                            {% endif %}
                         </div>
                         <div class="location">{{ profile.city }}</div>
                         <div class="current-projects-row" id="scrollBox">
-                        {% if "I'm starting something" in profile.agenda %}
+                        {% if "starting" in profile.agenda %}
                             {% for project in projects %}
                                 {% if project.pal.id == profile.id %}
                                     <p>Title: {{ project.title }}</p>
@@ -92,12 +112,27 @@
                         </div>
                         <div class="current-projects-popup">
                             <div class="current-projects-popup-content">
-                                {% if "I'm starting something" in profile.agenda %}
+                                {% if "starting" in profile.agenda %}
+                                    <header>Current Projects</header>
                                     {% for project in projects %}
                                         {% if project.pal.id == profile.id and project.actively_recruiting == 'yes'%}
                                             <p>Title: {{ project.title }}</p>
                                             <p>Description: {{ project.description }}</p>
                                         {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {% if "joining" in profile.agenda %}
+                                    <header>Interests</header>
+                                    {% for interest in interests %}
+                                        <div>Subject: {{ interest.subject }}</div>
+                                        <div>Interested In Joining: {{ interest.interested_in_joining }}</div>
+                                    {% endfor %}
+                                {% endif %}
+                                {% if "brainstorming" in profile.agenda %}
+                                    <header>Ideas</header>
+                                    {% for idea in ideas %}
+                                        <div>Subject: {{ idea.subject }}</div>
+                                        <div>Rough Idea: {{ idea.rough_idea }}</div>
                                     {% endfor %}
                                 {% endif %}
                             </div>
@@ -229,6 +264,7 @@
             current_projects_box.forEach((box, index) => {
                 box.addEventListener('mouseover', function() {
                     current_projects_popup[index].classList.toggle('show');
+                    current_project
                 });
                 box.addEventListener('mouseout', function() {
                     current_projects_popup[index].classList.toggle('show');

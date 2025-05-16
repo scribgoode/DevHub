@@ -8,6 +8,9 @@ from django.contrib.postgres.fields import ArrayField
 def video_upload_path(instance, filename):
     return f'videos/{filename}'
 
+def thumbnail_upload_path(instance, filename):
+    return f'videos/thumbnails/{filename}'
+
 AGENDA_CHOICES = (
     ('starting', 'Starting Something'),
     ('joining', 'Joining In'),
@@ -28,8 +31,10 @@ class Engineer(AbstractUser):
     country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True) 
     city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True)
     elevator_pitch = models.FileField(upload_to=video_upload_path, null=True, blank=True)
+    elevator_pitch_thumbnail = models.FileField(upload_to=thumbnail_upload_path, null=True, blank=True)
     address = models.OneToOneField(Address, on_delete=models.CASCADE, null=True, blank=True) #cant be a one to one field here because two people that live together can have the same address
     favorites = models.ManyToManyField('Engineer', symmetrical=False, blank=True) #not working
+    online_status = models.BooleanField(default=False)
     
     # Rating system
     rating = models.FloatField(default=0)
@@ -76,11 +81,11 @@ class Engineer(AbstractUser):
             return True
         else:
             return False
-    
-    
+
+#create a model and add both foreign keys from project and engineer to create a many to many relationship that we can add more fields to if needed
 
 class Project(models.Model):
-    pal = models.ForeignKey(Engineer, on_delete=models.CASCADE) #if we end up doing a clean up of the code then rename engineer to pal
+    pal = models.ForeignKey(Engineer, on_delete=models.CASCADE,  related_name='project') #if we end up doing a clean up of the code then rename engineer to pal
     title = models.CharField(max_length=255, blank=True, null=True)
     description = models.TextField(max_length=4000)
     class YesandNo(models.TextChoices):
@@ -96,7 +101,17 @@ class Project(models.Model):
 
     #if we end up making it a project management site too, then we need to add a way to add users to a project but we might want to go ahead and add this so we can use the meetup spot algorithm to find a place between three people
     #we might want to end up setting that up as best we can before putting the website up because ETL is an expensive process but maybe not because of scope creep
- 
+
+class Interest(models.Model):
+    pal = models.ForeignKey(Engineer, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=255, blank=True, null=True)
+    interested_in_joining = models.TextField(max_length=4000, blank=True, null=True)
+
+class Idea(models.Model):
+    pal = models.ForeignKey(Engineer, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=255, blank=True, null=True)
+    rough_idea = models.TextField(max_length=4000, blank=True, null=True)
+
 
  # I think there should be a list of reviews for users to see, we should use it internally to see if the reviews are valid for the rating
 class Review(models.Model):

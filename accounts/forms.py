@@ -1,5 +1,5 @@
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
-from .models import Engineer, Project, AGENDA_CHOICES
+from .models import Engineer, Project, AGENDA_CHOICES, Interest, Idea
 from allauth.account.forms import SignupForm
 from django import forms
 from cities_light.models import City, Country
@@ -57,7 +57,17 @@ class ElevatorPitchForm(forms.ModelForm):
 class ProjectCreationForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ['title', 'description', 'display_on_profile', 'actively_recruiting', 'contribution_explanation'] 
+        fields = ['title', 'description', 'display_on_profile', 'actively_recruiting', 'contribution_explanation']
+
+class InterestCreationForm(forms.ModelForm):
+    class Meta:
+        model = Interest
+        fields = ['subject', 'interested_in_joining']
+
+class IdeaCreationForm(forms.ModelForm):
+    class Meta:
+        model = Idea
+        fields = ['subject', 'rough_idea']
 
 class EditProfileForm(forms.ModelForm):
     class Meta:

@@ -10,7 +10,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 from accounts.context_processors import global_data
 from video_chat.serializers import NotificationSerializer
-from .models import Engineer, Project, Review
+from .models import Engineer, Project, Review, Interest, Idea
 from cities_light.models import City
 from text_chat.models import Room, Message
 from video_chat.models import Meeting, MeetingRequest, MeetingReview, Notification
@@ -25,7 +25,7 @@ from rest_framework.response import Response
 from django.db.models import Q
 from video_chat.forms import MeetingRequestForm
 from django.contrib import messages
-from accounts.forms import ProjectCreationForm, EditProfileForm
+from accounts.forms import ProjectCreationForm, EditProfileForm, InterestCreationForm, IdeaCreationForm
 import requests
 from django.db.models import Case, When
 
@@ -59,7 +59,7 @@ def home(request):
     search = request.GET.get('search') 
 
     if 'search' in request.GET:
-        profiles = profiles.filter(Q(first_name__icontains=search) | Q(projects__description__icontains=search))
+        profiles = profiles.filter(Q(first_name__icontains=search) | Q(project__description__icontains=search)).distinct()
 
     if 'city' in request.GET:
         if city != 'any':
@@ -68,7 +68,7 @@ def home(request):
     if 'agenda' in request.GET:
         #status = request.GET['status'] 
         if agenda != 'any':
-            profiles = profiles.filter(agenda=agenda)
+            profiles = profiles.filter(agenda__contains=[agenda])
 
     if 'preference' in request.GET:
         #preference = request.GET['preference']
@@ -198,12 +198,16 @@ def Profile(request, id):
     num_meetings_received = MeetingRequest.objects.filter(recipient__id=id).count()
     profile = Engineer.objects.get(id=id)
     projects = Project.objects.filter(pal__id=id)
+    interests = Interest.objects.filter(pal__id=id)
+    ideas = Idea.objects.filter(pal__id=id)
     context = {'profile': profile,
                'form': meeting_request_form,
                'projects': projects,
                'num_completed_meetings': num_completed_meetings,
                'num_meetings_sent': num_meetings_sent,
-               'num_meetings_received': num_meetings_received,}
+               'num_meetings_received': num_meetings_received,
+               'interests': interests,
+               'ideas': ideas,}
     
     return render(request, 'profile.html', context)
 
@@ -219,7 +223,6 @@ def myProfile(request):
     # print(current_time_unix)
     # print(f"Current Time in {system_timezone}: {current_time}")
 
-    print(request.POST)
     if request.method == 'POST':
         form_type = request.POST.get("form_type")
         print("form type:", form_type)
@@ -468,7 +471,11 @@ def myProfile(request):
         )
     ).order_by('status_order')
     projects = Project.objects.filter(pal=request.user)
+    interests = Interest.objects.filter(pal=request.user)
+    ideas = Idea.objects.filter(pal=request.user)
     project_creation_form = ProjectCreationForm()
+    interest_creation_form = InterestCreationForm()
+    idea_creation_form = IdeaCreationForm()
     edit_profile_info_form = EditProfileForm(instance=request.user)
 
     context = {'meetings': meetings,
@@ -478,7 +485,11 @@ def myProfile(request):
                 'now': current_time_unix,
                 'has_reviewed': has_reviewed,
                 'project_creation_form': project_creation_form,
+                'interest_creation_form': interest_creation_form,
+                'idea_creation_form': idea_creation_form,
                'edit_profile_info_form': edit_profile_info_form,
+               'interests': interests,
+               'ideas': ideas,
                }
 
     return render(request, 'my_profile.html', context)
@@ -637,3 +648,37 @@ def get_unread_notifications(request):
     unread = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')
     serializer = NotificationSerializer(unread, many=True)
     return Response({"notifications": serializer.data})
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def contact_search(request):
+    user = request.user
+    query = request.GET.get('q', '').lower()
+
+    rooms = Room.objects.filter(users=user).prefetch_related('users')
+
+    results = []
+    for room in rooms:
+        other_user = room.users.exclude(id=user.id).first()
+        if other_user and query in other_user.first_name.lower():
+            results.append({
+                'room_id': room.room_id,
+                'id': other_user.id,
+                'first_name': other_user.first_name,
+                'full_name': other_user.get_full_name(),
+                'messagable': room.messagable
+            })
+
+    return Response(results)
+
+
+# def ajax_contact_search(request):
+#     query = request.GET.get('q', '')
+#     results = []
+#     if request.user.is_authenticated and query:
+#         results = Room.objects.filter(
+#             request.user__in=users,
+#             name__icontains=query
+#         ).values('id', 'name')[:10]  # Limit results
+#     return JsonResponse(list(results), safe=False)

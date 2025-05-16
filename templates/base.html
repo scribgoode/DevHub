@@ -13,7 +13,7 @@
 <body>
     <div class="container"> 
         <div class="head">
-            <h1><a href="/">ProjectPals</a></h1>
+            <h1 style="color: white;"><a href="/">ProjectPals</a></h1>
             <div class="head-buttons">
                 {% if user.is_authenticated and request.path == '/my-profile/' %}
                     <form id="login-form" action="{% url 'account_logout' %}" method="get">
@@ -85,9 +85,11 @@
         <div class="text-chat hidden">
             <header id="text-chat-header">Messages</header>
             <div class="contacts-and-messages">
-                <section id="contacts">
+                <div class="left-side-of-messages">
                     <header id="contacts-header">Contacts</header>
-                </section>
+                    <input id="contact-search-input" type="text" name="search" placeholder="Search Contacts" {% if search %}value={{search}}{% endif %}>
+                <section id="contacts"></section>
+                </div>
                 <section id="messages">
                     <header id="messages-header"></header>
                     <div class="messages-box"></div>
@@ -127,7 +129,7 @@
     {% block content %}
     {% endblock %}
     <footer class="footer">
-        <p>&copy; 2023 ProjectPals</p>
+        <p>&copy; 2025 ProjectPals</p>
         <div>What don't you like about the site?</div>
         <input type="text">
     </footer>
@@ -416,8 +418,57 @@
                 });
                 console.log('new chatroom:', newChatroom);
                 dmList.appendChild(newChatroom);
-            })
+            });
+            const input = document.getElementById('contact-search-input');
+            let timeout = null;
+            input.addEventListener('input', function () {
+                clearTimeout(timeout);
+                const query = input.value.trim();
+
+                if (query.length === 0) {
+                    dmList.innerHTML = '';
+                    return;
+                }
+                timeout = setTimeout(() => {
+                    fetch(`/api/contacts/search/?q=${encodeURIComponent(query)}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            // get all chatrooms that user is in and render them as buttons
+                            data.forEach(searched_room => {
+                                console.log('other user in room:', searched_room.first_name);
+                                console.log('room messagable:', searched_room.messagable);
+                                // check if room is messagable
+                                if (!searched_room.messagable) {
+                                    return;
+                                }
+
+                            let newChatroom = document.createElement('button');
+                            newChatroom.id = 'contact-button';
+
+                            //let newChatroomname = searched_room.first_name;
+                            //let newChatroomid = searched_room.room_id;
+
+                            // get # of unread messages
+                            const index = unread_list.findIndex(item => item.sender__id === searched_room.id);
+                            console.log("chatroomname, index:", searched_room.id, index);
+                            if (index !== -1) {
+                                console.log('unread:', unread_list[index].unread_count);
+                                const unreadCount = unread_list[index].unread_count;
+                                newChatroom.innerHTML = `${searched_room.first_name} (${unreadCount})`;
+                            } else {
+                                console.log('newbuttonadded');
+                                newChatroom.innerHTML = searched_room.first_name;
+                            }
+                            
+                            dmList.appendChild(newChatroom);
+                            });
+                        });
+                }, 300);
+
+            });
+
         });
+
     // wait for socket to open
         function waitForOpenSocket(socket) {
             return new Promise((resolve, _reject) => {

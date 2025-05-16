@@ -7,7 +7,7 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-color:cornflowerblue;
+    background-color: cornflowerblue;
     margin: 0;
     padding: 0;
 }
@@ -110,6 +110,7 @@ transform: scale(1.05) translateY(.125rem);
 
 .table-head{
     display: flex;
+    height: 7vh;
 }
 
 .table-head div{
@@ -118,6 +119,12 @@ transform: scale(1.05) translateY(.125rem);
     background-color:black;
     color:#fff;
     font-weight: bold;
+    box-sizing: border-box;
+}
+
+.table-head .elevator-pitch{
+    flex: 10%;
+    border-radius: 5px;
 }
 
 .table-head .status{
@@ -136,7 +143,7 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .table-head .current-projects{
-    flex: 40%;
+    flex: 30%;
     border-radius: 5px;
 }
 
@@ -147,7 +154,7 @@ transform: scale(1.05) translateY(.125rem);
 
 .table-row {
     display: flex;
-    height: 60px;
+    height: 10vh;
 }
 
 .table-row:hover{
@@ -159,6 +166,22 @@ transform: scale(1.05) translateY(.125rem);
     padding: 5px;
     margin: 1.7px;;
     background-color: #fff;
+    border-radius: 3px;
+    box-sizing: border-box;
+}
+
+.table-row .elevator-pitch{
+    flex: 10%;
+    background-color: #fff;
+    margin: 1.7px;;
+    background-color: #fff;
+    border-radius: 3px;
+}
+
+.elevator-pitch img{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     border-radius: 3px;
 }
 
@@ -187,7 +210,7 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .table-row .current-projects-row{
-    flex: 40%;
+    flex: 30%;
     overflow-y: auto;
     scroll-behavior: smooth;
     background-color: #fff;
@@ -203,6 +226,7 @@ transform: scale(1.05) translateY(.125rem);
     width: 90vh;
     background-color: #fff;
     border: 0.5vh solid black;
+    z-index: 999;
 }
 
 .table-row .meeting-preferences{
@@ -372,6 +396,7 @@ transform: scale(1.05) translateY(.125rem);
 
 #projects-button{
     border: .5vh solid black;
+    background-color: grey;
 }
 
 #projects-button:hover{
@@ -655,10 +680,14 @@ transform: scale(1.05) translateY(.125rem);
     display: flex;
 }
 
+.left-side-of-messages{
+    width: 15vw;
+    border-right: 5px solid black;
+}
+
 #contacts{
     flex: 1 1 33%;
     height: 100%;
-    border-right: 5px solid black;
     overflow-y: auto;    /* Enables vertical scrolling */
     overflow-x: hidden;
 }
@@ -1003,7 +1032,7 @@ figcaption {
     flex-direction: column;
     position: absolute;
     top: 100%;
-    width: 55%;
+    width: 100%;
     background-color: #fff;
 }
 

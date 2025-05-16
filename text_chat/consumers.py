@@ -221,6 +221,8 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         self.current_user = self.scope["user"]
         self.user_group = f'user_{self.current_user.id}'
 
+        await self.change_status()
+
         print("🔌 Adding user to group:", self.user_group)
 
         await self.channel_layer.group_add(self.user_group, self.channel_name)
@@ -401,3 +403,12 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
                 'type': event.get('notification_type', 'request'),
             }
         })
+    
+    async def change_status(self):
+        self.current_user.online_status = True
+        await self.current_user.asave()
+    
+    async def disconnect(self, close_code): # When the WebSocket connection is closed, this method is called.
+        self.current_user.online_status = False
+        print("disconnecting userrrrrrrrrrrrrrrrrrrrrrr")
+        await self.current_user.asave()
