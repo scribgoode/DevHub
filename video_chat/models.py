@@ -1,4 +1,4 @@
-from datetime import date, timezone, datetime
+from datetime import date, datetime
 from time import mktime
 from django.db import models
 from tzlocal import get_localzone
@@ -8,6 +8,9 @@ from meetup_point.models import Address
 import string
 import random
 from django.utils.timezone import now, activate, localtime
+from django.utils import timezone
+
+
 
 # Create your models here.
 
@@ -59,8 +62,8 @@ class Meeting(models.Model):
     sender = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name='sender')
     recipient = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name='recipient')
     date = models.DateField()
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
     start_time_unix = models.BigIntegerField(null=True, blank=True)
     end_time_unix = models.BigIntegerField(null=True, blank=True)
     description = models.TextField()
@@ -121,7 +124,7 @@ class Meeting(models.Model):
                         # Notify sender and recipient if the change is made by a user
                         recipient = self.recipient if actor == self.sender else self.sender
                         from .utils import notify_meeting_status_cancelled
-                        notify_meeting_status_cancelled(self, old.status, self.status, actor, recipient)
+                        notify_meeting_status_cancelled(self, actor, recipient)
                     else:
                         # Notify both sender and recipient if the change is made by the system
                         from .utils import notify_meeting_status_change
@@ -155,8 +158,8 @@ class MeetingRequest(models.Model):
     sender = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name='request_sender')
     recipient = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name='request_recipient')
     date = models.DateField()
-    start_time = models.TimeField()
-    end_time = models.TimeField()
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
     message = models.TextField()
     sent_date = models.DateTimeField(auto_now_add=True)
     

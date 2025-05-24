@@ -6,6 +6,13 @@ from .models import Notification
 from celery.result import AsyncResult
 from video_chat.tasks.meeting_tasks import set_meeting_status
 
+from datetime import datetime
+from django.utils.timezone import make_aware, is_aware, utc
+
+from django.utils.timezone import localtime
+import pytz
+
+
 def notify_meeting_status_cancelled(meeting_obj, sender, recipient):
     # this is user made
     type_map = {
@@ -18,6 +25,14 @@ def notify_meeting_status_cancelled(meeting_obj, sender, recipient):
     msg = f"Your meeting with {sender.first_name} has been cancelled.\nReason: {meeting_obj.cancel_reason}"
     
     notification = Notification.objects.create(user=recipient, message=msg)
+
+    # Convert timestamp to recipient's timezone
+    user_tz = pytz.timezone(recipient.timezone or 'UTC')
+    notification_time = localtime(notification.created_at, timezone=user_tz)
+
+    # Format it for the frontend
+    formatted_time = notification_time.isoformat()
+
     channel_layer = get_channel_layer()
     print("✅ Sending user update for notification", notification.id)
     async_to_sync(channel_layer.group_send)(
@@ -27,10 +42,10 @@ def notify_meeting_status_cancelled(meeting_obj, sender, recipient):
             'id': notification.id,
             'sender': sender.get_full_name(),
             'message': msg,
-            'created_at': now().isoformat(),
+            'created_at': formatted_time,
             'notification_type': 'meeting_update',
         }
-        )
+    )
 
 def notify_meeting_status_change(meeting_obj, old_status, new_status, sender, recipient):
     # This is a system update
@@ -62,6 +77,15 @@ def notify_meeting_status_change(meeting_obj, old_status, new_status, sender, re
 
 
         notification = Notification.objects.create(user=user, message=msg)
+
+        # Convert timestamp to recipient's timezone
+        user_tz = pytz.timezone(user.timezone or 'UTC')
+        notification_time = localtime(notification.created_at, timezone=user_tz)
+
+        # Format it for the frontend
+        formatted_time = notification_time.isoformat()
+        print("formatted_time: ", formatted_time)
+
         print("✅ Sending annoucement for notification", notification.id, " to user", user.id)
         async_to_sync(channel_layer.group_send)(
         f'user_{user.id}',
@@ -70,7 +94,7 @@ def notify_meeting_status_change(meeting_obj, old_status, new_status, sender, re
                 'id': notification.id,
                 'sender': "System Announcement",
                 'message': msg,
-                'created_at': now().isoformat(),
+                'created_at': formatted_time,
                 'notification_type': 'meeting_update',
             }
         )
@@ -106,6 +130,15 @@ def notify_meeting_request_status_change(request_obj, old_status, new_status, se
 
     notification = Notification.objects.create(user=recipient, message=msg)
 
+    # Convert timestamp to recipient's timezone
+    user_tz = pytz.timezone(recipient.timezone or 'UTC')
+    print("user_tz: ", user_tz)
+    notification_time = localtime(notification.created_at, timezone=user_tz)
+    print("notification_time: ", notification_time)
+    # Format it for the frontend
+    formatted_time = notification_time.isoformat()
+    print("formatted_time: ", formatted_time)
+
     print("✅ Sending group_send for notification", notification.id)
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -115,33 +148,41 @@ def notify_meeting_request_status_change(request_obj, old_status, new_status, se
             'id': notification.id,
             'sender': sender.get_full_name(),
             'message': msg,
-            'created_at': now().isoformat(),
+            'created_at': formatted_time,
             'notification_type': 'request_update',
         }
     )
 
+from django.utils.timezone import is_aware, make_aware, utc
+
 def schedule_meeting_status_updates(meeting):
     if meeting.start_time and meeting.end_time:
-        # Combine date and time → then make them timezone-aware
-        from django.utils.timezone import make_aware
-        start_datetime = make_aware(datetime.combine(meeting.date, meeting.start_time))
-        end_datetime = make_aware(datetime.combine(meeting.date, meeting.end_time))
+        start_datetime = meeting.start_time
+        end_datetime = meeting.end_time
+
+        print("start_time:", start_datetime)
+        print("tzinfo:", start_datetime.tzinfo)
+
+        # Ensure both datetimes are timezone-aware in UTC
+        if not is_aware(start_datetime):
+            start_datetime = make_aware(start_datetime)
+        if not is_aware(end_datetime):
+            end_datetime = make_aware(end_datetime)
 
         print(f"Scheduling status updates for Meeting {meeting.id} at {start_datetime} and {end_datetime}")
 
-        # Schedule 'ongoing'
+        # Schedule Celery tasks
         ongoing_task = set_meeting_status.apply_async(
             args=[meeting.id, 'ongoing'],
             eta=start_datetime
         )
 
-        # Schedule 'reviewing'
         reviewing_task = set_meeting_status.apply_async(
             args=[meeting.id, 'reviewing'],
             eta=end_datetime
         )
 
-        # Store task IDs
+        # Save task IDs to model
         meeting.ongoing_task_id = ongoing_task.id
         meeting.reviewing_task_id = reviewing_task.id
         meeting.save()

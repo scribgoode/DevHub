@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     'channels',
     #'devhub.apps.ChannelsPresence',
-    'accounts',
+    'accounts.apps.AccountsConfig', 
     'meetup_point',
 ]
 
@@ -73,6 +73,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'accounts.middleware.UserTimezoneMiddleware',  # Custom middleware to set user timezone
 ]
 
 ROOT_URLCONF = 'devhub.urls'
@@ -216,6 +217,8 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',  # Ensure only authenticated users can access the API
     ],
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S %Z",  # Optional formatting
+    'USE_TZ': True,  # Ensures localtime is respected in response
 }
 
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['us'] #un comment this line to only include US cities the name time we download the data and also look at the docs to see how to download only us cities

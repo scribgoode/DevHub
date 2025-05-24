@@ -44,10 +44,15 @@
     </div>
 
     <div class="profile-page-right-side">
-        <form class="meeting-request-form" method="post">
+        <!-- <form class="meeting-request-form" method="post">
             {% csrf_token %}
             {{ form.as_div }}
             <button type="submit" id="send-meeting-request" onclick="sendMeetingRequest(this)">Send Meeting Request</button>
+        </form> -->
+        <form method="post" class="meeting-request-form">
+            {% csrf_token %}
+            {{ form.as_div }}
+            <button type="submit" id="send-meeting-request">Send Meeting Request</button>
         </form>
         {% if messages %}
         <ul class="messages">
@@ -124,6 +129,32 @@
             }
         });
     </script>
+    <script>
+    document.querySelector(".meeting-request-form").addEventListener("submit", function (e) {
+        e.preventDefault();  // stop it from submitting for testing
+        const start = document.querySelector("input[name='start_time']").value;
+        const end = document.querySelector("input[name='end_time']").value;
+        const date = document.querySelector("input[name='date']").value;
+        console.log("🕒 Submitted values →", { date, start, end });
+        e.target.submit();  // uncomment this to allow form submission
+    });
+    flatpickr("input[name='start_time']", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "h:i K"  // Ensures 12-hour with AM/PM
+    });
+
+    flatpickr("input[name='end_time']", {
+        enableTime: true,
+        noCalendar: true,
+        dateFormat: "h:i K"
+    });
+
+    flatpickr("input[name='date']", {
+        dateFormat: "Y-m-d"
+    });
+    </script>
+    
     <!-- <script>
     const is_authenticated = JSON.parse(document.getElementById('is_authenticated').textContent);
     // wait for DOM to load

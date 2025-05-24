@@ -77,22 +77,26 @@ to-do:
 celery implemented
 
 
-1. add task id to meeting object (store task id from celery) (done)
-2. create task when meeting object is created (done)
-3. if meeting is cancel -> call cancel_task -> skip the task in the meeting when time comes (done)
-4. meeting_tasks is called when eta is has_reviewed (done)
-5. live update to status by system (done)
-6. Once last user submits their review, it will update the review status to completed (without using celery) (done)
+1. add task id to meeting object (store task id from celery) ✅
+    - add task to send notification 24 hours before meeting starts
+2. create task when meeting object is created ✅
+3. if meeting is cancel -> call cancel_task -> skip the task in the meeting when time comes ✅
+4. meeting_tasks is called when eta is has_reviewed ✅
+5. live update to status by system ✅
+6. Once last user submits their review, it will update the review status to completed (without using celery) ✅
 
 
 
 problems:
 ensure server time is UTC
 
+
+created middleware but need to ensure that it is running
+
 client
-1.  Client registers or logs in
+1.  Client registers ✅ or logs in
 2.  Retrieve client’s timezone using JavaScript:
-Intl.DateTimeFormat().resolvedOptions().timeZone  // e.g. "America/New_York"
+    Intl.DateTimeFormat().resolvedOptions().timeZone  // e.g. "America/New_York"
 3. Send and store timezone in user profile:
 { "timezone": "America/New_York" }
 
@@ -116,3 +120,17 @@ Server → Client (Show Event Time)
 new Date("2025-05-06T20:00:00Z").toLocaleString(undefined, {
   timeZone: userTimeZone
 });
+
+
+
+
+
+
+
+
+
+
+5/15
+1. meeting request and meeting objects are both using user time and being stored in UTC on the server
+2. need to update notification to show user timezone
+3. need to ensure dates are stored correctly.
