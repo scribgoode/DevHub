@@ -69,6 +69,10 @@ urlpatterns = [
     path('api/contacts/search/', accounts_views.contact_search, name='contact_search'),
 
     path('meeting-history/', meetingHistory, name='meeting_history'),
+
+
+    # test
+    path('test-timezone/', accounts_views.timezone_test_view),
 ]
 
 if settings.DEBUG:

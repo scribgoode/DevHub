@@ -1,4 +1,8 @@
 {% load static %}
+{% load tz %}
+{% now "U" as current_time %}
+{% load timezone_utils %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -523,7 +527,10 @@
 </script>
 
 <!-- Script for mark notification as read -->
+<!-- The user's timezone is now available as {{ user_timezone }} from the context processor -->
 <script>
+    const userTimezone = "{{ user_timezone }}";
+    console.log("User timezone:", userTimezone);
     const notifSocket = new WebSocket(
         'ws://' + window.location.host + '/ws/chat/notifications/'
     );
@@ -551,10 +558,20 @@
             const newNotif = document.createElement('div');
             newNotif.classList.add('notif-item');
             newNotif.setAttribute('data-id', notifId);
+            const createdDate = new Date(createdAt);
+            const formatted = createdDate.toLocaleString('en-US', {
+                timeZone: userTimezone,
+                month: 'short', // "May"
+                day: '2-digit', // "23"
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false, // Set to true for 12-hour format
+            });
+            console.log("Formatted date:", formatted);
             newNotif.innerHTML = `
                 <strong>Meeting status:</strong><br>
                 <span class="notif-text">${message}</span><br>
-                <small class="timestamp">${createdAt}</small><br>
+                <small class="timestamp">${formatted}</small><br>
                 <button class="mark-read-btn">Mark as Read</button>
             `;
 

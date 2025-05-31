@@ -5,6 +5,7 @@ from django import forms
 from cities_light.models import City, Country
 from meetup_point.models import Address
 from django_flatpickr.widgets import DatePickerInput
+from pytz import all_timezones
 
 class CustomUserCreationForm(UserCreationForm):
 
@@ -30,6 +31,7 @@ class CustomSignupForm(SignupForm):
     address = forms.CharField(max_length=255, label='address') 
     city = forms.ModelChoiceField(queryset=City.objects.all(), empty_label="Select City", label='city')
     country = forms.ModelChoiceField(queryset=Country.objects.all(), empty_label="Select Country", label='country')
+    timezone = forms.ChoiceField(choices=[(tz, tz) for tz in all_timezones], initial='UTC')
 
     def save(self, request):
         user = super(CustomSignupForm, self).save(request)
@@ -40,6 +42,7 @@ class CustomSignupForm(SignupForm):
         user.country = self.cleaned_data['country']
         user.dob = self.cleaned_data['dob']
         user.city = self.cleaned_data['city']
+        user.timezone = self.cleaned_data['timezone']
         user.save()
         return user
     

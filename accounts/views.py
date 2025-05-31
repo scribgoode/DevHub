@@ -39,6 +39,12 @@ from text_chat.models import Message
 
 from django.template.loader import render_to_string
 
+from django.utils.timezone import make_aware
+from datetime import datetime
+import pytz
+from video_chat.tasks.meeting_tasks import set_meeting_status
+
+
 '''
 class HomePageView(TemplateView):
     template_name = "home.html"
@@ -106,14 +112,34 @@ def home(request):
     return render(request, 'home.html', context)
 
 def Profile(request, id):
+    print('Profile view')
     if request.method == 'POST':
-        meeting_request_form = MeetingRequestForm(request.POST)
+        meeting_request_form = MeetingRequestForm(request.POST, user=request.user)
         if MeetingRequest.objects.filter(sender=request.user, recipient=Engineer.objects.get(id=id), status="pending").exists():
             messages.warning(request, 'You already have a meeting request pending for this user. You have to wait until they accept, decline, or the date has passed.')
         elif meeting_request_form.is_valid():
             meeting_request = meeting_request_form.save(commit=False)
             meeting_request.sender = request.user
             meeting_request.recipient = Engineer.objects.get(id=id)
+
+            date = meeting_request_form.cleaned_data['date']
+            start_time = meeting_request_form.cleaned_data['start_time']
+            end_time = meeting_request_form.cleaned_data['end_time']
+
+            user_tz = pytz.timezone(request.user.timezone)
+
+            # Convert to timezone-aware datetimes
+            meeting_request.start_time = make_aware(datetime.combine(date, start_time), user_tz)
+            meeting_request.end_time = make_aware(datetime.combine(date, end_time), user_tz)
+
+            print("start_time:", meeting_request.start_time)
+            print("end_time:", meeting_request.end_time)
+            print("tzinfo for start:", meeting_request.start_time.tzinfo)
+            print("tzinfo for end:", meeting_request.end_time.tzinfo)
+            print(type(meeting_request.start_time), type(meeting_request.end_time))
+            # Now save to DB
+            meeting_request.save()
+
             if meeting_request.type == 'in-person':
                 # check if both users have addresses
                 if request.user.address is not None and Engineer.objects.get(id=id).address is not None:
@@ -228,6 +254,8 @@ def myProfile(request):
     # Get the current time in the system's timezone
     current_time = localtime(now())
     current_time_unix = int(time.mktime(current_time.timetuple()))
+
+    print(request.user.timezone)
     # print(type(current_time_unix))
     # print(current_time_unix)
     # print(f"Current Time in {system_timezone}: {current_time}")
@@ -252,6 +280,8 @@ def myProfile(request):
 
                         #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
                         meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request)
+
+                        # meeting_request is now accepted
                         meeting_request.status = MeetingRequest.Status.ACCEPTED
                         
                         # send notification to the sender of the meeting request
@@ -263,33 +293,54 @@ def myProfile(request):
                         meeting.review.save()   
                         # Ensure meeting.date and meeting.start_time/end_time are valid
                         if meeting.date and meeting.start_time and meeting.end_time:
-                            # Combine date and time into a datetime object
-                            start_datetime = datetime.combine(meeting.date, meeting.start_time)
-                            end_datetime = datetime.combine(meeting.date, meeting.end_time)
+                            print('meeting date:', meeting.date)
+                            print('meeting start time:', meeting.start_time)
+                            print('meeting end time:', meeting.end_time)
+                            print("current timezone", request.user.timezone)
+                            
+                            print(type(meeting.start_time), type(meeting.end_time))
 
-                            # Convert to naive datetime if timezone-aware
-                            if is_aware(start_datetime):
-                                start_datetime = make_naive(start_datetime)
-                            if is_aware(end_datetime):
-                                end_datetime = make_naive(end_datetime)
-
-
+                            start_datetime = meeting.start_time
+                            end_datetime = meeting.end_time
+                            
+                            # # Convert to naive datetime if timezone-aware
+                            if is_aware(meeting.start_time):
+                                start_datetime = make_naive(meeting.start_time)
+                                print('native start time:', start_datetime)
+                            if is_aware(meeting.end_time):
+                                end_datetime = make_naive(meeting.end_time)
+                                print('native end time:', end_datetime)
+                        
+                            
                             # Convert to Unix timestamps
                             meeting.start_time_unix = int(time.mktime(start_datetime.timetuple()))
                             meeting.end_time_unix = int(time.mktime(end_datetime.timetuple()))
+                            print('meeting start time unix:', meeting.start_time_unix)
+                            print('meeting end time unix:', meeting.end_time_unix)
+                            print(type(meeting.start_time_unix), type(meeting.end_time_unix))
 
                             meeting_request.save()
-                            meeting.save()
+
+                        else:
+                            messages.error(request, 'Invalid date or time for the meeting.')
+                            return redirect('my-profile')
+
+                        meeting.save()
+                        from video_chat.utils import schedule_meeting_status_updates
+                        print('meeting id:', meeting.id)
+                        schedule_meeting_status_updates(meeting)
 
                             
                     case 'decline':
                         #meeting_request = MeetingRequest.objects.get(sender__id=request.POST.get('meeting_request_sender_id'), recipient__id=request.POST.get('meeting_request_recipient_id'), status='pending')
                         meeting_request.status = MeetingRequest.Status.DECLINED
+                        meeting_request._actor = request.user  # ⬅️ Powers the real-time notification
                         meeting_request.save()
                         meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.DECLINED)
                         meeting.save()
                     case 'reschedule':
                         meeting_request.status = MeetingRequest.Status.RESCHEDULED
+                        meeting_request._actor = request.user  # ⬅️ Powers the real-time notification
                         meeting_request.save()
                         meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.RESCHEDULED)
                         meeting.save()
@@ -349,7 +400,8 @@ def myProfile(request):
                         # Check if both users has submitted their reviews
                         if review.sender_status == MeetingReview.Status.REVIEWED and review.recipient_status == MeetingReview.Status.REVIEWED:
                             # Update the review status to reviewed
-                            print('both users have reviewed')   
+                            print('both users have reviewed')
+                            meeting._actor = "system"  # ⬅️ Powers the real-time notification
                             meeting.review.review_status = MeetingReview.Status.REVIEWED
                             meeting.status = Meeting.Status.COMPLETED # update meeting to completed, it will not show up in the upcoming meetings
                             meeting.acknowledged = True # mark meeting as acknowledged
@@ -361,9 +413,9 @@ def myProfile(request):
                     else:
                         # Create a new review (but should not go to this as we create the meeting review when the meeting is REVIEW status)
                         if reviewee_role == 'sender':
-                            review = MeetingReview(recipient_review=request.POST.get('meeting_feedback'), recipient_rating=request.POST.get('rating'), meeting_date=meeting.date, submitted_date=datetime.now(), recipient_status=MeetingReview.Status.REVIEWED, review_status=MeetingReview.Status.PENDING)
+                            review = MeetingReview(recipient_review=request.POST.get('meeting_feedback'), recipient_rating=request.POST.get('rating'), meeting_date=meeting.date, submitted_date=timezone.now(), recipient_status=MeetingReview.Status.REVIEWED, review_status=MeetingReview.Status.PENDING)
                         elif reviewee_role == 'recipient':
-                            review = MeetingReview(sender_review=request.POST.get('meeting_feedback'), sender_rating=request.POST.get('rating'), meeting_date=meeting.date, submitted_date=datetime.now(), sender_status=MeetingReview.Status.REVIEWED, review_status=MeetingReview.Status.PENDING)
+                            review = MeetingReview(sender_review=request.POST.get('meeting_feedback'), sender_rating=request.POST.get('rating'), meeting_date=meeting.date, submitted_date=timezone.now(), sender_status=MeetingReview.Status.REVIEWED, review_status=MeetingReview.Status.PENDING)
                         review.save()
                         
                         # Associate the review with the meeting
@@ -403,16 +455,20 @@ def myProfile(request):
                 meeting.save()
                 print(f'meeting marked as {meeting.status}')
         
-            case 'cancel-meeting-form': # Happens when someone cancels the meeting
+            case 'cancel-meeting-form': # Happens when someone cancels the meeting - front end checks if the meeting can be cancelled (24 hours before meeting start time)
+                print('cancel meeting form')
                 cancel_reason = request.POST.get('cancel_reason', None)
                 if cancel_reason is not None:
                     meeting = Meeting.objects.get(id=request.POST.get('meeting_id'))
                     print(meeting)
                     
                     meeting.cancel_user = Engineer.objects.get(id=request.POST.get('cancel_user'))
+                    meeting._actor = meeting.cancel_user  # ⬅️ Powers the real-time notification
                     meeting.status = Meeting.Status.CANCELLED
                     meeting.meeting_request.status = MeetingRequest.Status.CANCELLED
                     meeting.cancel_reason = cancel_reason
+                    from video_chat.utils import cancel_meeting_status_tasks
+                    cancel_meeting_status_tasks(meeting, user=meeting.cancel_user)
                     meeting.save()
             case 'cancel_sent_request': # Happens only when sender cancels the request
                 meeting_request = MeetingRequest.objects.get(id=request.POST.get('sent_meeting_id'))
@@ -429,29 +485,24 @@ def myProfile(request):
     
     # Create a dictionary to track if the user has reviewed each meeting
     has_reviewed = {}
-
-    # Update meeting status based on current time
     for meeting in meetings:
+        print('meeting:', meeting.status)
         if meeting.status == Meeting.Status.COMPLETED or meeting.status == Meeting.Status.DECLINED or meeting.status == Meeting.Status.CANCELLED or meeting.status == Meeting.Status.RESCHEDULED:
             continue
-        
-        if meeting.start_time_unix <= current_time_unix <= meeting.end_time_unix:
-            meeting.status = Meeting.Status.ONGOING
-            meeting.save()
-        elif meeting.end_time_unix < current_time_unix:
-            meeting.status = Meeting.Status.REVIEWING
-            # Create review object if it doesn't exist
+        if meeting.status == Meeting.Status.REVIEWING:
             if meeting.review is None:
                 review = MeetingReview(review_status=MeetingReview.Status.PENDING, meeting_date=meeting.date)
                 review.save()
                 meeting.review = review
                 meeting.save()
-        if meeting.review:
-            has_reviewed[meeting.id] = meeting.review.has_reviewed(request.user.id, "sender" if meeting.sender.id == request.user.id else "recipient")  # check if the user has reviewed the meeting
-        else:
-            has_reviewed[meeting.id] = False  # Default to False if no review exists
-        meeting.save()  
-    print("aftr filter")
+            if meeting.review:
+                has_reviewed[meeting.id] = meeting.review.has_reviewed(request.user.id, "sender" if meeting.sender.id == request.user.id else "recipient")  # check if the user has reviewed the meeting
+                print("user has not reviewed")
+            else:
+                has_reviewed[meeting.id] = False  # Default to False if no review exists
+                print("user has reviewed")
+            meeting.save()  
+
     # Sort meetings by status priority
     meetings = meetings.annotate(
         status_order=Case(
@@ -468,6 +519,18 @@ def myProfile(request):
     
     meeting_requests = MeetingRequest.objects.filter( Q(recipient=request.user) | Q(sender=request.user) ) #maybe make meeting_requests and sent_meetings_requests
     meeting_requests = meeting_requests.order_by('date', 'start_time')
+
+
+    for m in meeting_requests:
+        print(m.sender.first_name, m.recipient.first_name, m.status, m.start_time, m.end_time)
+        print('start:', m.start_time)
+        print('end:', m.end_time)
+
+    from django.utils import timezone
+
+    print("Current active timezone in view:", timezone.get_current_timezone_name())
+    print("current user timezone:", request.user.timezone)
+
     
     sent_meetings = MeetingRequest.objects.filter(sender=request.user)
     sent_meetings = sent_meetings.annotate(
@@ -486,6 +549,7 @@ def myProfile(request):
     interest_creation_form = InterestCreationForm()
     idea_creation_form = IdeaCreationForm()
     edit_profile_info_form = EditProfileForm(instance=request.user)
+    print("current time:", now())  # returns datetime in the user's timezone
 
     context = {'meetings': meetings,
                 'meeting_requests': meeting_requests,
@@ -657,6 +721,28 @@ def get_unread_notifications(request):
     unread = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at')
     serializer = NotificationSerializer(unread, many=True)
     return Response({"notifications": serializer.data})
+
+
+from django.http import HttpResponse
+from django.utils.timezone import now, localtime
+
+def timezone_test_view(request):
+    utc_now = now()  # Will reflect user's timezone if middleware is working
+    local = localtime(utc_now)
+
+    if request.user.is_authenticated:
+        tz = getattr(request.user, 'timezone', 'Not set')
+    else:
+        tz = 'Anonymous'
+
+    return HttpResponse(f"""
+        <h2>Timezone Debug</h2>
+        <p><strong>User:</strong> {request.user}</p>
+        <p><strong>User Timezone:</strong> {tz}</p>
+        <p><strong>UTC Time:</strong> {utc_now}</p>
+        <p><strong>Local Time:</strong> {local}</p>
+    """)
+
 
 
 @api_view(['GET'])

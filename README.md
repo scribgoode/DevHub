@@ -7,3 +7,4 @@ A site with many feature such as video calling, text chat, a meeting location fi
 -pip install -r requirements.txt (Install in the virtual environment)
 -py .\manage.py runserver (start servers)
 -docker run --rm -p 6379:6379 redis:7
+-celery -A devhub worker --loglevel=info --pool=solo (running async tasks)

@@ -6,6 +6,9 @@ from .models import MeetingRequest, Notification
 class MeetingRequestSerializer(serializers.ModelSerializer):
     sender = EngineerSerializer()
     recipient = EngineerSerializer()
+    # start_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S %Z")
+    # end_time = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S %Z")
+    #sent_date = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S %Z")
     
     class Meta:
         model = MeetingRequest

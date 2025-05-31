@@ -68,3 +68,69 @@ meeting request notification request updated for video and inperson meetings
 to-do:
 - maybe when they mark as read - redirect to my_profile? maybe kinda annoying
 - implement meeting object notifications.
+
+
+
+
+
+
+celery implemented
+
+
+1. add task id to meeting object (store task id from celery) ✅
+    - add task to send notification 24 hours before meeting starts
+2. create task when meeting object is created ✅
+3. if meeting is cancel -> call cancel_task -> skip the task in the meeting when time comes ✅
+4. meeting_tasks is called when eta is has_reviewed ✅
+5. live update to status by system ✅
+6. Once last user submits their review, it will update the review status to completed (without using celery) ✅
+
+
+
+problems:
+ensure server time is UTC
+
+
+created middleware but need to ensure that it is running
+
+client
+1.  Client registers ✅ or logs in
+2.  Retrieve client’s timezone using JavaScript:
+    Intl.DateTimeFormat().resolvedOptions().timeZone  // e.g. "America/New_York"
+3. Send and store timezone in user profile:
+{ "timezone": "America/New_York" }
+
+
+server
+4. Activate user's timezone for every request using middleware:
+timezone.activate(request.user.profile.timezone)
+
+Client → Server (User Schedules a Time)
+5. User picks a local time (e.g., 3:00 PM EST)
+6. Client sends time with timezone offset OR as ISO 8601 aware datetime
+{ "start_time": "2025-05-06T15:00:00-05:00" }
+7. Server translates to UTC and stores (handled automatically by USE_TZ = True)
+
+Server → Client (Show Event Time)
+8. Server retrieves UTC datetime from the DB
+9. Django activates the user's timezone (via middleware)
+10. Django templates or serializers convert UTC → user’s local time automatically
+{{ meeting.start_time|localtime|date:"M d, Y h:i A T" }}
+11. Client receives datetime already translated, or receives UTC and converts it in JS
+new Date("2025-05-06T20:00:00Z").toLocaleString(undefined, {
+  timeZone: userTimeZone
+});
+
+
+
+
+
+
+
+
+
+
+5/15
+1. meeting request and meeting objects are both using user time and being stored in UTC on the server
+2. need to update notification to show user timezone
+3. need to ensure dates are stored correctly.

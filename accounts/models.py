@@ -30,6 +30,8 @@ class Engineer(AbstractUser):
     dob = models.DateField(default=date.today)
     country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True) 
     city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True)
+    timezone = models.CharField(max_length=64, default='UTC')
+    
     elevator_pitch = models.FileField(upload_to=video_upload_path, null=True, blank=True)
     elevator_pitch_thumbnail = models.FileField(upload_to=thumbnail_upload_path, null=True, blank=True)
     address = models.OneToOneField(Address, on_delete=models.CASCADE, null=True, blank=True) #cant be a one to one field here because two people that live together can have the same address

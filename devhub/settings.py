@@ -60,7 +60,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount",
     'channels',
     #'devhub.apps.ChannelsPresence',
-    'accounts',
+    'accounts.apps.AccountsConfig', 
     'meetup_point',
 ]
 
@@ -73,6 +73,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'allauth.account.middleware.AccountMiddleware',
+    'accounts.middleware.UserTimezoneMiddleware',  # Custom middleware to set user timezone
 ]
 
 ROOT_URLCONF = 'devhub.urls'
@@ -138,13 +139,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
-
-TIME_ZONE = str(get_localzone()) # Automatically get the local timezone
-
+TIME_ZONE = 'UTC'  # ✅ Internal timezone
 USE_I18N = True
-from django.utils.timezone import activate
-activate(TIME_ZONE)
-
 USE_TZ = True
 
 
@@ -221,9 +217,15 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',  # Ensure only authenticated users can access the API
     ],
+    'DATETIME_FORMAT': "%Y-%m-%d %H:%M:%S %Z",  # Optional formatting
+    'USE_TZ': True,  # Ensures localtime is respected in response
 }
 
 CITIES_LIGHT_INCLUDE_COUNTRIES = ['us'] #un comment this line to only include US cities the name time we download the data and also look at the docs to see how to download only us cities
 
 
 #CITIES_LIGHT_INCLUDE_CITY_TYPES = ['PPL', 'PPLA', 'PPLA2', 'PPLA3', 'PPLA4', 'PPLC', 'PPLF', 'PPLG', 'PPLL', 'PPLR', 'PPLS', 'STLMT', 'PPLX',]
+
+CELERY_BROKER_URL = 'redis://localhost:6379/0'  # Make sure Redis is running
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
