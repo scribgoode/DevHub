@@ -49,7 +49,12 @@
     </div>
     <div class="spacer"></div>
     <div class="meetings-list">
-        <header class="meeting-headers">Upcoming Meetings</header>
+        <div class="meeting-headers">
+            <span>Upcoming Meetings</span>
+            <form id="meeting-history" action="{% url 'meeting_history' %}" method="get">
+                <button type="submit" id="loginLink">Meeting History</button>
+            </form>
+        </div>
         <div class="upcoming-meetings-box">
             {% for meeting in meetings %}
                 {% if meeting.status == "upcoming" %}
@@ -501,7 +506,7 @@ document.addEventListener("DOMContentLoaded", function () {
     } else if (current_tab ==='ideas') {
         document.getElementById('add-idea-popup').classList.toggle('hidden');
     }
-});
+    });
 
     /*let add_button = document.getElementById("add-project")
     add_button.addEventListener('click', function () {

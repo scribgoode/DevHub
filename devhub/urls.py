@@ -16,7 +16,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from accounts.views import Profile, myProfile, home, index, signUp, login, videoChat
+from accounts.views import Profile, myProfile, home, index, signUp, login, videoChat, meetingHistory
 from accounts import views as accounts_views
 from meetup_point import views as meetup_views
 from video_chat import views as meeting_request_views
@@ -67,6 +67,8 @@ urlpatterns = [
 
     path('my-profile/video_chat/<str:room_token>', videoChat, name='video_chat'),#i need to serialize the room object into json i think leland has already done this do i need to figure how to use the rest framework #actually nope
     path('api/contacts/search/', accounts_views.contact_search, name='contact_search'),
+
+    path('meeting-history/', meetingHistory, name='meeting_history'),
 ]
 
 if settings.DEBUG:

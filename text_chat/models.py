@@ -111,6 +111,7 @@ class Room(models.Model): #this should be renamed to TextRoom
     users = models.ManyToManyField(Engineer, blank=True)
     roomOwner = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name="room_owner", null=True, blank=True)
     roomClient = models.ForeignKey(Engineer, on_delete=models.CASCADE, related_name="room_client", null=True, blank=True)
+    #last_message = models.ForeignKey('Message', on_delete=models.SET_NULL, null=True, blank=True, related_name='last_message_in_room')
 
     # Track if both user agreed to meeting request
     messagable = models.BooleanField(default=False) #if false, no messages can be sent in the room

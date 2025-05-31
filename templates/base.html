@@ -136,8 +136,10 @@
 
 <script>
     //logic that lets you hide text chat
-    document.querySelector('.message-button').addEventListener('click', function() {
+    document.querySelector('.message-button').addEventListener('click', async function() {
         document.querySelector('.text-chat').classList.toggle('hidden');
+        let data = await AllDMs();
+        RenderDMList(data, '');
     });
 
     document.querySelector('.save-for-later').addEventListener('click', function() {
@@ -247,227 +249,235 @@
             current_user.id = data.id;
         });
     
+    const input = document.getElementById('contact-search-input');
+    input.addEventListener('input', async function () {
+        const query = input.value.trim();
+        let data;
 
-    // render dm list
-    fetch(`/api/get-rooms/${user_id}?format=json`)
-        .then(response => response.json())
-        .then(data => {
-            // get all chatrooms that user is in and render them as buttons
-            data.forEach(room => {
-                console.log('current room:', room.room_id);
-                console.log('room messagable:', room.messagable);
-                // check if room is messagable
-                if (!room.messagable) {
-                    return;
-                }
+        console.log('query:', query);
+        if (query.length !== 0) {
+            data = await DMSearch(query);
+        } else {
+            data = await AllDMs();
+        }
 
+        RenderDMList(data, query);
+    });
 
-                // get the name of the other user in the chatroom
-                let newChatroomname = room.users[1 - room.users.findIndex(user => user.id === user_id)].first_name;
-                let newChatroomid = room.users[1 - room.users.findIndex(user => user.id === user_id)].id;
+        //just get the data from each fetch and then add the data.forEach
+        //need to research this async stuff more before proceeding
+    function RenderDMList(data, query) {
+        dmList.innerHTML = '';
+        data.forEach(room => {
 
-                
-                const newChatroom = document.createElement('button');
-                newChatroom.id = 'contact-button';
-                //newChatroom.innerHTML = newChatroomname;
+            if (!room.messagable) {
+                return;
+            }
 
-                // get # of unread messages
-                const index = unread_list.findIndex(item => item.sender__id === newChatroomid);
-                console.log("chatroomname, index:", newChatroomid, index);
-                if (index !== -1) {
-                    console.log('unread:', unread_list[index].unread_count);
-                    const unreadCount = unread_list[index].unread_count;
-                    newChatroom.innerHTML = `${newChatroomname} (${unreadCount})`;
-                } else {
-                    newChatroom.innerHTML = newChatroomname;
-                }
+            let newChatroomname, newChatroomid;
 
-                
-                newChatroom.addEventListener('click', () => {
+            // get the name of the other user in the chatroom
+            if (query.length !== 0) {
+                newChatroomname = room.first_name;
+                newChatroomid = room.room_id;
+            } else {
+                newChatroomname = room.users[1 - room.users.findIndex(user => user.id === user_id)].first_name;
+                newChatroomid = room.users[1 - room.users.findIndex(user => user.id === user_id)].id;
+            }
 
-                    // remove unread messages
-                    newChatroom.innerHTML = newChatroomname;
-                    // disable send button
-                    newChatroom.disabled = true;
+            
+            const newChatroom = document.createElement('button');
+            newChatroom.id = 'contact-button';
+            //newChatroom.innerHTML = newChatroomname;
 
-                    // enable every other button
-                    const chatroomButtons = document.querySelectorAll('button');
-                    chatroomButtons.forEach(button => {
-                        if (button !== newChatroom) {
-                            button.disabled = false;
-                        }
-                    });
+            // get # of unread messages
+            const index = unread_list.findIndex(item => item.sender__id === newChatroomid);
+            if (index !== -1) {
+                console.log('unread:', unread_list[index].unread_count);
+                const unreadCount = unread_list[index].unread_count;
+                newChatroom.innerHTML = `${newChatroomname} (${unreadCount})`;
+            } else {
+                newChatroom.innerHTML = newChatroomname;
+            }
 
-                    // close existing socket
-                    if (socket) {
-                        socket.close();
-                        console.log('previous socket closed');
+            
+            newChatroom.addEventListener('click', () => {
+
+                // remove unread messages
+                newChatroom.innerHTML = newChatroomname;
+                // disable send button
+                newChatroom.disabled = true;
+
+                // enable every other button
+                const chatroomButtons = document.querySelectorAll('button');
+                chatroomButtons.forEach(button => {
+                    if (button !== newChatroom) {
+                        button.disabled = false;
                     }
+                });
 
-                    let messagesHeader = document.querySelector('#messages-header')
-                    // TODO: Create css for button name
-                    chat_user_id = room.users[1 - room.users.findIndex(user => user.id === user_id)].id
-                    messagesHeader.innerHTML = `<button onclick="window.location.href='/profile/${chat_user_id}';">${newChatroomname}</button>`;
-                    
+                // close existing socket
+                if (socket) {
+                    socket.close();
+                    console.log('previous socket closed');
+                }
 
-                    // get chat history
-                    console.log('selected chatroom:', room);
-                    fetch(`/api/get-chathistory/${room.room_id}?format=json`)
-                        .then(response => response.json())
-                        .then(data => {
-                            // render chat history in chatbox depending on selected chatroom
-                            console.log('chat history:', data);
-                            // empty chatbox
-                            chatbox.innerHTML = '';
+                let messagesHeader = document.querySelector('#messages-header')
+                // TODO: Create css for button name
 
-                            let receiver_id = room.users[1].id;
-                            console.log(typeof receiver_id);
-                            data.forEach(chat => {
-                                const newChat = document.createElement('div');
-                                console.log('chat:', chat);
-                                if (chat.sender.id === current_user.id) {
-                                    newChat.innerHTML = `<div class="user-message">${chat.messageContent}</div>`;
+                chat_user_id = newChatroomid
+                messagesHeader.innerHTML = `<span class="chat-name" onclick="window.location.href='/profile/${chat_user_id}';">${newChatroomname}</span>`;
+                
+
+                // get chat history
+                console.log('selected chatroom:', room);
+                fetch(`/api/get-chathistory/${room.room_id}?format=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // render chat history in chatbox depending on selected chatroom
+                        console.log('chat history:', data);
+                        // empty chatbox
+                        chatbox.innerHTML = '';
+
+                        let receiver_id = room.users[1].id;
+                        console.log(typeof receiver_id);
+                        data.forEach(chat => {
+                            const newChat = document.createElement('div');
+                            newChat.id = 'message-row';
+                            console.log('chat:', chat);
+                            if (chat.sender.id === current_user.id) {
+                                newChat.innerHTML = `
+                                    <div class="user-message">${chat.messageContent}</div>
+                                    <div class="timestamp">${format12Hour(chat.timestamp)}</div>
+                                    `;
+                            }
+                            else {
+                                // update message has been read
+                                if (chat.is_read !== true) {
+                                    chat.is_read = true;
+                                    console.log('chat id:', chat.id);
+                                    console.log('message read:', chat, "is now read:", chat.is_read);
+                                    fetch('/api/messages/mark-read/', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRFToken': getCookie('csrftoken')
+                                        },
+                                        body: JSON.stringify({ message_id: chat.id })
+                                    })
+                                    .then(res => res.json())
+                                    .then(() => {fetch('/api/messages/mark-read/', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                            'X-CSRFToken': getCookie('csrftoken')
+                                        },
+                                        body: JSON.stringify({ message_id: chat.id })
+                                    })
+                                    .then(res => res.json())
+                                    .then(response => {
+                                        if (response.success) {
+                                            // ✅ Refresh both notifications and message icon
+                                            Promise.all([
+                                                fetch('/notifications/html/').then(res => res.json()),
+                                                fetch('/messages/button/html/').then(res => res.json())
+                                            ]).then(([notif, button]) => {
+                                                document.getElementById('notification-dropdown').innerHTML = notif.html;
+                                                document.getElementById('message-button-wrapper').innerHTML = button.html;
+                                            });
+                                        } else {
+                                            console.error("❌ Failed to mark message as read:", response.error || 'Unknown error');
+                                        }
+                                    })
+                                    .catch(error => {
+                                        console.error("❌ Network or server error:", error);
+                                    });
+
+                                        // Refresh notification box
+                                        fetch('/notifications/html/')  // URL to your new view
+                                            .then(res => res.json())
+                                            .then(data => {
+                                                document.getElementById('notification-dropdown').innerHTML = data.html;
+                                            });
+                                    });
+                                }
+                                newChat.innerHTML = `
+                                <div class="contact-message">${chat.messageContent}</div>
+                                <div class="contact-timestamp">${format12Hour(chat.timestamp)}</div>
+                                `;
+
+                            }
+                            chatbox.appendChild(newChat);
+                        });
+
+                        chat_type = "text";
+                        socket = new WebSocket(
+                            'ws://'
+                            + window.location.host
+                            + '/ws/chat/text/'
+                        );
+                        waitForOpenSocket(socket).then(() => {
+                            console.log('socket opened');
+                            // on message received
+                            socket.onmessage = function(event) {
+                                const message = JSON.parse(event.data)
+                                console.log(message);
+                                // add message to chat history
+                                const messageDiv = document.createElement('div');
+                                if (message.sender_id === current_user.id) {
+                                    messageDiv.innerHTML = `<div class="user-message">${message.message}</div>`;
                                 }
                                 else {
-                                    // update message has been read
-                                    if (chat.is_read !== true) {
-                                        chat.is_read = true;
-                                        console.log('chat id:', chat.id);
-                                        console.log('message read:', chat, "is now read:", chat.is_read);
-                                        fetch('/api/messages/mark-read/', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'X-CSRFToken': getCookie('csrftoken')
-                                            },
-                                            body: JSON.stringify({ message_id: chat.id })
-                                        })
-                                        .then(res => res.json())
-                                        .then(() => {fetch('/api/messages/mark-read/', {
-                                            method: 'POST',
-                                            headers: {
-                                                'Content-Type': 'application/json',
-                                                'X-CSRFToken': getCookie('csrftoken')
-                                            },
-                                            body: JSON.stringify({ message_id: chat.id })
-                                        })
-                                        .then(res => res.json())
-                                        .then(response => {
-                                            if (response.success) {
-                                                // ✅ Refresh both notifications and message icon
-                                                Promise.all([
-                                                    fetch('/notifications/html/').then(res => res.json()),
-                                                    fetch('/messages/button/html/').then(res => res.json())
-                                                ]).then(([notif, button]) => {
-                                                    document.getElementById('notification-dropdown').innerHTML = notif.html;
-                                                    document.getElementById('message-button-wrapper').innerHTML = button.html;
-                                                });
-                                            } else {
-                                                console.error("❌ Failed to mark message as read:", response.error || 'Unknown error');
-                                            }
-                                        })
-                                        .catch(error => {
-                                            console.error("❌ Network or server error:", error);
-                                        });
-
-                                            // Refresh notification box
-                                            fetch('/notifications/html/')  // URL to your new view
-                                                .then(res => res.json())
-                                                .then(data => {
-                                                    document.getElementById('notification-dropdown').innerHTML = data.html;
-                                                });
-                                        });
-                                    }
-                                    newChat.innerHTML = `<div class="contact-message">${chat.messageContent}</div>`;
+                                    messageDiv.innerHTML = `<div class="contact-message">${message.message}</div>`;
                                 }
-                                chatbox.appendChild(newChat);
-                            });
-
-                            chat_type = "text";
-                            socket = new WebSocket(
-                                'ws://'
-                                + window.location.host
-                                + '/ws/chat/text/'
-                            );
-                            waitForOpenSocket(socket).then(() => {
-                                console.log('socket opened');
-                                // on message received
-                                socket.onmessage = function(event) {
-                                    const message = JSON.parse(event.data)
-                                    console.log(message);
-                                    // add message to chat history
-                                    const messageDiv = document.createElement('div');
-                                    if (message.sender_id === current_user.id) {
-                                        messageDiv.innerHTML = `<div class="user-message">${message.message}</div>`;
-                                    }
-                                    else {
-                                        messageDiv.innerHTML = `<div class="contact-message">${message.message}</div>`;
-                                    }
-                                    chatbox.appendChild(messageDiv);
-                                };
-                                // on socket open
-                                socket.onopen = function(event) {
-                                    console.log("WebSocket connection opened");
-                                    sendButton.disabled = false;
-                                    socket.send(JSON.stringify({
-                                        "profile_id": room.users[1 - room.users.findIndex(user => user.id === user_id)].id,
-                                    }));
-                                };
-                            });
+                                chatbox.appendChild(messageDiv);
+                            };
+                            // on socket open
+                            socket.onopen = function(event) {
+                                console.log("WebSocket connection opened");
+                                sendButton.disabled = false;
+                                socket.send(JSON.stringify({
+                                    "profile_id": room.users[1 - room.users.findIndex(user => user.id === user_id)].id,
+                                }));
+                            };
                         });
-                });
-                console.log('new chatroom:', newChatroom);
-                dmList.appendChild(newChatroom);
+                    });
             });
-            const input = document.getElementById('contact-search-input');
-            let timeout = null;
-            input.addEventListener('input', function () {
-                clearTimeout(timeout);
-                const query = input.value.trim();
-
-                if (query.length === 0) {
-                    dmList.innerHTML = '';
-                    return;
-                }
-                timeout = setTimeout(() => {
-                    fetch(`/api/contacts/search/?q=${encodeURIComponent(query)}`)
-                        .then(response => response.json())
-                        .then(data => {
-                            // get all chatrooms that user is in and render them as buttons
-                            data.forEach(searched_room => {
-                                console.log('other user in room:', searched_room.first_name);
-                                console.log('room messagable:', searched_room.messagable);
-                                // check if room is messagable
-                                if (!searched_room.messagable) {
-                                    return;
-                                }
-
-                            let newChatroom = document.createElement('button');
-                            newChatroom.id = 'contact-button';
-
-                            //let newChatroomname = searched_room.first_name;
-                            //let newChatroomid = searched_room.room_id;
-
-                            // get # of unread messages
-                            const index = unread_list.findIndex(item => item.sender__id === searched_room.id);
-                            console.log("chatroomname, index:", searched_room.id, index);
-                            if (index !== -1) {
-                                console.log('unread:', unread_list[index].unread_count);
-                                const unreadCount = unread_list[index].unread_count;
-                                newChatroom.innerHTML = `${searched_room.first_name} (${unreadCount})`;
-                            } else {
-                                console.log('newbuttonadded');
-                                newChatroom.innerHTML = searched_room.first_name;
-                            }
-                            
-                            dmList.appendChild(newChatroom);
-                            });
-                        });
-                }, 300);
-
-            });
-
+            console.log('new chatroom:', newChatroom);
+            dmList.appendChild(newChatroom);
         });
+    };
+
+    function format12Hour(timestamp) {
+        const date = new Date(timestamp);
+        let hours = date.getHours();
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        hours = hours % 12 || 12; // Convert 0 to 12 for midnight
+        const timeStr = `${hours}:${minutes} ${ampm}`;
+
+        // Format date (e.g., May 28, 2025)
+        const dateStr = date.toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
+
+        return `${dateStr} ${timeStr}`;
+}
+
+
+    async function AllDMs() {
+        const response = await fetch(`/api/get-rooms/${user_id}?format=json`);
+        const data = await response.json();
+        return data;
+    };
+
+    async function DMSearch(query) {
+        const response = await fetch(`/api/contacts/search/?q=${encodeURIComponent(query)}`);
+        const data = await response.json();
+        return data;
+    };
 
     // wait for socket to open
         function waitForOpenSocket(socket) {

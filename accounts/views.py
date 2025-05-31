@@ -44,6 +44,15 @@ class HomePageView(TemplateView):
     template_name = "home.html"
 '''
 
+def meetingHistory(request):
+    sent_meetings = Meeting.objects.filter(sender=request.user).order_by('-date', '-start_time')
+    received_meetings = Meeting.objects.filter(recipient=request.user).order_by('-date', '-start_time')
+    context = {
+        'sent_meetings': sent_meetings,
+        'received_meetings': received_meetings,
+    }
+    return render(request, 'meeting_history.html', context)
+
 def signUp(request):
     return render(request, 'accounts/signup.html')
 
@@ -682,3 +691,10 @@ def contact_search(request):
 #             name__icontains=query
 #         ).values('id', 'name')[:10]  # Limit results
 #     return JsonResponse(list(results), safe=False)
+
+
+#in the frontend, i need to check if the current message date is greater the last message date of the room if it exists
+#if yea, i need to turn the date stamp flag in the message to true
+#if no, do nothing
+
+#update room last message everytime

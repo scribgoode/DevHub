@@ -10,7 +10,7 @@ To Do List Before Production:
     -after the account is created, the person should be directed to a seperate page where they can decide to stay a recruit or advertise a project or multiple projects and to record their elevator pitch
     -give people a good example of an elevator pitch and some key points to talk about and emphasize the importance of it
     -configure css for sign out page
-    -notifcation across top of all screens that says you have a meeting that start 1 hour before meeting and during meeting(link if text or video meeting)
+    -✔️notifcation across top of all screens that says you have a meeting that start 1 hour before meeting and during meeting(link if text or video meeting)
     -consider order of information in the rows on the home page
     -pick friendly font
     -✔️change creator and recruit to: 1. "I'm starting something" — I have a project and want collaborators(have a tab for each one: projects, interests, ideas)
@@ -18,7 +18,7 @@ To Do List Before Production:
                                     3. "I'm brainstorming" — I want to meet someone and co-create a new project
                                     (change text of creator and recruit and not just status)
     -✔️just make sure there is something like a symbol showing the connection between the three agendas and the tabs. Also, format it better across site
-    -fix filters
+    -✔️fix filters
     -add age
 
     Video Chat
@@ -53,7 +53,7 @@ To Do List Before Production:
     -✔️make sure that users are added once a meeting request is accepted
         - If meeting request declined - the recipient should be able to send a message to sender on why it was declined (or use reschedule)
     -✔️make it possible to access someones profile from contacts page in messages
-    -add feature to search contacts
+    -✔️add feature to search contacts
     -✔️notifcation on the contact name that says how many new message you have from them(1 new message)
     -✔️notification on the message icon that states how many total new messages you have
     -time stamps and date stamps
@@ -63,19 +63,18 @@ To Do List Before Production:
     -✔️need to be sure do add something like display projects with dates and links so people can show off their past projects
     -✔️automatically put in creator status if you have at least one project you are actively recruiting for(if you have projects and want to switch to recruit then all project's actively recruiting switch is turned off)
     -✔️if your status is recuit, state and display the type of projects you are open to joining(maybe do this for creators to, maybe for creators state whether they are open to contributing to another project)
-        -(if your are a recruit or are a creator and willing to contribute to anothers project that the interests tab is revealed)
+        -✔️(if your are a recruit or are a creator and willing to contribute to anothers project that the interests tab is revealed)
     -✔️add favorites list of profiles
     -display strikes(maybe display and allow user to add a reason for why they missed the meeting)(maybe do display strikes but make sure they exist and we notify if someone receives one)
     -✔️notifier that states whether someone is willing to contribute to someone elses project(default is yes)
     -remove sent meeting invites and provide a link to a meeting history page
-    -only update ratings every 5-10 ratings(objective questions and positive)
 
     Signup Page
     -✔️allow to select dob using calendar and change format(some type of widget)(add this for send meeting invite form too)
     -send code to email to verify email
 
     Signin Page
-    -allow yourself to sign in with other sites such as google
+    -allow yourself to sign in with other sites such as google(wont work right now because of all the other data we are trying to capture on sign up)
 
     Meeting Point
     -make sure meeting point api cannot be exploited

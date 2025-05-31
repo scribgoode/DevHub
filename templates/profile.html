@@ -24,20 +24,48 @@
                     <p><b>Name:</b> {{profile.first_name}}</p>
                     <p><b>City:</b> {{profile.city}}</p>
                     <p><b>Meeting Preference:</b> {{profile.meeting_preference}}</p>
-                    <p><b>Agendas:</b> {{profile.agenda}}</p>
+                    <div><b>Agendas:</b> 
+                    <div>{% if 'starting' in profile.agenda %} <img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="20" height="20">Starting Something {% endif %}</div>
+                    <div>{% if 'joining' in profile.agenda %} <img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="20" height="20">Joining In{% endif %}</div>
+                    <div>{% if 'brainstorming' in profile.agenda %} <img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="20" height="20">Brainstorming{% endif %}</div></div>
                     {% if "I'm starting something" in profile.agenda %}<p><b>Willing to Contribute to Another's Project Too:</b> {{profile.open_to_contributing}}{% endif %}</p>
                 </div>
             </div>
         </div>
         <div class="projects">
-            <div class="projects-header">Projects</div>
+            <div class="projects-header">
+                {% if 'starting' in profile.agenda %}<span id="projects-button" onclick="showProjects()"><img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="20" height="20">Projects</span>{% endif %}
+                {% if 'joining' in profile.agenda %}<span id="interests-button" onclick="showInterests()"><img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="20" height="20">Interests</span>{% endif %}
+                {% if 'brainstorming' in profile.agenda %}<span id="ideas-button" onclick="showIdeas()"><img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="20" height="20">Ideas</span>{% endif %}
+            </div>
             <div class="projects-box">
+            {% if 'starting' in profile.agenda %}
                 {% for project in projects %}
                 <div class="project-rows">
                     <header>{{project.title}}</header>
-                    <p>Visibility: {{project.visibility}}</p>
-                    <p>Description: {{project.description}}</p>
+                    <div id="project-dates">{{project.start_date}} - {% if project.current %}current{% else %}{{project.end_date}}{% endif %}</div>
+                    <div>Actively Recruiting?: {{project.actively_recruiting}}</div>
+                    <div>Description: {{project.description}}</div>
+                    {% if project.contribution_explanation %}<div>How I would like someone to contribute: {{project.contribution_explanation}}</div>{% endif %}
+                    {% if project.link %}<div>Relevant Link: <a href="{{project.link}}">{{project.link}}</a></div>{% endif %}
                 </div>
+                {% endfor %}
+            {% endif %}
+            </div>
+            <div class="interests-box hidden">
+                {% for interest in interests %}
+                    <div class="project-rows">
+                        <div>Subject: {{interest.subject}}</div>
+                        <p>Interested In Joining: {{interest.interested_in_joining}}</p>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class="ideas-box hidden">
+                {% for idea in ideas %}
+                    <div class="project-rows">
+                        <div>Subject: {{idea.subject}}</div>
+                        <p>Rough Idea: {{idea.rough_idea}}</p>
+                    </div>
                 {% endfor %}
             </div>
         </div>
@@ -124,6 +152,49 @@
             }
         });
     </script>
+    
+<script>
+    const ideas_button = document.getElementById("ideas-button");
+    const interests_button = document.getElementById("interests-button");
+    const projects_button = document.getElementById("projects-button");
+
+    function showIdeas() {
+        const projectsBox = document.querySelector(".projects-box");
+        projectsBox.classList.add("hidden");
+        const interestsBox = document.querySelector(".interests-box");
+        interestsBox.classList.add("hidden");
+        const ideasBox = document.querySelector(".ideas-box");
+        ideasBox.classList.remove("hidden");
+        ideas_button.style.backgroundColor = "grey";
+        projects_button.style.backgroundColor = "#fff";
+        interests_button.style.backgroundColor = "#fff";
+    }
+
+    function showInterests() {
+        const projectsBox = document.querySelector(".projects-box");
+        const ideasBox = document.querySelector(".ideas-box");
+        projectsBox.classList.add("hidden");
+        ideasBox.classList.add("hidden");
+        const interestsBox = document.querySelector(".interests-box");
+        interestsBox.classList.remove("hidden");
+        interests_button.style.backgroundColor = "grey";
+        projects_button.style.backgroundColor = "#fff";
+        ideas_button.style.backgroundColor = "#fff";
+    }
+
+    function showProjects() {
+        const projectsBox = document.querySelector(".projects-box");
+        projectsBox.classList.remove("hidden");
+        const interestsBox = document.querySelector(".interests-box");
+        const ideasBox = document.querySelector(".ideas-box");
+        interestsBox.classList.add("hidden");
+        ideasBox.classList.add("hidden");
+        projects_button.style.backgroundColor = "grey";
+        interests_button.style.backgroundColor = "#fff";
+        ideas_button.style.backgroundColor = "#fff";
+
+    }
+</script>
     <!-- <script>
     const is_authenticated = JSON.parse(document.getElementById('is_authenticated').textContent);
     // wait for DOM to load

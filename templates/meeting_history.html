@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+{% load tz %}
+{% now "U" as current_time %}
+{% load meeting_logic %}
+
+<div class="meeting-history-header">Meeting History</div>
+
+<div class="sent-meetings-container">
+    <div class="sent-meeting-invites-header">Sent Meeting Invites</div>
+    {% for meeting in sent_meetings %}
+        <div class="meeting-item">
+            <div class="meeting-recipient">Sent to: {{ meeting.recipient }}</div>
+            <div class="meeting-time">Time: {{ meeting.start_time|date:"Y-m-d H:i" }} - {{ meeting.end_time|date:"H:i" }}</div>
+            <div class="meeting-status">Status: {{ meeting.status }}</div>
+        </div>
+    {% empty %}
+        <div class="no-meetings">No sent meetings found.</div>
+    {% endfor %}
+</div>
+<div class="received-meeting-invites-header">Received Meeting Invites</div>
+    <div class="received-meetings-container">
+        {% for meeting in received_meetings %}
+            <div class="meeting-item">
+                <div class="meeting-sender">From: {{ meeting.sender }}</div>
+                <div class="meeting-time">Time: {{ meeting.start_time|date:"Y-m-d H:i" }} - {{ meeting.end_time|date:"H:i" }}</div>
+                <div class="meeting-status">Status:{{ meeting.status }}</div>
+            </div>
+        {% empty %}
+            <div class="no-meetings">No received meetings found.</div>
+        {% endfor %}
+
+{% endblock %}
