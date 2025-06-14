@@ -28,6 +28,7 @@ class Engineer(AbstractUser):
     # address = models.CharField(max_length=255, blank=True, null=True)
     projects = models.ManyToManyField('Project', blank=True) 
     dob = models.DateField(default=date.today)
+    age = models.IntegerField(default=0, blank=True, null=True) #this is not a required field because we might not want to ask for it
     country = models.ForeignKey('cities_light.Country', on_delete=models.SET_NULL, null=True, blank=True) 
     city = models.ForeignKey('cities_light.City', on_delete=models.SET_NULL, null=True, blank=True)
     timezone = models.CharField(max_length=64, default='UTC')
@@ -37,6 +38,7 @@ class Engineer(AbstractUser):
     address = models.OneToOneField(Address, on_delete=models.CASCADE, null=True, blank=True) #cant be a one to one field here because two people that live together can have the same address
     favorites = models.ManyToManyField('Engineer', symmetrical=False, blank=True) #not working
     online_status = models.BooleanField(default=False)
+    online_status_visible = models.BooleanField(default=True)  # Whether the user wants to be visible online
     
     # Rating system
     rating = models.FloatField(default=0)
@@ -83,6 +85,13 @@ class Engineer(AbstractUser):
             return True
         else:
             return False
+    
+    @property
+    def age(self):
+        today = date.today()
+        return today.year - self.dob.year - (
+            (today.month, today.day) < (self.dob.month, self.dob.day)
+        )
 
 #create a model and add both foreign keys from project and engineer to create a many to many relationship that we can add more fields to if needed
 

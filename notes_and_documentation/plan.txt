@@ -1,7 +1,8 @@
 To Do List Before Production:
     Security
-    -make sure each form has csrf token
+    -✔️make sure each post, put, and delete form has csrf token
     -look up django security practices and implement standards
+        -make sure meeting point api cannot be exploited
 
     UI
     -configure css for smart phones
@@ -19,7 +20,7 @@ To Do List Before Production:
                                     (change text of creator and recruit and not just status)
     -✔️just make sure there is something like a symbol showing the connection between the three agendas and the tabs. Also, format it better across site
     -✔️fix filters
-    -add age
+    -✔️add age
 
     Video Chat
     -✔️add microphone button
@@ -38,8 +39,8 @@ To Do List Before Production:
     -✔️display last online(online within the last week, online within the past month)(filter)(we decided there was no point for this filter right now)
     -fix last online to work if you login with cached login info
     -✔️display currently online using websocket(would you want people to know you are currently online using the site?)
-    -add button to hide online status
-    -pagination
+    -✔️add button to hide online status(online status: visible or hidden)
+    -✔️pagination
     -✔️footer
     -default sorting(online status, city, creator/status)
     -logo
@@ -56,7 +57,7 @@ To Do List Before Production:
     -✔️add feature to search contacts
     -✔️notifcation on the contact name that says how many new message you have from them(1 new message)
     -✔️notification on the message icon that states how many total new messages you have
-    -time stamps and date stamps
+    -✔️time stamps and date stamps
 
     My Profile Page
     -✔️allow edits to only some profile information
@@ -67,17 +68,17 @@ To Do List Before Production:
     -✔️add favorites list of profiles
     -display strikes(maybe display and allow user to add a reason for why they missed the meeting)(maybe do display strikes but make sure they exist and we notify if someone receives one)
     -✔️notifier that states whether someone is willing to contribute to someone elses project(default is yes)
-    -remove sent meeting invites and provide a link to a meeting history page
+    -✔️remove sent meeting invites and provide a link to a meeting history page
 
     Signup Page
     -✔️allow to select dob using calendar and change format(some type of widget)(add this for send meeting invite form too)
-    -send code to email to verify email
+    -✔️send code to email to verify email
+    -✔️reset password in email
 
     Signin Page
-    -allow yourself to sign in with other sites such as google(wont work right now because of all the other data we are trying to capture on sign up)
+    -✔️allow yourself to sign in with other sites such as google(wont work right now because of all the other data we are trying to capture on sign up)
 
     Meeting Point
-    -make sure meeting point api cannot be exploited
     -css
 
     Projects
@@ -88,6 +89,7 @@ To Do List Before Production:
     Ideas/ things that might NEED to be added:
     -maybe just have two colums that show project title and interests titles in the projects, interests, and ideas column
     -reveal last name to other user once the other user accepts a meeting request
+    -maybe remove porjects, interests, and ideas column on home screen and just make that hidden window appear when hovering on agendas
 
 
 

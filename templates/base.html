@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{% static 'styling.css' %}">
     <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
     <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" />
     <title>ProjectPals</title>
     
 </head>
@@ -48,7 +49,10 @@
                     {% else %}
                         <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
                     {% endif %}
-            {% elif user.is_authenticated and request.path != '/my-profile/' %}
+
+                    <button id="loginLink" class="quick-settings-button">&#x2699;</button>
+                    
+                {% elif user.is_authenticated and request.path != '/my-profile/' %}
                     <form id="login-form" action="/my-profile" method="get">
                         <button type="submit" id="loginLink" >My Profile</button>
                     </form>
@@ -77,7 +81,11 @@
                     {% else %}
                         <button type="submit" id="loginLink" class="notification-button">&#128276;</button>
                     {% endif %}
-            {% elif not user.is_authenticated and request.path != '/accounts/signup/' %}
+
+                    
+                    <button id="loginLink" class="quick-settings-button">&#x2699;</button>
+
+                {% elif not user.is_authenticated and request.path != '/accounts/signup/' %}
                     <form id="login-form" action="{% url 'account_login' %}" method="get">
                         <button type="submit" id="loginLink">Login</button>
                     </form>
@@ -114,6 +122,20 @@
           </div>
         {% endfor %}
       </div>
+
+
+    <div class="quick-settings hidden">
+        <h2>Quick Settings</h2>
+        <form id="online-status-form" method="post">
+            {% csrf_token %}
+            <input type="hidden" name="show-online-status-checkbox" value="hidden">
+            <label>
+                <input type="checkbox" name="show-online-status-checkbox" value="visible" onchange="this.form.submit()" {% if user.online_status_visible %}checked{% endif %}>
+                Online Status Visible
+            </label>
+        </form>
+        <a href="{% url 'account_reset_password' %}" class="btn btn-primary">Reset Password</a>
+    </div>
   
       <div id="notification-dropdown" class="dropdown hidden">
         {% if unread_notifications.unread_meeting_status %}
@@ -153,6 +175,10 @@
     document.querySelector('.notification-button').addEventListener('click', function() {
         document.querySelector('#notification-dropdown').classList.toggle('hidden');
     });
+
+    document.querySelector('.quick-settings-button').addEventListener('click', function() {
+        document.querySelector('.quick-settings').classList.toggle('hidden'); 
+    })
     
     //logic that lets you see notifications
     document.addEventListener("click", function (e) {

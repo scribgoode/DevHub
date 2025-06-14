@@ -37,8 +37,8 @@
             <button id="submit-profile-info-edits" type="submit">Update</button>
         </form>
         <div class="profile-info-container" id="profile-info-container">
-            <button id="edit-personal-info" onclick=showForm() >Edit Personal Info</button>
             <p><b>Name:</b> {{user.first_name}}</p>
+            <p><b>Age:</b> {{user.age}}</p>
             <p><b>City:</b> {{user.city}}</p>
             <p><b>Meeting Preference:</b> {{user.meeting_preference}}</p>
             <div><b>Agendas:</b> 
@@ -47,6 +47,7 @@
             <div>{% if 'brainstorming' in user.agenda %} <img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="20" height="20">Brainstorming{% endif %}</div></div>
             <p><b>Willing to Contribute to Another's Project Too:</b> {{user.open_to_contributing}}</p>
         </div>
+        <button id="edit-personal-info" onclick=showForm() >Edit Personal Info</button>
     </div>
     <div class="spacer"></div>
     <div class="meetings-list">
@@ -78,8 +79,8 @@
                             <p>Address: {{meeting.meeting_request.address}}</p>
                             {% if meeting.can_cancel %}
                                 <form method="POST" class="cancel-meeting-form">
-                                    <input type="hidden" name="form_type" value="cancel-meeting-form">
                                     {% csrf_token %}
+                                    <input type="hidden" name="form_type" value="cancel-meeting-form">
                                     <input type="hidden" name="meeting_id" value="{{ meeting.id }}">
                                     <input type="hidden" name="cancel_user" value="{{ user.id }}">
                                     <label for="cancel_reason">Reason for cancellation:</label>
@@ -99,8 +100,8 @@
                             <p>Proposed Time: {{meeting.start_time|timezone:request.user.timezone|time:"H:i T"}} - {{ meeting.end_time|timezone:request.user.timezone|time:"H:i T" }} on {{meeting.date}}</p>
                              {% if meeting.can_cancel %}
                             <form method="POST" class="cancel-meeting-form"></form>
-                                <input type="hidden" name="form_type" value="cancel-meeting-form">
                                 {% csrf_token %}
+                                <input type="hidden" name="form_type" value="cancel-meeting-form">
                                 <input type="hidden" name="meeting_id" value="{{ meeting.id }}">
                                 <input type="hidden" name="cancel_user" value="{{ user.id }}">
                                 <label for="cancel_reason">Reason for cancellation:</label>
@@ -150,8 +151,8 @@
                             <br>
                             Please rate the meeting and the pal!
                             <form method="POST" class="meeting-review-form">
-                                <input type="hidden" name="form_type" value="meeting-review-form">    
                                 {% csrf_token %}
+                                <input type="hidden" name="form_type" value="meeting-review-form">    
                                 <input type="hidden" name="meeting_id" value="{{ meeting.id }}">
                                 <input type="hidden" name="meeting_type" value="{{ meeting.type }}">
                                 {% if user.id == meeting.sender.id %}
@@ -220,8 +221,8 @@
                         <p>Meeting with {{meeting.recipient}} has been cancelled</p>
                         <p>Reason: {{meeting.cancel_reason}}</p>
                         <form class="acknowledge-meeting" method="POST">
-                            <input type="hidden" name="form_type" value="acknowledge_meeting">
                             {% csrf_token %}
+                            <input type="hidden" name="form_type" value="acknowledge_meeting">
                             <input type="hidden" name="meeting_id" value="{{ meeting.id }}">
                             <button type="submit">Acknowledge</button>
                         </form>
@@ -238,8 +239,8 @@
                                 <p>{{meeting.recipient}} will reschedule this meeting...</p>
                             {% endif %}
                             <form class="acknowledge-meeting" method="POST">
-                                <input type="hidden" name="form_type" value="acknowledge_meeting">
                                 {% csrf_token %}
+                                <input type="hidden" name="form_type" value="acknowledge_meeting">
                                 <input type="hidden" name="meeting_id" value="{{ meeting.id }}">
                                 <button type="submit">Acknowledge</button>
                             </form>
@@ -292,8 +293,8 @@
         <div class="add-project-popup hidden" id="add-project-popup">
                 <button class="close-window">X</button>
                 <form class="add-project" method="post">
-                    <input type="hidden" name="form_type" value="add_project">
                     {% csrf_token %}
+                    <input type="hidden" name="form_type" value="add_project">
                     {{ project_creation_form.as_p }}
                     <button type="submit">Create</button>
                 </form>
@@ -301,9 +302,9 @@
             <div class="add-project-popup hidden" id="add-interest-popup">
                 <button class="close-window">X</button>
                 <form class="add-interest" method="post">
+                    {% csrf_token %}
                     <input type="hidden" name="form_type" value="add_project">
                     <header>Interest Form</header>
-                    {% csrf_token %}
                     {{ interest_creation_form.as_p }}
                     <button type="submit">Create</button>
                 </form>
@@ -311,9 +312,9 @@
             <div class="add-project-popup hidden" id="add-idea-popup">
                 <button class="close-window">X</button>
                 <form class="add-idea" method="post">
+                    {% csrf_token %}
                     <input type="hidden" name="form_type" value="add_project">
                     <header>Idea Form</header>
-                    {% csrf_token %}
                     {{ idea_creation_form.as_p }}
                     <button type="submit">Create</button>
                 </form>
@@ -350,8 +351,8 @@
                         <p>Address: {{meeting_request.address}}</p>
                     {% endif %}
                     <form class="meeting-request-decision" method="post">
-                        <input type="hidden" name="form_type" value="meeting_request_decision">
                         {% csrf_token %}
+                        <input type="hidden" name="form_type" value="meeting_request_decision">
                         <input type="hidden" name="meeting_request_sender_id" value="{{ meeting_request.sender.id }}">
                         <input type="hidden" name="meeting_request_recipient_id" value="{{ meeting_request.recipient.id }}">
                         <input type="hidden" name="decision" id="decision">
@@ -387,12 +388,13 @@
                                 Status: {{sent_meeting.status}} <br>
                                 {% if sent_meeting.type == 'in-person' %}
                                     <form id="update-location-form" type="meeting_request_update">
+                                        {% csrf_token %}
                                         <button type="button" name="meeting_request_update" onclick="updateLocation('{{ sent_meeting.locationUpdateURL }}')">Update Location</button>
                                     </form>
                                 {% endif %}
                                 <form class="cancel-sent-request-form" method="POST">
-                                    <input type="hidden" name="form_type" value="cancel_sent_request">
                                     {% csrf_token %}
+                                    <input type="hidden" name="form_type" value="cancel_sent_request">
                                     <input type="hidden" name="sent_meeting_id" value="{{ sent_meeting.id }}">
                                     <button type="submit">Cancel Request</button>
                                 </form>
@@ -406,8 +408,8 @@
                             <button class="close-window">X</button>
                             <p>Meeting request with {{sent_meeting.recipient}} is being rescheduled</p>
                             <form class="sent-meeting-acknowledgement" method="post">
-                                <input type="hidden" name="form_type" value="sent-meeting-acknowledgement">
                                 {% csrf_token %}
+                                <input type="hidden" name="form_type" value="sent-meeting-acknowledgement">
                                 <input type="hidden" name="sent_meeting_sender_id" value="{{ sent_meeting.sender.id }}">
                                 <input type="hidden" name="sent_meeting_recipient_id" value="{{ sent_meeting.recipient.id }}">
                                 <input type="hidden" name="send_meeting_status" value="{{ sent_meeting.status }}">
@@ -423,8 +425,8 @@
                             <button class="close-window">X</button>
                             <p>Meeting request with {{sent_meeting.recipient}} has been declined</p>
                             <form class="sent-meeting-acknowledgement" method="post">
-                                <input type="hidden" name="form_type" value="sent-meeting-acknowledgement">
                                 {% csrf_token %}
+                                <input type="hidden" name="form_type" value="sent-meeting-acknowledgement">
                                 <input type="hidden" name="sent_meeting_sender_id" value="{{ sent_meeting.sender.id }}">
                                 <input type="hidden" name="sent_meeting_recipient_id" value="{{ sent_meeting.recipient.id }}">
                                 <input type="hidden" name="send_meeting_status" value="{{ sent_meeting.status }}">

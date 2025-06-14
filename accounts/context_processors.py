@@ -32,7 +32,6 @@ def global_data(request):
         # Timezone-aware unread meeting notifications
         user_tz = pytz.timezone(getattr(request.user, 'timezone', 'UTC'))
         notification = Notification.objects.filter(user=request.user, is_read=False).order_by('-created_at').first()
-        print("local time: ", localtime(notification.created_at, timezone=user_tz))
         
         unread_meeting_status = [
             {

@@ -44,6 +44,8 @@ from datetime import datetime
 import pytz
 from video_chat.tasks.meeting_tasks import set_meeting_status
 
+from django.core.paginator import Paginator
+
 
 '''
 class HomePageView(TemplateView):
@@ -62,7 +64,7 @@ def meetingHistory(request):
 def signUp(request):
     return render(request, 'accounts/signup.html')
 
-def login(request): 
+def login(request):
     return render(request, 'accounts/login.html')  
 
 def home(request):
@@ -96,17 +98,37 @@ def home(request):
             profiles = profiles.filter(elevator_pitch__isnull=False).exclude(elevator_pitch='')
         if pitch == 'false':
             profiles = profiles.filter(Q(elevator_pitch=True) | Q(elevator_pitch=''))
+        
+    if request.method == 'POST':      
+        if 'show-online-status-checkbox' in request.POST:
+            value = request.POST.get('show-online-status-checkbox')
+            if value == 'hidden':  
+                current_user = Engineer.objects.get(id=request.user.id)
+                current_user.online_status_visible = False
+                current_user.save()
+                messages.success(request, 'You are now hidden online.')
+            else:
+                current_user = Engineer.objects.get(id=request.user.id)
+                current_user.online_status_visible = True
+                current_user.save()
+                messages.success(request, 'You are now visible online.')
 
     projects = Project.objects.all()
+    paginator = Paginator(profiles, 10) #Show 10 profiles per page
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    user = request.user
+
     cities = City.objects.all()
-    context = {'profiles': profiles,
+    context = {'page_obj': page_obj,
                'cities': cities,
                'agenda': agenda,
                'preference': preference,
                'pitch': pitch,
                'city': city,
                'search': search,
-               'projects': projects,}
+               'projects': projects,
+               'user': user,}
     #tomorrow
     
     return render(request, 'home.html', context)
@@ -224,7 +246,8 @@ def Profile(request, id):
             current_user.favorites.add(Engineer.objects.get(id=id))
             current_user.save()
             messages.success(request, 'Profile added to favorites.')
-            print(current_user.favorites.all(), 'print statement for favorites')
+            print(current_user.favorites.all(), 'print statement for favorites')   
+
     else:
         meeting_request_form = MeetingRequestForm()
 
@@ -260,7 +283,20 @@ def myProfile(request):
     # print(current_time_unix)
     # print(f"Current Time in {system_timezone}: {current_time}")
 
-    if request.method == 'POST':
+    if request.method == 'POST':      
+        if 'show-online-status-checkbox' in request.POST:
+            value = request.POST.get('show-online-status-checkbox')
+            if value == 'hidden':  
+                current_user = Engineer.objects.get(id=request.user.id)
+                current_user.online_status_visible = False
+                current_user.save()
+                messages.success(request, 'You are now hidden online.')
+            else:
+                current_user = Engineer.objects.get(id=request.user.id)
+                current_user.online_status_visible = True
+                current_user.save()
+                messages.success(request, 'You are now visible online.')
+
         form_type = request.POST.get("form_type")
         print("form type:", form_type)
         match form_type:
@@ -476,7 +512,7 @@ def myProfile(request):
                 meeting_request.save()
                 meeting = Meeting(sender=meeting_request.sender, recipient=meeting_request.recipient, start_time=meeting_request.start_time, end_time=meeting_request.end_time, date=meeting_request.date, description=meeting_request.message, type=meeting_request.type, meeting_request = meeting_request, status=Meeting.Status.CANCELLED)
                 meeting.acknowledged = True # mark meeting as acknowledged as request was cancelled
-                meeting.save()
+                meeting.save()            
             case _:
                 print('did not get post msg. something went wrong')
 
@@ -549,6 +585,7 @@ def myProfile(request):
     interest_creation_form = InterestCreationForm()
     idea_creation_form = IdeaCreationForm()
     edit_profile_info_form = EditProfileForm(instance=request.user)
+    user = Engineer.objects.get(id=request.user.id) 
     print("current time:", now())  # returns datetime in the user's timezone
 
     context = {'meetings': meetings,
@@ -563,6 +600,7 @@ def myProfile(request):
                'edit_profile_info_form': edit_profile_info_form,
                'interests': interests,
                'ideas': ideas,
+               'user': user,
                }
 
     return render(request, 'my_profile.html', context)

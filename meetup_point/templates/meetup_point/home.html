@@ -20,6 +20,7 @@
         <section id="input-address">
             <h2>Input Address</h2>
             <form id="address-form">
+                {% csrf_token %}
                 <label for="state">State:</label>
                 <input type="text" id="state" name="state" required>
 
@@ -39,6 +40,7 @@
         <section id="input-address">
             <h2>Input 2nd Address</h2>
             <form id="address-form">
+                {% csrf_token %}
                 <label for="state">State:</label>
                 <input type="text" id="state2" name="state" required>
 
@@ -56,6 +58,7 @@
         <section id="transportation-mode">
             <h2>Select Transportation Mode</h2>
             <form id="transportation-form">
+                {% csrf_token %}
                 <label for="mode">Mode of Transportation:</label>
                 <select id="mode" name="mode" required>
                     <option value="car">Car</option>
