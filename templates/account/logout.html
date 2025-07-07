@@ -1,0 +1,67 @@
+{% load static %}
+{% load allauth i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.8">
+    <link rel="stylesheet" href="{% static 'styling.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@700&display=swap" rel="stylesheet">
+    <title>ProjectPals</title>
+</head>
+<body>
+    <div class="logout-container">
+    {% if user.is_authenticated %}
+        {% url 'account_email' as email_url %}
+        {% if email_url %}
+            <li>
+                <a href="{{ email_url }}">{% trans "Change Email" %}</a>
+            </li>
+        {% endif %}
+        {% url 'account_change_password' as change_password_url %}
+        {% if change_password_url %}
+            <li>
+                <a href="{{ change_password_url }}">{% trans "Change Password" %}</a>
+            </li>
+        {% endif %}
+        {% url 'mfa_index' as mfa_url %}
+        {% if mfa_url %}
+            <li>
+                <a href="{{ mfa_url }}">{% trans "Two-Factor Authentication" %}</a>
+            </li>
+        {% endif %}
+        {% url 'usersessions_list' as usersessions_list_url %}
+        {% if usersessions_list_url %}
+            <li>
+                <a href="{{ usersessions_list_url }}">{% trans "Sessions" %}</a>
+            </li>
+        {% endif %}
+        {% url 'account_logout' as logout_url %}
+        {% if logout_url %}
+            <li>
+                <a href="{{ logout_url }}">{% trans "Sign Out" %}</a>
+            </li>
+        {% endif %}
+    {% endif%}
+    
+    {% element h1 %}
+        {% trans "Sign Out" %}
+    {% endelement %}
+    {% element p %}
+        {% trans 'Are you sure you want to sign out?' %}
+    {% endelement %}
+    {% url 'account_logout' as action_url %}
+    {% element form method="post" action=action_url no_visible_fields=True %}
+        {% slot body %}
+            {% csrf_token %}
+            {{ redirect_field }}
+        {% endslot %}
+        {% slot actions %}
+            {% element button type="submit" %}
+                {% trans 'Sign Out' %}
+            {% endelement %}
+        {% endslot %}
+    {% endelement %}
+    </div>
+</body>
+</html>

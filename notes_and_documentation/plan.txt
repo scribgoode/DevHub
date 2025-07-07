@@ -10,7 +10,7 @@ To Do List Before Production:
     -after the slide show require a sign in or sign up to access the site
     -after the account is created, the person should be directed to a seperate page where they can decide to stay a recruit or advertise a project or multiple projects and to record their elevator pitch
     -give people a good example of an elevator pitch and some key points to talk about and emphasize the importance of it
-    -configure css for sign out page
+    -✔️configure css for sign out page
     -✔️notifcation across top of all screens that says you have a meeting that start 1 hour before meeting and during meeting(link if text or video meeting)
     -consider order of information in the rows on the home page
     -pick friendly font

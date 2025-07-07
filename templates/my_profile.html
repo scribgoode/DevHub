@@ -9,6 +9,8 @@
 
 <div class="profile-data">
     {% if user.elevator_pitch %}
+    <div class="my-profile-left-side">
+    <div class="my-profile-left-side-top">
         <form method="post">
             {% csrf_token %}
             <input type="hidden" name="form_type" value="video_remove">
@@ -49,7 +51,80 @@
         </div>
         <button id="edit-personal-info" onclick=showForm() >Edit Personal Info</button>
     </div>
-    <div class="spacer"></div>
+</div>
+
+<div class="projects-and-requests">
+    <div class="projects">
+        <div class="projects-header">
+            {% if 'starting' in user.agenda %}<span id="projects-button" onclick="showProjects()"><img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="20" height="20">Projects</span>{% endif %}
+            {% if 'joining' in user.agenda %}<span id="interests-button" onclick="showInterests()"><img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="20" height="20">Interests</span>{% endif %}
+            {% if 'brainstorming' in user.agenda %}<span id="ideas-button" onclick="showIdeas()"><img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="20" height="20">Ideas</span>{% endif %}
+            <button id="add-project">&#43;</button>
+        </div>
+        <div class="projects-box">
+        {% if 'starting' in user.agenda %}
+            {% for project in projects %}
+            <div class="project-rows">
+                <header>{{project.title}}</header>
+                <div id="project-dates">{{project.start_date}} - {% if project.current %}current{% else %}{{project.end_date}}{% endif %}</div>
+                <div>Actively Recruiting?: {{project.actively_recruiting}}</div>
+                <div>Description: {{project.description}}</div>
+                {% if project.contribution_explanation %}<div>How I would like someone to contribute: {{project.contribution_explanation}}</div>{% endif %}
+                {% if project.link %}<div>Relevant Link: <a href="{{project.link}}">{{project.link}}</a></div>{% endif %}
+            </div>
+            {% endfor %}
+        {% endif %}
+        </div>
+        <div class="interests-box hidden">
+            {% for interest in interests %}
+                <div class="project-rows">
+                    <div>Subject: {{interest.subject}}</div>
+                    <p>Interested In Joining: {{interest.interested_in_joining}}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="ideas-box hidden">
+            {% for idea in ideas %}
+                <div class="project-rows">
+                    <div>Subject: {{idea.subject}}</div>
+                    <p>Rough Idea: {{idea.rough_idea}}</p>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="add-project-popup hidden" id="add-project-popup">
+                <button class="close-window">X</button>
+                <form class="add-project" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="add_project">
+                    {{ project_creation_form.as_p }}
+                    <button type="submit">Create</button>
+                </form>
+            </div>
+            <div class="add-project-popup hidden" id="add-interest-popup">
+                <button class="close-window">X</button>
+                <form class="add-interest" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="add_project">
+                    <header>Interest Form</header>
+                    {{ interest_creation_form.as_p }}
+                    <button type="submit">Create</button>
+                </form>
+            </div>
+            <div class="add-project-popup hidden" id="add-idea-popup">
+                <button class="close-window">X</button>
+                <form class="add-idea" method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="form_type" value="add_project">
+                    <header>Idea Form</header>
+                    {{ idea_creation_form.as_p }}
+                    <button type="submit">Create</button>
+                </form>
+            </div>
+    </div>
+    </div>
+    </div>
+<div class="my-profile-right-side">
+    <div class="incoming-and-sent-invites">
     <div class="meetings-list">
         <div class="meeting-headers">
             <span>Upcoming Meetings</span>
@@ -251,77 +326,6 @@
         </div>
     </div>
 </div>
-
-<div class="projects-and-requests">
-    <div class="projects">
-        <div class="projects-header">
-            {% if 'starting' in user.agenda %}<span id="projects-button" onclick="showProjects()"><img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="20" height="20">Projects</span>{% endif %}
-            {% if 'joining' in user.agenda %}<span id="interests-button" onclick="showInterests()"><img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="20" height="20">Interests</span>{% endif %}
-            {% if 'brainstorming' in user.agenda %}<span id="ideas-button" onclick="showIdeas()"><img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="20" height="20">Ideas</span>{% endif %}
-            <button id="add-project">&#43;</button>
-        </div>
-        <div class="projects-box">
-        {% if 'starting' in user.agenda %}
-            {% for project in projects %}
-            <div class="project-rows">
-                <header>{{project.title}}</header>
-                <div id="project-dates">{{project.start_date}} - {% if project.current %}current{% else %}{{project.end_date}}{% endif %}</div>
-                <div>Actively Recruiting?: {{project.actively_recruiting}}</div>
-                <div>Description: {{project.description}}</div>
-                {% if project.contribution_explanation %}<div>How I would like someone to contribute: {{project.contribution_explanation}}</div>{% endif %}
-                {% if project.link %}<div>Relevant Link: <a href="{{project.link}}">{{project.link}}</a></div>{% endif %}
-            </div>
-            {% endfor %}
-        {% endif %}
-        </div>
-        <div class="interests-box hidden">
-            {% for interest in interests %}
-                <div class="project-rows">
-                    <div>Subject: {{interest.subject}}</div>
-                    <p>Interested In Joining: {{interest.interested_in_joining}}</p>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="ideas-box hidden">
-            {% for idea in ideas %}
-                <div class="project-rows">
-                    <div>Subject: {{idea.subject}}</div>
-                    <p>Rough Idea: {{idea.rough_idea}}</p>
-                </div>
-            {% endfor %}
-        </div>
-        <div class="add-project-popup hidden" id="add-project-popup">
-                <button class="close-window">X</button>
-                <form class="add-project" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="form_type" value="add_project">
-                    {{ project_creation_form.as_p }}
-                    <button type="submit">Create</button>
-                </form>
-            </div>
-            <div class="add-project-popup hidden" id="add-interest-popup">
-                <button class="close-window">X</button>
-                <form class="add-interest" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="form_type" value="add_project">
-                    <header>Interest Form</header>
-                    {{ interest_creation_form.as_p }}
-                    <button type="submit">Create</button>
-                </form>
-            </div>
-            <div class="add-project-popup hidden" id="add-idea-popup">
-                <button class="close-window">X</button>
-                <form class="add-idea" method="post">
-                    {% csrf_token %}
-                    <input type="hidden" name="form_type" value="add_project">
-                    <header>Idea Form</header>
-                    {{ idea_creation_form.as_p }}
-                    <button type="submit">Create</button>
-                </form>
-            </div>
-    </div>
-    <div class="spacer"></div>
-    <div class="incoming-and-sent-invites">
         <div class="incoming-meeting-invites">
             <header class="meeting-headers">Incoming Meeting Invites</header>
             <div class="incoming-meetings-box">
@@ -441,7 +445,7 @@
     </div>
 </div>
 </div>
-
+</div>
 
 {% comment %} <div class="chat-header">Chat Messages
     <div class="message-container">

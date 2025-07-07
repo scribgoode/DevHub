@@ -19,45 +19,41 @@
                         </select>
                     </div>
 
-                    <button id="toggle-filters"><i class="fa fa-filter"></i></button>
-                    <div id="filters" class="filters hidden">
-                        <!-- your filter inputs here -->
-                        <label><input type="checkbox"> Option A</label>
-                        <label><input type="checkbox"> Option B</label>
-                    </div>
-                    
-                    <div class="status-filter">
-                        <button type="button" class="status-filter-button" id="status-filter-button">Agenda &#8964;</button>
-                        <div class="status-filter-content">
-                            <div class="status-filter-form">
-                                <label><input type="radio" name="agenda" value="any" onchange="this.form.submit()" {% if agenda == 'any' or not agenda %}checked{% endif %}>Any</label>
-                                <label><input type="radio" name="agenda" value='starting' onchange="this.form.submit()" {% if agenda == "starting" %}checked{% endif %}><img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="15" height="15">Starting Something</label>
-                                <label><input type="radio" name="agenda" value="joining" onchange="this.form.submit()" {% if agenda == "joining" %}checked{% endif %}><img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="15" height="15">Joining In</label>
-                                <label><input type="radio" name="agenda" value="brainstorming" onchange="this.form.submit()" {% if agenda == "brainstorming" %}checked{% endif %}><img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="15" height="15">Brainstorming</label>
+                    <button id="toggle-filters" type="button"><i class="fa fa-filter"></i></button>
+                    <div id="filters" class="filters">
+                        <div class="status-filter">
+                            <button type="button" class="status-filter-button" id="status-filter-button">Agenda &#8964;</button>
+                            <div class="status-filter-content">
+                                <div class="status-filter-form">
+                                    <label><input type="radio" name="agenda" value="any" onchange="this.form.submit()" {% if agenda == 'any' or not agenda %}checked{% endif %}>Any</label>
+                                    <label><input type="radio" name="agenda" value='starting' onchange="this.form.submit()" {% if agenda == "starting" %}checked{% endif %}><img src="{% static 'img/hammer_icon.png' %}" alt="My Icon" width="15" height="15">Starting Something</label>
+                                    <label><input type="radio" name="agenda" value="joining" onchange="this.form.submit()" {% if agenda == "joining" %}checked{% endif %}><img src="{% static 'img/join_icon.webp' %}" alt="My Icon" width="15" height="15">Joining In</label>
+                                    <label><input type="radio" name="agenda" value="brainstorming" onchange="this.form.submit()" {% if agenda == "brainstorming" %}checked{% endif %}><img src="{% static 'img/brain_icon.png' %}" alt="My Icon" width="15" height="15">Brainstorming</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="meeting-filter">
-                        <button type="button" id="meeting-preferences-button">Meeting Preferences &#8964;</button>
-                        <div class="meeting-filter-content">
-                            <div class="meeting-filter-form">
-                                <label><input type="radio" name="preference" value="any" onchange="this.form.submit()" {% if preference == 'any' or not preference %}checked{% endif %}>Any</label>
-                                <label><input type="radio" name="preference" value="in-person" onchange="this.form.submit()" {% if preference == 'in-person' %}checked{% endif %}>In-Person</label>
-                                <label><input type="radio" name="preference" value="video" onchange="this.form.submit()" {% if preference == 'video' %}checked{% endif %}>Video Chat</label>
-                                <label><input type="radio" name="preference" value="text" onchange="this.form.submit()" {% if preference == 'text' %}checked{% endif %}>Text Chat</label>
+                        <div class="meeting-filter">
+                            <button type="button" id="meeting-preferences-button">Meeting Preferences &#8964;</button>
+                            <div class="meeting-filter-content">
+                                <div class="meeting-filter-form">
+                                    <label><input type="radio" name="preference" value="any" onchange="this.form.submit()" {% if preference == 'any' or not preference %}checked{% endif %}>Any</label>
+                                    <label><input type="radio" name="preference" value="in-person" onchange="this.form.submit()" {% if preference == 'in-person' %}checked{% endif %}>In-Person</label>
+                                    <label><input type="radio" name="preference" value="video" onchange="this.form.submit()" {% if preference == 'video' %}checked{% endif %}>Video Chat</label>
+                                    <label><input type="radio" name="preference" value="text" onchange="this.form.submit()" {% if preference == 'text' %}checked{% endif %}>Text Chat</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="meeting-filter">
-                        <button type="button" id="pitch-preferences-button">Has Elevator Pitch &#8964;</button>
-                        <div class="pitch-filter-content">
-                            <div class="meeting-filter-form">
-                                <label><input type="radio" name="pitch" value="any" onchange="this.form.submit()" {% if pitch == 'any' or not pitch %}checked{% endif %}>Any</label>
-                                <label><input type="radio" name="pitch" value="true" onchange="this.form.submit()" {% if pitch == 'true' %}checked{% endif %}>True</label>
-                                <label><input type="radio" name="pitch" value="false" onchange="this.form.submit()" {% if pitch == 'false' %}checked{% endif %}>False</label>
+                        <div class="meeting-filter">
+                            <button type="button" id="pitch-preferences-button">Has Elevator Pitch &#8964;</button>
+                            <div class="pitch-filter-content">
+                                <div class="meeting-filter-form">
+                                    <label><input type="radio" name="pitch" value="any" onchange="this.form.submit()" {% if pitch == 'any' or not pitch %}checked{% endif %}>Any</label>
+                                    <label><input type="radio" name="pitch" value="true" onchange="this.form.submit()" {% if pitch == 'true' %}checked{% endif %}>True</label>
+                                    <label><input type="radio" name="pitch" value="false" onchange="this.form.submit()" {% if pitch == 'false' %}checked{% endif %}>False</label>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                </div>
                 </div>
             </form>
         </div>
@@ -182,6 +178,8 @@
     </div>
         <script>
                 document.addEventListener("DOMContentLoaded", function() {
+                    document.querySelector("#filters").classList.add("hidden");
+
                     document.querySelector(".status-filter-button").addEventListener("click", function() {
                         document.querySelector(".status-filter-content").classList.toggle("show");
                     });
@@ -190,6 +188,9 @@
                     });
                     document.querySelector("#pitch-preferences-button").addEventListener("click", function() {
                         document.querySelector(".pitch-filter-content").classList.toggle("show");
+                    });
+                    document.querySelector("#toggle-filters").addEventListener("click", function() {
+                        document.querySelector("#filters").classList.toggle("hidden");
                     });
                 /*window.addEventListener("click", function(e) {
                     if (!e.target.matches('.status-filter')) {

@@ -252,7 +252,8 @@ transform: scale(1.05) translateY(.125rem);
 
 .profile-data{
     display: flex;
-    height: 29vh;
+    height: auto;
+    gap: 1rem;
 }
 
 .profile-page-container{
@@ -268,6 +269,22 @@ transform: scale(1.05) translateY(.125rem);
 .profile-data-profile-page{
     display: flex;
     height: 30vh;
+}
+
+.my-profile-left-side{
+    display: flex;
+    flex-direction: column;
+    flex: 55%;
+}
+
+.my-profile-left-side-top{
+    display:flex;
+}
+
+.my-profile-right-side{
+    display: flex;
+    flex-direction: column;
+    flex: 35%;
 }
 
 .profile-data2{
@@ -667,7 +684,7 @@ transform: scale(1.05) translateY(.125rem);
 }
 
 .hidden{
-    display:none;
+    display:none !important;
 }
 
 #text-chat-header{
@@ -1489,6 +1506,10 @@ figcaption {
     display:none;
 }
 
+.logout-container{
+    background-color: cornflowerblue;
+}
+
 
 /* PHONE STYLES */
 @media only screen and (max-width: 600px) {
@@ -1538,14 +1559,6 @@ figcaption {
 
     #toggle-filters{
         display: block;
-    }
-
-    .status-filter{
-        display: none;
-    }
-
-    .meeting-filter{
-        display:none;
     }
 
     .search-bar-div{
@@ -1618,9 +1631,7 @@ figcaption {
         border:#000 0.2rem solid;
     }
 
-    .incoming-and-sent-invites{
-        display:none;
-    }
+
 
     .projects-header{
         display: flex;
@@ -1648,5 +1659,83 @@ figcaption {
         height: 3.5rem;
         font-size: 2rem;
         align-items: center;
+    }
+
+    .my-profile-left-side-top{
+        flex-direction: column;
+    }
+
+    .authentication-box{
+        width: 90%;
+    }
+
+    .signup-container{
+        display: flex;
+        width: 100%;
+        height: 100%;
+    }
+
+    .signup-left-side{
+        width: 90%;
+        height: 90%;
+        margin: auto auto;
+    }
+
+    .signup-right-side{
+        display: none;
+    }
+
+    .profile-page-container{
+        flex-direction: column;
+    }
+
+    .profile-data-profile-page{
+        flex-direction: column;
+        height: auto;
+    }
+
+    .video-row {
+        flex-direction: column !important;
+    }
+
+    .videoContent{
+        background-color: #fff;
+        height: 1rem;
+        font-size: 20rem;
+    }
+
+    .filters{
+        display: flex;
+        position:absolute;
+        top: 11rem;
+        background-color: #fff;
+        z-index: 1000;
+        width: 75%;
+    }
+
+    .text-chat{
+        top: 11rem;
+        right: 0rem;
+        height: 40rem;
+        width: 32rem;
+    }
+
+    .left-side-of-messages{
+        width: 11rem;
+    }
+
+    #contact-search-input{
+        width: 10rem;
+    }
+
+    .message-input{
+        font-size: 1.2rem;
+        padding: 0 2.8vh 0 1vh;
+    }
+
+    .dropdown{
+        width: 32rem;
+        height: 40rem;
+        right: 0rem;
     }
 }
