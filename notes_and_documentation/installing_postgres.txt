@@ -14,5 +14,8 @@
     GRANT CREATE ON SCHEMA public TO scrib;
     GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO scrib;
 7. make migrations, migrate, create superuser
+8. Elevate user to superuser 
+    ALTER USER your_username WITH SUPERUSER;
+    
 
 Database names and users names needs to be lowercase
