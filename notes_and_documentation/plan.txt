@@ -1,3 +1,5 @@
+Proudction tutorial: https://blog.lamorre.co/django-production/django-ec2-complete 
+
 To Do List Before Production:
     Security
     -✔️make sure each post, put, and delete form has csrf token

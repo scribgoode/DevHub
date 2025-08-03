@@ -1,0 +1,56 @@
+Proudction tutorial: https://blog.lamorre.co/ddjango-production/django-ec2-complete 
+https://www.youtube.com/watch?v=mbUOtILjGgU
+
+1. pip install gunicorn
+2. create dockerfile that creates image using gunicorn, changing relevant information
+3. undo commented static dirs setting then run collectstatic
+4. run these two commands to create image and then run it
+    docker build -t projectpals-production-image:latest .
+    docker run -p 8000:8080 projectpals-production-image:latest
+5. this worked but i didnt have a postgres server to test so i had to create the yml file and run
+docker-compose up --build then docker-compose exec web python manage.py migrate then the first command again
+6. aws ecr create-repository --repository-name projectpals-ec2
+6. docker login -u AWS -p $(aws ecr get-login-password --region us-east-2) 571600867484.dkr.ecr.us-east-2.amazonaws.com/projectpals-ec2
+7. docker push 571600867484.dkr.ecr.us-east-2.amazonaws.com/projectpals-ec2
+8. write terraform file, terraform init, teraform apply, enter django secret key with the quotes attached 
+9. write database.tf file and apply
+10. put environment variables at the end of activate.ps1 file before signature block and change setting to pull from there
+11. migrate the database and create super user
+12.
+(other: add whitenoise to server static files, remove pywin=308 from requirements, postgress should be 16 in database.tf)
+13. connect elasticache endpoint
+
+make sure to add quotations when terraform asks for secret key but not for database password
+make sure to start celery in the background nohup celery -A devhub worker --loglevel=info --pool=solo > celery.log 2>&1 &
+
+
+edit file on server
+-access container
+-vim (file path)
+-after do pkill -HUP gunicorn
+
+7/29
+-changed debug to true
+
+7/30
+-changed command that starts gunicorn in docker file to run the async version of gunicorn(added uvicorn[standard] to requirements)
+-changed inbound rules for the security groups associated with the elasticache to accept port 6379
+-changed celery broker url to have "" instead of ''
+
+7/31
+-elasticache traffic is encrypted so i had to change the broker url to the tls version on  port 6380. I also changed the inbound and 
+outbound rules after adding the ec2 instance to the eleastic caches' 'connected compute resources' via the console
+-also changed the channels layer endpoint to match and some small stuff to match
+-had to change the redis oss cache to have cluster mode disabled and makre sure the open port was 6380
+
+NTD(need to do):
+-add celery start up command to docker file
+
+Tips:
+rememeber to delete meeting requests because users cant have more then one pending meeting request between them
+restart everytime you change something in the settings
+
+Bugs:
+-halfway meeting point
+-24 hour format on meeting pop up
+-make sure video instances get deleted every time 

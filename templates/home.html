@@ -19,7 +19,7 @@
                         </select>
                     </div>
 
-                    <button id="toggle-filters" type="button"><i class="fa fa-filter"></i></button>
+                    <button onclick="toggleFilters()" id="toggle-filters" type="button"><i class="fa fa-filter"></i></button>
                     <div id="filters" class="filters">
                         <div class="status-filter">
                             <button type="button" class="status-filter-button" id="status-filter-button">Agenda &#8964;</button>
@@ -177,8 +177,16 @@
 </div>
     </div>
         <script>
+            function toggleFilters() {
+                const box = document.querySelector(".filters");
+                const current = getComputedStyle(box).display;
+                if (current === 'none') {
+                    box.style.display = 'flex';
+                } else {
+                    box.style.display = 'none';
+                }
+            }
                 document.addEventListener("DOMContentLoaded", function() {
-                    document.querySelector("#filters").classList.add("hidden");
 
                     document.querySelector(".status-filter-button").addEventListener("click", function() {
                         document.querySelector(".status-filter-content").classList.toggle("show");
@@ -188,9 +196,6 @@
                     });
                     document.querySelector("#pitch-preferences-button").addEventListener("click", function() {
                         document.querySelector(".pitch-filter-content").classList.toggle("show");
-                    });
-                    document.querySelector("#toggle-filters").addEventListener("click", function() {
-                        document.querySelector("#filters").classList.toggle("hidden");
                     });
                 /*window.addEventListener("click", function(e) {
                     if (!e.target.matches('.status-filter')) {

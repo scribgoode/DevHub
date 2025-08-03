@@ -1705,7 +1705,7 @@ figcaption {
     }
 
     .filters{
-        display: flex;
+        display: none;
         position:absolute;
         top: 11rem;
         background-color: #fff;
