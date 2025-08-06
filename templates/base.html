@@ -442,7 +442,7 @@
 
                         chat_type = "text";
                         socket = new WebSocket(
-                            'ws://'
+                            'wss://'
                             + window.location.host
                             + '/ws/chat/text/'
                         );
@@ -558,7 +558,7 @@
     const userTimezone = "{{ user_timezone }}";
     console.log("User timezone:", userTimezone);
     const notifSocket = new WebSocket(
-        'ws://' + window.location.host + '/ws/chat/notifications/'
+        'wss://' + window.location.host + '/ws/chat/notifications/'
     );
 
     notifSocket.onopen = function (e) {

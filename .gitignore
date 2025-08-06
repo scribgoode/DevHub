@@ -143,4 +143,5 @@ GitHub.sublime-settings
 .history
 
 #terraform
-.terraform/.
+.terraform/
+.terraform.lock.hcl

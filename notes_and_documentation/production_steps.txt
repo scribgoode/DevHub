@@ -22,6 +22,7 @@ docker-compose up --build then docker-compose exec web python manage.py migrate 
 
 make sure to add quotations when terraform asks for secret key but not for database password
 make sure to start celery in the background nohup celery -A devhub worker --loglevel=info --pool=solo > celery.log 2>&1 &
+actually run celery -A devhub worker --loglevel=info --pool=solo 
 
 
 edit file on server
@@ -45,6 +46,8 @@ outbound rules after adding the ec2 instance to the eleastic caches' 'connected 
 
 NTD(need to do):
 -add celery start up command to docker file
+-logo
+-lower costs
 
 Tips:
 rememeber to delete meeting requests because users cant have more then one pending meeting request between them
@@ -53,4 +56,12 @@ restart everytime you change something in the settings
 Bugs:
 -halfway meeting point
 -24 hour format on meeting pop up
--make sure video instances get deleted every time 
+-make sure video instances get deleted every time
+-server day(cant access video room on correct day)
+
+8/4
+-pasted route 53 nameservers into domains dns on godaddy
+-created terrform file with correct configuration
+-added csrf trusted origns in settings to be able to access other pages on the site
+-added wss instead of ws to websocket institialization
+-changed redis to cache.t4g.micro configuration

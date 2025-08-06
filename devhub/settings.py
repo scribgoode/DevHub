@@ -35,9 +35,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = False
 
 ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = [
-    'http://127.0.0.1', 'http://localhost', 'http://MSI.local'
-]
+
+CSRF_TRUSTED_ORIGINS = ['https://projectpals.io', 'https://www.projectpals.io']
 
 
 # Application definition

@@ -16,7 +16,7 @@ resource "aws_acm_certificate" "cert" {
 
 # Declare the Route 53 zone for the domain
 data "aws_route53_zone" "selected" {
-  name = "lamorre.com"
+  name = "projectpals.io"
 }
 
 # Define the Route 53 records for certificate validation
@@ -39,7 +39,7 @@ resource "aws_route53_record" "cert_validation" {
 # Define the Route 53 records for the domain and its www subdomain
 resource "aws_route53_record" "root_record" {
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = "lamorre.com"
+  name    = "projectpals.io"
   type    = "A"
 
   alias {
@@ -51,7 +51,7 @@ resource "aws_route53_record" "root_record" {
 
 resource "aws_route53_record" "www_record" {
   zone_id = data.aws_route53_zone.selected.zone_id
-  name    = "www.lamorre.com"
+  name    = "www.projectpals.io"
   type    = "A"
 
   alias {
@@ -90,7 +90,7 @@ resource "aws_security_group" "alb_sg" {
 
 # Application Load Balancer for HTTPS traffic
 resource "aws_lb" "default" {
-  name               = "django-ec2-alb-https"
+  name               = "projectpals-ec2-alb-https"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.alb_sg.id]
@@ -101,7 +101,7 @@ resource "aws_lb" "default" {
 
 # Target group for the ALB to route traffic from ALB to VPC
 resource "aws_lb_target_group" "default" {
-  name     = "django-ec2-tg-https"
+  name     = "projectpals-ec2-tg-https"
   port     = 443
   protocol = "HTTP" # Protocol used between the load balancer and targets
   vpc_id   = aws_vpc.default.id
