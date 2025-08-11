@@ -146,8 +146,8 @@
 
                             <p>
                             Proposed Time:
-                            {{ meeting.start_time|timezone:request.user.timezone|date:"H:i T" }} -
-                            {{ meeting.end_time|timezone:request.user.timezone|date:"H:i T" }}
+                            {{ meeting.start_time|timezone:request.user.timezone|date:"g:i A T" }} -
+                            {{ meeting.end_time|timezone:request.user.timezone|date:"g:i AT" }}
                             on {{ meeting.start_time|timezone:request.user.timezone|date:"M d, Y" }}
                             </p>
                             <p>Location Name: {{meeting.meeting_request.location_name}} </p>
@@ -172,7 +172,7 @@
                         <div class="meetings-popup hidden" id="meetings-popup-{{meeting.id}}">
                             <button class="close-window">X</button>
                             <p> {{meeting.sender}} & {{meeting.recipient}}'s meeting information</p>
-                            <p>Proposed Time: {{meeting.start_time|timezone:request.user.timezone|time:"H:i T"}} - {{ meeting.end_time|timezone:request.user.timezone|time:"H:i T" }} on {{meeting.date}}</p>
+                            <p>Proposed Time: {{meeting.start_time|timezone:request.user.timezone|time:"g:i A T"}} - {{ meeting.end_time|timezone:request.user.timezone|time:"g:i A T" }} on {{meeting.date}}</p>
                              {% if meeting.can_cancel %}
                             <form method="POST" class="cancel-meeting-form"></form>
                                 {% csrf_token %}
@@ -195,7 +195,7 @@
                         <div class="meetings-popup hidden" id="meetings-popup-{{meeting.id}}">
                             <button class="close-window">X</button>
                             <p> {{meeting.sender}} & {{meeting.recipient}}'s meeting information</p>
-                            <p>Time: {{meeting.start_time|timezone:request.user.timezone|time:"H:i T" }} - {{ meeting.end_time|timezone:request.user.timezone|time:"H:i T" }} on {{meeting.date}}</p>
+                            <p>Time: {{meeting.start_time|timezone:request.user.timezone|time:"g:i A T" }} - {{ meeting.end_time|timezone:request.user.timezone|time:"g:i A T" }} on {{meeting.date}}</p>
                             <p>Message: {{meeting.description}}</p>
                             <p>Location Name: {{meeting.meeting_request.location_name}} </p>
                             <p>Address: {{meeting.meeting_request.address}}</p>
@@ -207,7 +207,7 @@
                         <div class="meetings-popup hidden" id="meetings-popup-{{meeting.id}}">
                             <button class="close-window">X</button>
                             <p> {{meeting.sender}} & {{meeting.recipient}}'s meeting information</p>
-                            <p>Time: {{meeting.start_time|timezone:request.user.timezone|time:"H:i T"}} - {{ meeting.end_time|timezone:request.user.timezone|time:"H:i T" }} on {{meeting.date}}</p>
+                            <p>Time: {{meeting.start_time|timezone:request.user.timezone|time:"g:i A T"}} - {{ meeting.end_time|timezone:request.user.timezone|time:"g:i A T"}} on {{meeting.date}}</p>
                             <p>Message: {{meeting.description}}</p>
                             <p>Location: <a href="video_chat/{{ meeting.room_token }}">{{meeting.type}}</a></p>
                         </div>
@@ -222,7 +222,7 @@
                             <p>Basic Details on the meeting:</p>
                             <p>Meeting Type: {{meeting.type}}</p>
                             <p>{{meeting.start_time}}</p>
-                            <p>Meeting Time & Date: {{meeting.start_time|timezone:request.user.timezone|time:"H:i T" }} - {{ meeting.end_time|timezone:request.user.timezone|time:"H:i T" }} on {{meeting.date}}</p>
+                            <p>Meeting Time & Date: {{meeting.start_time|timezone:request.user.timezone|time:"g:i A T" }} - {{ meeting.end_time|timezone:request.user.timezone|time:"g:i A T" }} on {{meeting.date}}</p>
                             <br>
                             Please rate the meeting and the pal!
                             <form method="POST" class="meeting-review-form">
@@ -341,9 +341,9 @@
 
                     <p>
                     Proposed Time:
-                    {{ meeting_request.start_time|timezone:request.user.timezone|date:"H:i T" }}
+                    {{ meeting_request.start_time|timezone:request.user.timezone|date:"g:i A T" }}
                     -
-                    {{ meeting_request.end_time|timezone:request.user.timezone|date:"H:i T" }}
+                    {{ meeting_request.end_time|timezone:request.user.timezone|date:"g:i A T" }}
                     on {{ meeting_request.start_time|timezone:request.user.timezone|date:"M d, Y" }}
                     </p>
 
@@ -388,7 +388,7 @@
                                 <p> Location: video</p> <br>
                             {% endif %}
                                 Date: {{sent_meeting.date}} <br>
-                                Time: {{sent_meeting.start_time|timezone:request.user.timezone|time:"H:i T"}} - {{sent_meeting.end_time|timezone:request.user.timezone|time:"H:i T"}} <br>
+                                Time: {{sent_meeting.start_time|timezone:request.user.timezone|time:"g:i A T"}} - {{sent_meeting.end_time|timezone:request.user.timezone|time:"g:i A T"}} <br>
                                 Status: {{sent_meeting.status}} <br>
                                 {% if sent_meeting.type == 'in-person' %}
                                     <form id="update-location-form" type="meeting_request_update">

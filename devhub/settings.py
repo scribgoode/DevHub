@@ -245,3 +245,6 @@ CITIES_LIGHT_INCLUDE_COUNTRIES = ['us'] #un comment this line to only include US
 CELERY_BROKER_URL = "rediss://master.projectpalsredis.eukus7.use2.cache.amazonaws.com:6380/0"  # Make sure Redis is running
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+

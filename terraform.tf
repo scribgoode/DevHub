@@ -133,6 +133,7 @@ resource "aws_instance" "web" {
     --env DB_PASSWORD="SillyOnion42)" \
     --env DB_HOST=my-projectpals-rds.cn00esgis1oz.us-east-2.rds.amazonaws.com \
     --env DB_PORT=5432 \
+    --env GOOGLE_API_KEY=AIzaSyAttx1pSzt3WsERMlon5RgzvXlSI8u64-0 \
     571600867484.dkr.ecr.us-east-2.amazonaws.com/projectpals-ec2:latest
     EOF
 

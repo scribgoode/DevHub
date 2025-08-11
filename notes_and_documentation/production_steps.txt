@@ -22,7 +22,7 @@ docker-compose up --build then docker-compose exec web python manage.py migrate 
 
 make sure to add quotations when terraform asks for secret key but not for database password
 make sure to start celery in the background nohup celery -A devhub worker --loglevel=info --pool=solo > celery.log 2>&1 &
-actually run celery -A devhub worker --loglevel=info --pool=solo 
+actually run celery -A devhub worker --loglevel=info --pool=solo
 
 
 edit file on server
@@ -44,20 +44,37 @@ outbound rules after adding the ec2 instance to the eleastic caches' 'connected 
 -also changed the channels layer endpoint to match and some small stuff to match
 -had to change the redis oss cache to have cluster mode disabled and makre sure the open port was 6380
 
-NTD(need to do):
--add celery start up command to docker file
--logo
--lower costs
-
 Tips:
 rememeber to delete meeting requests because users cant have more then one pending meeting request between them
 restart everytime you change something in the settings
 
 Bugs:
--halfway meeting point
--24 hour format on meeting pop up
+✔️-halfway meeting point
+✔️-24 hour format on meeting pop up to 12 hour
 -make sure video instances get deleted every time
--server day(cant access video room on correct day)
+-make video chat work
+-elevator pitch saving system(content delivery network)(leland will look into it)
+-make sure addresses save correctly with city, state, and zip
+
+NTD(need to do):
+-add celery start up command to docker file
+-logo
+-lower costs
+-add dropdown for agendas and the ability to add and remove multiple
+-add text chat to video call
+-about page and contact page for what people dont like about the site
+-work on walkthrough script and button to make it pop up
+-pick nice, welcoming font
+-add vim to amazon linux requirements
+-consider adding these to setting(
+SECURE_SSL_REDIRECT = True  # redirect all HTTP requests to HTTPS
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+)
+-celery command that has security
+-make sure you can click on profile of person who sent you meeting invite in meeting invite(make it easy to tell you can click on it)
+-make sure its easy to tell you can click on messages name to go to profile
+
 
 8/4
 -pasted route 53 nameservers into domains dns on godaddy
