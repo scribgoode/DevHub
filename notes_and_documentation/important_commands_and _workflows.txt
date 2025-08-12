@@ -9,3 +9,5 @@ git/github
 -switch to main and merge feature branch to main
 -push main to remote repository
 -(maybe delete feature branch)
+
+celery -A devhub worker --loglevel=info --pool=solo

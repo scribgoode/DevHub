@@ -409,6 +409,5 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.current_user.asave()
     
     async def disconnect(self, close_code): # When the WebSocket connection is closed, this method is called.
-        self.current_user.online_status = False
-        print("disconnecting userrrrrrrrrrrrrrrrrrrrrrr")
+        await Presence.objects.filter(user=self.current_user, room=self.room).adelete()
         await self.current_user.asave()
