@@ -47,14 +47,18 @@ outbound rules after adding the ec2 instance to the eleastic caches' 'connected 
 Tips:
 rememeber to delete meeting requests because users cant have more then one pending meeting request between them
 restart everytime you change something in the settings
+if DEBUG = True, the server pulls directly from static instead of staticfiles
+you have to create your own turn server, servers just dont have them
+make sure to change session tabs when using chrome webrtc internals
 
 Bugs:
 ✔️-halfway meeting point
 ✔️-24 hour format on meeting pop up to 12 hour
--make sure video instances get deleted every time
--make video chat work
+✔️️-make sure video instances get deleted every time
+-make video chat work(ask leland for help)
 -elevator pitch saving system(content delivery network)(leland will look into it)
 -make sure addresses save correctly with city, state, and zip
+-make meeting pop up fit phone width
 
 NTD(need to do):
 -add celery start up command to docker file
@@ -82,3 +86,13 @@ CSRF_COOKIE_SECURE = True
 -added csrf trusted origns in settings to be able to access other pages on the site
 -added wss instead of ws to websocket institialization
 -changed redis to cache.t4g.micro configuration
+
+8/12
+-fixed lingering presences in chat room
+
+8/13
+-you have to create your own turn server, servers just dont have them
+-make sure to change session tabs when using chrome webrtc internals
+
+8/14
+-had to open security group for 3478 for UDP AND TCP
