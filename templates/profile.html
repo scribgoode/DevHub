@@ -9,7 +9,7 @@
         <div class="profile-data-profile-page">
             {% if profile.elevator_pitch %}
             <video id="elevator-pitch-video" controls>
-                <source src="{{ profile.elevator_pitch.url }}" type="video/mp4">
+                <source src="{{ video_url }}" type="video/mp4">
             </video>
             {% else %}
             <div class="video-placeholder"></div>
