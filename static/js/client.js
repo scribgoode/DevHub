@@ -6,14 +6,24 @@ const $self = {
     user_name: "",
     rtc_config: {
         iceServers: [
-            { urls: 'stun:kww.us:3478' },
-            { urls: 'stun:stun.l.google.com:19302' },
             {
-                username: "dcus",
-                credential: "dcus2024",
-                urls: 'turn:kww.us:3478',
-            },
-        ],
+                urls: ["stun:stun.l.google.com:19302",
+                    "turn:3.147.60.96:3478?transport=udp",
+                    "turn:3.147.60.96:3478?transport=tcp"
+            ],
+        username: "user",
+        credential: "pass"
+    }
+],
+
+        //     { urls: 'stun:kww.us:3478' },
+        //     { urls: 'stun:stun.l.google.com:19302' },
+        //     {
+        //         username: "dcus",
+        //         credential: "dcus2024",
+        //         urls: 'turn:kww.us:3478',
+        //     },
+        // ],
         iceTransportPolicy: "all"
     },
     media_constraints: {
