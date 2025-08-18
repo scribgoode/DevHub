@@ -1605,10 +1605,6 @@ figcaption {
         display:unset;
     }
 
-    .meetings-list{
-        
-    }
-
     .spacer{
         display: none;
     }
@@ -1621,10 +1617,6 @@ figcaption {
     #elevator-pitch-video {
         width: 100%;
         height: 20rem;
-    }
-
-    .projects-and-requests{
-        /* display: none; */
     }
 
     .profile-info{
@@ -1737,5 +1729,24 @@ figcaption {
         width: 32rem;
         height: 40rem;
         right: 0rem;
+    }
+
+    .add-project-popup{
+        width: 90%;
+    }
+
+    .meetings-popup{
+        position: fixed;
+        width: 90%;
+    }
+
+    .sent-meetings-popup{
+        position: fixed;
+        width: 90%;
+    }
+
+    .incoming-meetings-popup{
+        position: fixed;
+        width: 90%;
     }
 }

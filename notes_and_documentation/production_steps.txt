@@ -50,18 +50,21 @@ restart everytime you change something in the settings
 if DEBUG = True, the server pulls directly from static instead of staticfiles
 you have to create your own turn server, servers just dont have them
 make sure to change session tabs when using chrome webrtc internals
+using docker compose you can run multiple containers with the same setup from the Dockerfile
 
 Bugs:
 ✔️-halfway meeting point
 ✔️-24 hour format on meeting pop up to 12 hour
 ✔️️-make sure video instances get deleted every time
 -make video chat work(ask leland for help)
--elevator pitch saving system(content delivery network)(leland will look into it)
--make sure addresses save correctly with city, state, and zip
--make meeting pop up fit phone width
+️✔️-elevator pitch saving system(content delivery network)(leland will look into it)
+-make sure addresses save correctly with city, state, and zip(ask leland for help)
+️✔️️-make meeting pop up and notifs fit phone width
+✔️-fix add projects button
 
 NTD(need to do):
--add celery start up command to docker file
+-add celery start up command to docker file(need to look more into how to use docker-compose file/
+want to get all my other changes working before i mess something up)(celery command that has security)
 -logo
 -lower costs
 -add dropdown for agendas and the ability to add and remove multiple
@@ -75,10 +78,10 @@ SECURE_SSL_REDIRECT = True  # redirect all HTTP requests to HTTPS
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 )
--celery command that has security
 -make sure you can click on profile of person who sent you meeting invite in meeting invite(make it easy to tell you can click on it)
 -make sure its easy to tell you can click on messages name to go to profile
-
+-try new turn servers on local machine
+-elevator pitch cover picture button or the option to use a frame from the video
 
 8/4
 -pasted route 53 nameservers into domains dns on godaddy
@@ -95,4 +98,12 @@ CSRF_COOKIE_SECURE = True
 -make sure to change session tabs when using chrome webrtc internals
 
 8/14
--had to open security group for 3478 for UDP AND TCP
+-had to open security group for 3478 for UDP AND TCP(cant figure it out so going to wait for leland)
+-created s3 bucket
+-added new iam user credentials and stored them in path so that the server can read and write s3 bucket
+-new settings
+-added new code to views and templates 
+
+8/15 
+-fixed add projects button
+-made add project popup and meetings pop ups fit screen width

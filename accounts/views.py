@@ -46,6 +46,9 @@ from video_chat.tasks.meeting_tasks import set_meeting_status
 
 from django.core.paginator import Paginator
 
+from django.core.files.storage import default_storage
+import boto3
+from django.conf import settings
 
 '''
 class HomePageView(TemplateView):
@@ -258,6 +261,23 @@ def Profile(request, id):
     projects = Project.objects.filter(pal__id=id)
     interests = Interest.objects.filter(pal__id=id)
     ideas = Idea.objects.filter(pal__id=id)
+
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_S3_REGION_NAME
+    )
+
+    def get_video_url(expires=3600):
+        return s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME, 'Key': f"user_videos/{profile.id}/elevator_pitch.mp4"},
+            ExpiresIn=expires
+        )
+    
+    video_url = get_video_url()
+    
     context = {'profile': profile,
                'form': meeting_request_form,
                'projects': projects,
@@ -265,8 +285,9 @@ def Profile(request, id):
                'num_meetings_sent': num_meetings_sent,
                'num_meetings_received': num_meetings_received,
                'interests': interests,
-               'ideas': ideas,}
-    
+               'ideas': ideas,
+               'video_url': video_url,}
+
     return render(request, 'profile.html', context)
 
 def myProfile(request):
@@ -382,8 +403,12 @@ def myProfile(request):
                         meeting.save()
                         return redirect('profile', id=request.POST.get('meeting_request_sender_id'))
             case "video_upload":
+                file_name = default_storage.save(
+                    f"user_videos/{request.user.id}/elevator_pitch.mp4",
+                    request.FILES['elevator_pitch']
+                    )
                 user = request.user
-                user.elevator_pitch = request.FILES['elevator_pitch']
+                user.elevator_pitch = default_storage.url(file_name)
                 user.save()
             case "video_remove":
                 user = request.user
@@ -587,6 +612,22 @@ def myProfile(request):
     edit_profile_info_form = EditProfileForm(instance=request.user)
     user = Engineer.objects.get(id=request.user.id) 
     print("current time:", now())  # returns datetime in the user's timezone
+    agenda = user.agenda
+
+    s3 = boto3.client(
+        "s3",
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_S3_REGION_NAME
+    )
+
+    def get_video_url(expires=3600):
+        return s3.generate_presigned_url(
+            'get_object',
+            Params={'Bucket': settings.AWS_STORAGE_BUCKET_NAME, 'Key': f"user_videos/{request.user.id}/elevator_pitch.mp4"},
+            ExpiresIn=expires
+        )
+    video_url = get_video_url()
 
     context = {'meetings': meetings,
                 'meeting_requests': meeting_requests,
@@ -601,6 +642,8 @@ def myProfile(request):
                'interests': interests,
                'ideas': ideas,
                'user': user,
+               'video_url': video_url,
+               'agenda': agenda,
                }
 
     return render(request, 'my_profile.html', context)

@@ -17,7 +17,7 @@
             <button type="submit" id="remove-button">Remove</button>
         </form>
         <video id="elevator-pitch-video" controls>
-            <source src="{{ user.elevator_pitch.url }}" type="video/mp4">
+            <source src="{{ video_url }}" type="video/mp4">
         </video>
     {% else %}
         <div class="video-placeholder">
@@ -508,15 +508,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     let current_tab = "projects";
 
-    document.getElementById("projects-button").addEventListener('click', function() {
+    if (document.querySelector("#projects-button")) {
+        document.getElementById("projects-button").addEventListener('click', function() {
             current_tab = "projects";
-    });
-    document.getElementById("interests-button").addEventListener('click', function() {
+        });
+    }
+    if (document.querySelector("#interests-button")) {
+        document.getElementById("interests-button").addEventListener('click', function() {
             current_tab = "interests";
-    });
-    document.getElementById("ideas-button").addEventListener('click', function() {
+        });
+    }
+    if (document.querySelector("#ideas-button")) {
+        document.getElementById("ideas-button").addEventListener('click', function() {
             current_tab = "ideas";
-    });
+        });
+    }
 
     document.getElementById('add-project').addEventListener('click', function () {
     if (current_tab === 'projects') {
